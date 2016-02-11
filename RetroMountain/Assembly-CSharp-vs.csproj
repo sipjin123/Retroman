@@ -46,16 +46,16 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CameraControls.cs" />
-     <Compile Include="Assets\EnemyControls.cs" />
-     <Compile Include="Assets\GameControls.cs" />
-     <Compile Include="Assets\ObstacleManager.cs" />
-     <Compile Include="Assets\PlatformManager.cs" />
-     <Compile Include="Assets\PlatformObject.cs" />
-     <Compile Include="Assets\PlatformQuantityController.cs" />
-     <Compile Include="Assets\PlayerControls.cs" />
-     <Compile Include="Assets\SoundControls.cs" />
-     <Compile Include="Assets\TriggerableObjects.cs" />
+     <Compile Include="Assets\xScripts\Game\CameraControls.cs" />
+     <Compile Include="Assets\xScripts\Game\GameControls.cs" />
+     <Compile Include="Assets\xScripts\Game\PlatformQuantityController.cs" />
+     <Compile Include="Assets\xScripts\Game\SoundControls.cs" />
+     <Compile Include="Assets\xScripts\Obstacles\EnemyControls.cs" />
+     <Compile Include="Assets\xScripts\Obstacles\TriggerableObjects.cs" />
+     <Compile Include="Assets\xScripts\Platforms\ObstacleManager.cs" />
+     <Compile Include="Assets\xScripts\Platforms\PlatformManager.cs" />
+     <Compile Include="Assets\xScripts\Platforms\PlatformObject.cs" />
+     <Compile Include="Assets\xScripts\Player\PlayerControls.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Unity5.1/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
