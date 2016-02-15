@@ -47,9 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Destroyer.cs" />
-     <Compile Include="Assets\VFX.cs" />
-     <Compile Include="Assets\VFX_Obj.cs" />
-     <Compile Include="Assets\VFX_Trigger.cs" />
+     <Compile Include="Assets\xScripts\CoinboxDestroy.cs" />
      <Compile Include="Assets\xScripts\Game\CameraControls.cs" />
      <Compile Include="Assets\xScripts\Game\GameControls.cs" />
      <Compile Include="Assets\xScripts\Game\PlatformQuantityController.cs" />
@@ -60,6 +58,9 @@
      <Compile Include="Assets\xScripts\Platforms\PlatformManager.cs" />
      <Compile Include="Assets\xScripts\Platforms\PlatformObject.cs" />
      <Compile Include="Assets\xScripts\Player\PlayerControls.cs" />
+     <Compile Include="Assets\xScripts\VFX\VFX.cs" />
+     <Compile Include="Assets\xScripts\VFX\VFX_Obj.cs" />
+     <Compile Include="Assets\xScripts\VFX\VFX_Trigger.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Unity5.1/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
