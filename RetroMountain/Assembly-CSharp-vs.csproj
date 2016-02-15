@@ -46,6 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Destroyer.cs" />
+     <Compile Include="Assets\VFX.cs" />
+     <Compile Include="Assets\VFX_Obj.cs" />
+     <Compile Include="Assets\VFX_Trigger.cs" />
      <Compile Include="Assets\xScripts\Game\CameraControls.cs" />
      <Compile Include="Assets\xScripts\Game\GameControls.cs" />
      <Compile Include="Assets\xScripts\Game\PlatformQuantityController.cs" />
