@@ -45,9 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\RetroMountain\MountainObject.cs" />
-     <Compile Include="Assets\RetroMountain\MountainParent.cs" />
-     <Compile Include="Assets\RetroMountain\VFXSpawner.cs" />
      <Compile Include="Assets\RetroMountain\xScripts\Game\CameraControls.cs" />
      <Compile Include="Assets\RetroMountain\xScripts\Game\GameControls.cs" />
      <Compile Include="Assets\RetroMountain\xScripts\Game\PlatformQuantityController.cs" />
@@ -60,6 +57,9 @@
      <Compile Include="Assets\RetroMountain\xScripts\Player\PlayerControls.cs" />
      <Compile Include="Assets\RetroMountain\xScripts\VFX\CoinRotation.cs" />
      <Compile Include="Assets\RetroMountain\xScripts\VFX\CoinboxDestroy.cs" />
+     <Compile Include="Assets\RetroMountain\xScripts\VFX\MountainObject.cs" />
+     <Compile Include="Assets\RetroMountain\xScripts\VFX\MountainParent.cs" />
+     <Compile Include="Assets\RetroMountain\xScripts\VFX\VFXSpawner.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Aabb2.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Assertion.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Camera\OrthographicCamera.cs" />
