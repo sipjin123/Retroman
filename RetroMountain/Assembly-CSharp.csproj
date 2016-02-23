@@ -45,22 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\PoleTest.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Game\CameraControls.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Game\GameControls.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Game\PlatformQuantityController.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Game\SoundControls.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Obstacles\EnemyControls.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Obstacles\TriggerableObjects.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Platforms\ObstacleManager.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Platforms\PlatformManager.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Platforms\PlatformObject.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\Player\PlayerControls.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\VFX\CoinRotation.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\VFX\CoinboxDestroy.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\VFX\MountainObject.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\VFX\MountainParent.cs" />
-     <Compile Include="Assets\RetroMountain\xScripts\VFX\VFXSpawner.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Aabb2.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Assertion.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Camera\OrthographicCamera.cs" />
@@ -298,6 +282,21 @@
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityEngineBridge\UnityUIComponentExtensions.cs" />
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityWinRTBridge\Thread.cs" />
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Game\CameraControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Game\GameControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Game\PlatformQuantityController.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Game\SoundControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Obstacles\EnemyControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Obstacles\TriggerableObjects.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Platforms\ObstacleManager.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Platforms\PlatformManager.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Platforms\PlatformObject.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\Player\PlayerControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\VFX\CoinRotation.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\VFX\CoinboxDestroy.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\VFX\MountainObject.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\VFX\MountainParent.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\VFX\VFXSpawner.cs" />
      <None Include="Assets\Synergy88\Common\Fonts\LuckiestGuy\LICENSE.txt" />
      <None Include="Assets\Plugins\Android\GoogleMobileAdsPlugin\res\values\version.xml" />
      <None Include="Assets\Synergy88\Common\Shaders\ColorOnly.shader" />
