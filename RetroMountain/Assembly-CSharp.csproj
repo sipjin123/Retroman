@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\PlatformLord.cs" />
+     <Compile Include="Assets\PlatformMinion.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Aabb2.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Assertion.cs" />
      <Compile Include="Assets\Synergy88\Common\Scripts\Camera\OrthographicCamera.cs" />
@@ -282,6 +284,7 @@
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityEngineBridge\UnityUIComponentExtensions.cs" />
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityWinRTBridge\Thread.cs" />
      <Compile Include="Assets\Synergy88\UniRx\Scripts\UnityWinRTBridge\ThreadPoolScheduler_UnityWinRT.cs" />
+     <Compile Include="Assets\Trigger_Master.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Game\CameraControls.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Game\GameControls.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Game\PlatformQuantityController.cs" />
