@@ -39,8 +39,8 @@ public class Trigger_Master: MonoBehaviour {
 						if(gameObject.name == "CoinOBJ")
 						{
 							SoundControls.Instance._sfxCoin.Play();
-							GameControls.Instance.UptateScoreing();
 							GameControls.Instance.Score++;
+							GameControls.Instance.UptateScoreing();
 						}
 					break;
 				case TypeOfTrigger.SPIKE:
