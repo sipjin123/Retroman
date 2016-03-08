@@ -322,6 +322,7 @@
      <Compile Include="Assets\XRetroMountain\xScripts\Game\CameraControls.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Game\GameControls.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Game\SoundControls.cs" />
+     <Compile Include="Assets\XRetroMountain\xScripts\ManualAnimationScene.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Obstacles\Trigger_Master.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Platform\PlatformLord.cs" />
      <Compile Include="Assets\XRetroMountain\xScripts\Platform\PlatformMinion.cs" />
