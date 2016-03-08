@@ -22,8 +22,8 @@ public class PlatformMinion : MonoBehaviour {
 	public TypeofPlatform _previousTypeOfPlatform;
 	public enum HeightOfPlatform
 	{
-		NORMAL,
 		LOW,
+		NORMAL,
 		HIGH,
 		VERYHIGH
 	}
