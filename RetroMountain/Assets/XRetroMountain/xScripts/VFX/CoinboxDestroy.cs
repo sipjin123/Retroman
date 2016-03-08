@@ -18,7 +18,6 @@ public class CoinboxDestroy : MonoBehaviour {
 		{
 			transform.GetChild(i).gameObject.transform.localPosition = origstatepos[i];
 			transform.GetChild(i).gameObject.transform.localRotation = Quaternion.identity;
-			//transform.localScale = new Vector3(1,1,1);
 			try{
 			transform.GetChild(i).GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 			}catch{}
@@ -31,7 +30,7 @@ public class CoinboxDestroy : MonoBehaviour {
 			try{
 				transform.GetChild(i).gameObject.transform.localPosition = origstatepos[i];
 				transform.GetChild(i).gameObject.transform.localRotation = Quaternion.identity;
-			//transform.localScale = new Vector3(1,1,1);
+				transform.GetChild(i).GetComponent<Rigidbody>().velocity = new Vector3(0,0,0);
 			}
 			catch{}
 		}
