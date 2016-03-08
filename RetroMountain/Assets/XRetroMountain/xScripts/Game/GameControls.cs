@@ -99,7 +99,7 @@ public class GameControls : MonoBehaviour {
 	}
 	public IEnumerator DelayStart()
 	{
-		yield return new WaitForSeconds(3.25f);
+		yield return new WaitForSeconds(2.55f);
 		_camAnim.enabled = false;
 		_playerAnim.enabled = false;
 
