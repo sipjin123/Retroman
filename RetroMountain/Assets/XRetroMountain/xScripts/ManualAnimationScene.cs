@@ -24,15 +24,21 @@ public class ManualAnimationScene : MonoBehaviour {
 		_startLerping = true;
 		_lerpValue = 0;
 		_thispos = _wayPoints[0].transform.position;
+		_distLenght = Vector3.Distance( _thispos , _wayPoints[_waypoint].transform.position);
+		_startTime = Time.time;/////
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(_waypoint > 4)
+			GetComponent<ManualAnimationScene>().enabled = (false);
 		if(Input.GetKeyDown(KeyCode.K))
 		{
 			
 			_startLerping = true;
 			_thispos = _wayPoints[0].transform.position;
+			_distLenght = Vector3.Distance( _thispos , _wayPoints[_waypoint].transform.position);
+			_startTime = Time.time;/////
 		}
 		if(_startLerping)
 		{
@@ -42,7 +48,10 @@ public class ManualAnimationScene : MonoBehaviour {
 				_startLerping = false;
 				StartCoroutine(LerpWWait());
 			}
-			_lerpValue += Time.deltaTime * 2.75f;
+			//_lerpValue += Time.deltaTime * 2.75f;
+			float _distCov = (Time.time - _startTime) * _moveSpeed;
+			_lerpValue =  _distCov / _distLenght;
+				
 			try{
 			transform.position = Vector3.Lerp(_thispos,  _wayPoints[_waypoint].transform.position , _lerpValue );
 			}
@@ -50,14 +59,19 @@ public class ManualAnimationScene : MonoBehaviour {
 		}
 
 	}
+	float _distLenght;
+	float _startTime;
+	float _moveSpeed = 10;
 	IEnumerator LerpWWait()
 	{
-		yield return new WaitForSeconds(0.25f);
+		yield return new WaitForSeconds(0.15f);
 		try{
 		_waypoint++;
 		_thispos = transform.position;
 		_lerpValue = 0;
-		_startLerping = true;
+			_startLerping = true;
+			_distLenght = Vector3.Distance( transform.position , _wayPoints[_waypoint].transform.position);/////
+			_startTime = Time.time;/////
 		}
 		catch{
 			_startLerping = false;

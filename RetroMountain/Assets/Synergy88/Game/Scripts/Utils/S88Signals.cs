@@ -47,6 +47,7 @@ namespace Synergy88 {
 
 		// IAP
 		public static readonly Signal ON_STORE_ITEM_PURCHASE = new Signal("OnStoreItemPurchase");
+		public static readonly Signal ON_STORE_ITEM_SOFTCURRENCY= new Signal("OnStoreItemSoftCurrency");
 		public static readonly Signal ON_STORE_ITEM_PURCHASE_SUCCESSFUL = new Signal("OnStoreItemPurchaseSuccessful");
 		public static readonly Signal ON_STORE_ITEM_PURCHASE_FAILED = new Signal("OnStoreItemPurchaseFailed");
 		public static readonly Signal ON_RESTORE_PURCHASE = new Signal("OnRestorePurchase");

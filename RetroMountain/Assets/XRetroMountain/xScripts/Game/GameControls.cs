@@ -100,6 +100,7 @@ public class GameControls : MonoBehaviour {
 	public IEnumerator DelayStart()
 	{
 		yield return new WaitForSeconds(2.55f);
+
 		_camAnim.enabled = false;
 		_playerAnim.enabled = false;
 
@@ -134,7 +135,7 @@ public class GameControls : MonoBehaviour {
 	{
 		S88Scene.Load<GameRoot>(EScene.Game);
 		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
-		//S88Scene.Load<HomeRoot>(EScene.Home);
+		S88Scene.Load<HomeRoot>(EScene.Home);
 	}
 	public void ShowADS()
 	{
