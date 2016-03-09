@@ -18,10 +18,11 @@ public class Trigger_Master: MonoBehaviour {
 
 	void OnEnable()
 	{
-		try{
-		_coinMesh.SetActive(true);
-		_coinEffects.SetActive(false);
-		}catch{}
+		if(_typeOfTrigger == TypeOfTrigger.COIN)
+		{
+			_coinMesh.SetActive(true);
+			_coinEffects.SetActive(false);
+		}
 	}
 	void OnTriggerEnter(Collider hit)
 	{

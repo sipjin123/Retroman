@@ -249,7 +249,7 @@ public class PlatformLord: MonoBehaviour {
 					_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
 					break;
 
-				case PlatformAction.SPAWNTRAP:
+			case PlatformAction.SPAWNTRAP:
 					if(_trapType == TrapType.SPIKE)
 					{
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
