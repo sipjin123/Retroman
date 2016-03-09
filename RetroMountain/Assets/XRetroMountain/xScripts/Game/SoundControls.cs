@@ -6,7 +6,7 @@ public class SoundControls : MonoBehaviour {
 	public static SoundControls Instance { get { return _instance; } }
 
 
-	public AudioSource _sfxJump, _sfxBreakBlock, _sfxDie, _sfxBGM, _sfxCoin, _sfxRunning, _sfxSpikes, _sfxSplash;
+	public AudioSource _sfxJump, _sfxBreakBlock, _sfxDie, _sfxBGM, _sfxCoin, _sfxRunning, _sfxSpikes, _sfxSplash, _buttonClick;
 
 	public GameObject _BGMParent,_SFXParent;
 
@@ -16,6 +16,10 @@ public class SoundControls : MonoBehaviour {
 		_instance = this;
 	}
 	void OnEnable()
+	{
+		SetUpSounds();
+	}
+	public void SetUpSounds()
 	{
 		if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
 			_bgmswitch = false;

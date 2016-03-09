@@ -31,11 +31,13 @@ namespace Synergy88 {
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
 				GameControls.Instance._resultCharParent.SetActive(false);
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Ads, (ISignalParameters parameters) => {
 
 				S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Leaderboard, (ISignalParameters parameters) => {
@@ -48,6 +50,7 @@ namespace Synergy88 {
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 				this.LoadSceneAdditive<BackRoot>(EScene.Back);
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Refresh, (ISignalParameters parameters) => {

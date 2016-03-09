@@ -40,6 +40,7 @@ namespace Synergy88 {
 				MoreGamesItem item = (MoreGamesItem)parameters.GetParameter(S88Params.BUTTON_DATA);
 				item.OpenLink();
 
+				SoundControls.Instance._buttonClick.Play();
 				Factory.Get<UnityAnalytics>().Track(item);
 			});
 		}
