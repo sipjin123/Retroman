@@ -26,6 +26,7 @@ public class GameControls : MonoBehaviour {
 	//UI WINDOWS
 	public GameObject InGameWindow;
 	public GameObject _resultCharParent;
+	public GameObject _resultCharParentOVERLAY;
 	public GameObject _pauseButton, _resumeButton;
 
 	//INTRO ANIMATIONS
@@ -34,6 +35,8 @@ public class GameControls : MonoBehaviour {
 	//IN GAME OPTIONS
 	bool ifGameOverplayed;
 	public bool _isPaused;
+
+	public GameObject _startUpDesign;
 	//==========================================================================================================================================
 	void Awake()
 	{
@@ -44,7 +47,11 @@ public class GameControls : MonoBehaviour {
 		_isPaused = false;
 		_gameState = GameState.START;
 		Score = 0;
-
+	}
+	public IEnumerator TimeBombStartDesign()
+	{
+		yield return new WaitForSeconds( 5 );
+		Destroy(_startUpDesign);
 	}
 	//==========================================================================================================================================
 	//SIGNALS
@@ -109,6 +116,7 @@ public class GameControls : MonoBehaviour {
 
 		UIHS.GetComponent<Text>().text = ""+PlayerPrefs.GetInt("hiSkor",0);
 		UIHS2.GetComponent<Text>().text = ""+PlayerPrefs.GetInt("hiSkor",0);
+		StartCoroutine(TimeBombStartDesign());
 	}
 	//==========================================================================================================================================
 	public void LevelPause( bool _switch)
@@ -184,7 +192,7 @@ public class GameControls : MonoBehaviour {
 
 		//SET DELAY
 		yield return new WaitForSeconds(2);
-
+		_resultCharParentOVERLAY.SetActive(true);
 		_resultCharParent.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0) ).gameObject.SetActive(true);
 
 		S88Scene.Load<ResultsRoot>(EScene.Results);
