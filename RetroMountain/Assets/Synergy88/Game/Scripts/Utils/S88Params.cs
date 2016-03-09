@@ -26,6 +26,7 @@ namespace Synergy88 {
 		public const string STORE_ITEM = "StoreItem";
 		public const string STORE_ITEM_ID = "StoreItemId";
 		public const string STORE_ITEM_PRICE = "StoreItemPrice";
+		public const string STORE_ITEM_STORE_ID = "StoreItemStoreID";
 
 	}
 

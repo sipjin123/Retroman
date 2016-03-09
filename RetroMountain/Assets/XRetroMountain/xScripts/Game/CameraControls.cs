@@ -54,7 +54,7 @@ public class CameraControls : MonoBehaviour {
 	{
 		if(_lerpValue < 1)
 		{
-			_lerpValue += 0.75f * Time.deltaTime;	
+			_lerpValue += 1.75f * Time.deltaTime;	
 			_CamObj.transform.localPosition = Vector3.Lerp(_objtoLerpFrom, _oBjToLerpTo, _lerpValue);
 		}
 		else

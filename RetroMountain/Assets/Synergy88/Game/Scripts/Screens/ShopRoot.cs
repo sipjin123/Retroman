@@ -51,37 +51,37 @@ namespace Synergy88 {
 		[SerializeField]
 		private ShopItemData data;
 
-		public void ConrimationWindow(GameObject _obj)
+		public void ActivateConrimationWindow()
 		{
-			data = _obj.GetComponent<ShopItem>().ItemData;
+			_confirmationWindow.SetActive(true);
 		}
-		public void ConfirmationYes()
-		{
-
-			string _itemID = this.data.ItemId;
-			int _itemPrice = int.Parse( this.data.ItemPrice.ToString() );
-			int _itemNum= int.Parse( this.data.ItemStoreId.ToString() );
-
-
-
-			S88Signals.ON_UPDATE_PLAYER_CURRENCY.ClearParameters();
-			S88Signals.ON_UPDATE_PLAYER_CURRENCY.AddParameter(S88Params.PLAYER_CURRENCY, -_itemPrice);
-			S88Signals.ON_UPDATE_PLAYER_CURRENCY.Dispatch();
-			PlayerPrefs.SetInt("Bought"+_itemID,1);
-
-			Signal signal = S88Signals.ON_STORE_ITEM_PURCHASE;
-			signal.ClearParameters();
-			signal.AddParameter(S88Params.STORE_ITEM_ID, this.data.ItemId);
-			signal.Dispatch();
-
-			_confirmationWindow.SetActive(false);
-		}
-
-
 		public void DisableConrimationWindow()
 		{
 			_confirmationWindow.SetActive(false);
 		}
+		public void ConfirmationYes()
+		{
+			string _id = data.ItemId;
+			int _price = int.Parse(data.ItemPrice);
+			int _number = int.Parse(data.ItemStoreId);
+
+
+			S88Signals.ON_UPDATE_PLAYER_CURRENCY.ClearParameters();
+			S88Signals.ON_UPDATE_PLAYER_CURRENCY.AddParameter(S88Params.PLAYER_CURRENCY, -_price );
+			S88Signals.ON_UPDATE_PLAYER_CURRENCY.Dispatch();
+			PlayerPrefs.SetInt("Bought"+ data.ItemId,1);
+
+			S88Signals.ON_STORE_ITEM_PURCHASE.ClearParameters();
+			S88Signals.ON_STORE_ITEM_PURCHASE.AddParameter(S88Params.STORE_ITEM_ID, _id);
+			S88Signals.ON_STORE_ITEM_PURCHASE.Dispatch();
+
+			DisableConrimationWindow();
+			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.ClearParameters();
+			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.AddParameter(S88Params.STORE_ITEM, data);
+			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.Dispatch();
+		}
+
+
 		public void ResetPlayerPrefs()
 		{
 
@@ -105,6 +105,7 @@ namespace Synergy88 {
 
 			S88Signals.ON_STORE_ITEM_PURCHASE_SUCCESSFUL.AddListener(this.OnStorePurchaseSuccessful);
 			S88Signals.ON_STORE_ITEM_PURCHASE_FAILED.AddListener(this.OnStorePurchaseFailed);
+			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.AddListener(this.SoftCurrencyStore);
 
 		}
 
@@ -114,6 +115,7 @@ namespace Synergy88 {
 
 			S88Signals.ON_STORE_ITEM_PURCHASE_SUCCESSFUL.RemoveListener(this.OnStorePurchaseSuccessful);
 			S88Signals.ON_STORE_ITEM_PURCHASE_FAILED.RemoveListener(this.OnStorePurchaseFailed);
+			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.RemoveListener(this.SoftCurrencyStore);
 
 		}
 
@@ -197,6 +199,11 @@ namespace Synergy88 {
 
 		private void OnStorePurchaseFailed(ISignalParameters parameters) {
 			Debug.LogFormat("ShopRoot::OnStorePurchaseFailed\n");
+		}
+
+		private void SoftCurrencyStore(ISignalParameters parameters)
+		{
+			data = ( ShopItemData )parameters.GetParameter(S88Params.STORE_ITEM);
 		}
 		#endregion
 
