@@ -143,7 +143,7 @@ public class PlatformLord: MonoBehaviour {
 		_pattern6 = new int[] {3,1,0,0,0}; //	
 		_pattern7 = new int[] {0,1,3,1,0}; //	
 		_pattern8 = new int[] {1,6,4,6,0}; //	^|_@_|_
-		_pattern9 = new int[] {2,6,6,6,2}; //	@|___|@
+		_pattern9 = new int[] {4,6,6,6,4}; //	@|___|@
 		_pattern10 = new int[] {2,4,6,4,2};//	@|@_@|@
 		/*
 		NORMAL,0
@@ -268,7 +268,7 @@ public class PlatformLord: MonoBehaviour {
 					break;
 				case PlatformAction.SPAWNTRAPPATTERN:
 						_platformMinion._typeOfPlatform = (PlatformMinion.TypeofPlatform)  _patternDict[_patternRandomizer].GetValue(_spawnStackCounter) ;
-						_platformMinion.transform.eulerAngles = new Vector3(0,45,0);
+						//_platformMinion.transform.eulerAngles = new Vector3(0,45,0);
 						break;
 			}
 		}
