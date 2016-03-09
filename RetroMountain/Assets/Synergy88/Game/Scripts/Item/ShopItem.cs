@@ -95,22 +95,23 @@ namespace Synergy88 {
 			if(PlayerPrefs.GetInt("Bought"+_itemID,0) == 1)
 			{
 				PlayerPrefs.SetInt("CurrentCharacter",_itemNum) ;
-				//Debug.LogError("Selected "+_itemID);
+				S88Signals.ON_STORE_REFRESHWINDOW.Dispatch();
+				SoundControls.Instance._buttonClick.Play();
 			}
 			else
 			{
 				if(PlayerPrefs.GetInt("TotalGold",0) > _itemPrice)
 				{
 					_shopRoot.GetComponent<ShopRoot>().ActivateConrimationWindow();
+					Signal signal = S88Signals.ON_STORE_ITEM_SOFTCURRENCY;
+					signal.ClearParameters();
+					signal.AddParameter(S88Params.STORE_ITEM, this.ItemData);
+					signal.AddParameter(S88Params.STORE_ITEM_ID, this.ItemData.ItemId);
+					signal.AddParameter(S88Params.STORE_ITEM_PRICE, this.ItemData.ItemPrice);
+					signal.AddParameter(S88Params.STORE_ITEM_STORE_ID, this.ItemData.ItemStoreId);
+					signal.Dispatch();
 				}
 			}
-			Signal signal = S88Signals.ON_STORE_ITEM_SOFTCURRENCY;
-			signal.ClearParameters();
-			signal.AddParameter(S88Params.STORE_ITEM, this.ItemData);
-			signal.AddParameter(S88Params.STORE_ITEM_ID, this.ItemData.ItemId);
-			signal.AddParameter(S88Params.STORE_ITEM_PRICE, this.ItemData.ItemPrice);
-			signal.AddParameter(S88Params.STORE_ITEM_STORE_ID, this.ItemData.ItemStoreId);
-			signal.Dispatch();
 
 			/*
 			Signal signal = S88Signals.ON_STORE_ITEM_PURCHASE;
@@ -137,11 +138,11 @@ namespace Synergy88 {
 
 		private void OnEnable()
 		{
-			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.AddListener(refreshButtons);
+			S88Signals.ON_STORE_REFRESHWINDOW.AddListener(refreshButtons);
 		}
 		private void OnDestroy()
 		{
-			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.RemoveListener(refreshButtons);
+			S88Signals.ON_STORE_REFRESHWINDOW.RemoveListener(refreshButtons);
 		}
 		private void refreshButtons(ISignalParameters parameters)
 		{

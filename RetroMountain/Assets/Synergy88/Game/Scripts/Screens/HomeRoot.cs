@@ -30,9 +30,12 @@ namespace Synergy88 {
 				this.LoadScene<MoreGamesRoot>(EScene.MoreGames);
 				this.LoadSceneAdditive<BackRoot>(EScene.Back);
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Currency, (ISignalParameters parameters) => {
+
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Help, (ISignalParameters parameters) => {
@@ -49,6 +52,8 @@ namespace Synergy88 {
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 				this.LoadSceneAdditive<BackRoot>(EScene.Back);
+
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Play, (ISignalParameters parameters) => {
@@ -57,12 +62,15 @@ namespace Synergy88 {
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Settings, (ISignalParameters parameters) => {
 				this.LoadScene<SettingsRoot>(EScene.Settings);
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
 				this.LoadSceneAdditive<BackRoot>(EScene.Back);
+
+				SoundControls.Instance._buttonClick.Play();
 			});
 		}
 

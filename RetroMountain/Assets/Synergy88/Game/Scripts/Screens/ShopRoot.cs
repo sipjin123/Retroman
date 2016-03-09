@@ -53,14 +53,17 @@ namespace Synergy88 {
 
 		public void ActivateConrimationWindow()
 		{
+			SoundControls.Instance._buttonClick.Play();
 			_confirmationWindow.SetActive(true);
 		}
 		public void DisableConrimationWindow()
 		{
+			SoundControls.Instance._buttonClick.Play();
 			_confirmationWindow.SetActive(false);
 		}
 		public void ConfirmationYes()
 		{
+			SoundControls.Instance._buttonClick.Play();
 			string _id = data.ItemId;
 			int _price = int.Parse(data.ItemPrice);
 			int _number = int.Parse(data.ItemStoreId);
@@ -70,15 +73,14 @@ namespace Synergy88 {
 			S88Signals.ON_UPDATE_PLAYER_CURRENCY.AddParameter(S88Params.PLAYER_CURRENCY, -_price );
 			S88Signals.ON_UPDATE_PLAYER_CURRENCY.Dispatch();
 			PlayerPrefs.SetInt("Bought"+ data.ItemId,1);
+			PlayerPrefs.SetInt("CurrentCharacter",_number) ;
+
+			DisableConrimationWindow();
+			S88Signals.ON_STORE_REFRESHWINDOW.Dispatch();
 
 			S88Signals.ON_STORE_ITEM_PURCHASE.ClearParameters();
 			S88Signals.ON_STORE_ITEM_PURCHASE.AddParameter(S88Params.STORE_ITEM_ID, _id);
 			S88Signals.ON_STORE_ITEM_PURCHASE.Dispatch();
-
-			DisableConrimationWindow();
-			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.ClearParameters();
-			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.AddParameter(S88Params.STORE_ITEM, data);
-			S88Signals.ON_STORE_ITEM_SOFTCURRENCY.Dispatch();
 		}
 
 

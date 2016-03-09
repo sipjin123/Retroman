@@ -35,6 +35,7 @@ namespace Synergy88 {
 
 
 				_CreditsWindow.SetActive(true);
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.Restore, (ISignalParameters parameters) => {
@@ -45,6 +46,7 @@ namespace Synergy88 {
 				S88Signals.ON_SHOW_UNITY_ADS.ClearParameters();
 				S88Signals.ON_SHOW_UNITY_ADS.AddParameter(S88Params.UNITY_ADS_REGION, "001Region");
 				S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
+				SoundControls.Instance._buttonClick.Play();
 			});
 		}
 
@@ -64,6 +66,7 @@ namespace Synergy88 {
 
 		public void SwitchBGM()
 		{
+			SoundControls.Instance._buttonClick.Play();
 			if(_BGMswitch)
 			{
 				PlayerPrefs.SetInt("BGMSWITCH",0);
@@ -76,9 +79,11 @@ namespace Synergy88 {
 				_toggleBGM.SetActive(true);
 				_BGMswitch = true;
 			}
+			SoundControls.Instance.SetUpSounds();
 		}
 		public void SwitchSFX()
 		{
+			SoundControls.Instance._buttonClick.Play();
 			if(_SFXswitch)
 			{
 				PlayerPrefs.SetInt("SFXSWITCH",0);
@@ -91,6 +96,7 @@ namespace Synergy88 {
 				_toggleSFX.SetActive(true);
 				_SFXswitch = true;
 			}
+			SoundControls.Instance.SetUpSounds();
 		}
 	}
 

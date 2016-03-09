@@ -29,6 +29,7 @@ namespace Synergy88 {
 				this.LoadScene<HomeRoot>(EScene.Home);
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Game);
+				SoundControls.Instance._buttonClick.Play();
 			});
 		}
 

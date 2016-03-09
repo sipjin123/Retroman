@@ -22,6 +22,7 @@ namespace Synergy88 {
 
 			this.AddButtonHandler(EButtonType.Login, (ISignalParameters parameters) => {
 				this.Login();
+				SoundControls.Instance._buttonClick.Play();
 			});
 
 			this.AddButtonHandler(EButtonType.LoginFacebook, (ISignalParameters parameters) => {
