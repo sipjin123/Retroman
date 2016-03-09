@@ -30,7 +30,6 @@ namespace Synergy88 {
 				this.LoadScene<HomeRoot>(EScene.Home);
 				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
 				this.LoadSceneAdditive<BackRoot>(EScene.Game);
-				GameControls.Instance._resultCharParent.SetActive(false);
 				SoundControls.Instance._buttonClick.Play();
 			});
 
@@ -63,6 +62,9 @@ namespace Synergy88 {
 		}
 
 		protected override void OnEnable() {
+			try{
+				GameControls.Instance._resultCharParent.SetActive(true);
+			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.AddListener(ResetGame);
 
 			foreach(Transform child in _Avatar.transform)
@@ -81,6 +83,9 @@ namespace Synergy88 {
 		}
 
 		protected override void OnDisable() {
+			try{
+			GameControls.Instance._resultCharParent.SetActive(false);
+			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.RemoveListener(ResetGame);
 			base.OnDisable();
 		}

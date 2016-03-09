@@ -49,7 +49,6 @@ public class PlatformMinion : MonoBehaviour {
 	public void UpdateThisPlatform()
 	{
 		DisableAll();
-
 		switch(_typeOfPlatform)
 		{
 			case TypeofPlatform.UNKNOWN:
@@ -72,7 +71,8 @@ public class PlatformMinion : MonoBehaviour {
 				GetComponent<BoxCollider>().enabled = false;
 				break;
 			case TypeofPlatform.COINBOX:
-				_coinBoxObject.SetActive(true);
+			_coinBoxObject.SetActive(true);
+			_coinBoxObject.transform.GetChild(0).gameObject.SetActive(true);
 				break;
 			case TypeofPlatform.LEFT:
 				_leftObject.SetActive(true);
@@ -136,6 +136,7 @@ public class PlatformMinion : MonoBehaviour {
 				_holeObject.SetActive(false);
 				break;
 			case TypeofPlatform.COINBOX:
+			_coinBoxObject.transform.GetChild(0).GetComponent<Trigger_Master>()._coinEffects.SetActive(false);
 				_coinBoxObject.SetActive(false);
 				break;
 			case TypeofPlatform.LEFT:

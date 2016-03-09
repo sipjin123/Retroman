@@ -18,15 +18,14 @@ public class GameControls : MonoBehaviour {
 
 	//SCORING
 	public float Score;
-	public GameObject UITExt;
-	public GameObject UITExt2;
-	public GameObject UIHS;
-	public GameObject UIHS2;
+	public Text UIScore;
+	public Text UIScore2;
+	public Text UIHighScore;
+	public Text UIHighScore2;
 
 	//UI WINDOWS
 	public GameObject InGameWindow;
 	public GameObject _resultCharParent;
-	public GameObject _resultCharParentOVERLAY;
 	public GameObject _pauseButton, _resumeButton;
 
 	//INTRO ANIMATIONS
@@ -81,8 +80,8 @@ public class GameControls : MonoBehaviour {
 	//==========================================================================================================================================
 	public void UptateScoreing()
 	{
-		UITExt.GetComponent<Text>().text = ""+(int)Score;
-		UITExt2.GetComponent<Text>().text = ""+(int)Score;
+		UIScore.text = ""+(int)Score;
+		UIScore2.text = ""+(int)Score;
 		S88Signals.ON_UPDATE_PLAYER_CURRENCY.AddParameter(S88Params.PLAYER_CURRENCY, 1);
 		S88Signals.ON_UPDATE_PLAYER_CURRENCY.Dispatch();
 	}
@@ -114,9 +113,10 @@ public class GameControls : MonoBehaviour {
 		S88Signals.ON_GAME_RESUME.Dispatch();
 		InGameWindow.SetActive(true);
 
-
-		UIHS.GetComponent<Text>().text = ""+PlayerPrefs.GetInt("hiSkor",0);
-		UIHS2.GetComponent<Text>().text = ""+PlayerPrefs.GetInt("hiSkor",0);
+		UIScore.text = "0";
+		UIScore2.text = "0";
+		UIHighScore.text = "Best "+PlayerPrefs.GetInt("hiSkor",0);
+		UIHighScore2.text = "Best "+PlayerPrefs.GetInt("hiSkor",0);
 		StartCoroutine(TimeBombStartDesign());
 	}
 	//==========================================================================================================================================
@@ -141,9 +141,13 @@ public class GameControls : MonoBehaviour {
 	}
 	public void ResetGame()
 	{
+		S88Scene.Load<HomeRoot>(EScene.Home);
 		S88Scene.Load<GameRoot>(EScene.Game);
 		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
-		S88Scene.Load<HomeRoot>(EScene.Home);
+		/*
+		S88Scene.Load<GameRoot>(EScene.Game);
+		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
+		S88Scene.Load<HomeRoot>(EScene.Home);*/
 	}
 	public void ShowADS()
 	{
@@ -184,8 +188,8 @@ public class GameControls : MonoBehaviour {
 		//SET HIGH SCORE
 		if(Score > PlayerPrefs.GetInt("hiSkor",0))
 			PlayerPrefs.SetInt("hiSkor",(int)Score);
-		UIHS.GetComponent<Text>().text = "HS: "+PlayerPrefs.GetInt("hiSkor",0);
-		UIHS2.GetComponent<Text>().text = "HS: "+PlayerPrefs.GetInt("hiSkor",0);
+		UIHighScore.GetComponent<Text>().text = "HS: "+PlayerPrefs.GetInt("hiSkor",0);
+		UIHighScore2.GetComponent<Text>().text = "HS: "+PlayerPrefs.GetInt("hiSkor",0);
 
 		//SOUND EFFECTS
 		SoundControls.Instance._sfxDie.Play();
@@ -193,7 +197,7 @@ public class GameControls : MonoBehaviour {
 
 		//SET DELAY
 		yield return new WaitForSeconds(2);
-		_resultCharParentOVERLAY.SetActive(true);
+		_resultCharParent.SetActive(true);
 		_resultCharParent.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0) ).gameObject.SetActive(true);
 
 		S88Scene.Load<ResultsRoot>(EScene.Results);
