@@ -6,6 +6,9 @@ public class CreditsRollUp : MonoBehaviour {
 	float _yAxis;
 	float _StartyAxis;
 	float _EndyAxis;
+
+
+	float _speed = 100;
 	void OnEnable()
 	{
 		transform.position = new Vector3(0,0,0);
@@ -24,16 +27,16 @@ public class CreditsRollUp : MonoBehaviour {
 
 			if(_EndyAxis > _StartyAxis)
 			{
-				_yAxis += 3f;
+				_yAxis += (_speed *Time.deltaTime);
 			}
 			else
 			{
-				_yAxis -=  3f;
+				_yAxis -=  (_speed *Time.deltaTime);
 			}
 		}
 		if(!Input.anyKey)
 		{
-			_yAxis += 1f;
+			_yAxis += ((_speed*0.25f) *Time.deltaTime);
 		}
 
 		transform.position = new Vector3(0, _yAxis,0);
