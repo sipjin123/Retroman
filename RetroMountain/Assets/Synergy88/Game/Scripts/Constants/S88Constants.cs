@@ -53,10 +53,10 @@ namespace Synergy88 {
 		#region Google Mobile Ads (Interstitials)
 
 		// game ids
-		public const string GA_INTERSTITIAL_GAME_ID = "ca-app-pub-5250363041223975/6527596440";
+		public const string GA_INTERSTITIAL_GAME_ID = "";
 
 		// interstitial ids
-		public const string GA_INTERSTITIALS_AD_UNIT_ID_ANDROID = "";
+		public const string GA_INTERSTITIALS_AD_UNIT_ID_ANDROID = "ca-app-pub-5250363041223975/6527596440";
 		public const string GA_INTERSTITIALS_AD_UNIT_ID_IOS = "ca-app-pub-5250363041223975/3434529249";
 
 		#endregion
