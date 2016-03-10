@@ -309,6 +309,7 @@ public class PlayerControls : MonoBehaviour {
 	}
 	void OnGameResume(ISignalParameters parameters)
 	{
+		_shadowObject.SetActive(true);
 		_activePlayerObject = true;
 		_rigidbody.useGravity = true;
 		CameraControls.Instance._startFollow = true;

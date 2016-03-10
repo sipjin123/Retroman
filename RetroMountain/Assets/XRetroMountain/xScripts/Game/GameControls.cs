@@ -36,6 +36,8 @@ public class GameControls : MonoBehaviour {
 	public bool _isPaused;
 
 	public GameObject _startUpDesign;
+
+	float _storeTimeScale;
 	//==========================================================================================================================================
 	void Awake()
 	{
@@ -59,6 +61,8 @@ public class GameControls : MonoBehaviour {
 		S88Signals.ON_GAME_START.AddListener(OnGameSTartup);
 		S88Signals.ON_GAME_PAUSE.AddListener(OnGamePause);
 		S88Signals.ON_GAME_RESUME.AddListener(OnGameResume);
+
+		SoundControls.Instance._sfxBGM.gameObject.SetActive(true);
 	}
 	void OnDisable()
 	{
@@ -127,6 +131,7 @@ public class GameControls : MonoBehaviour {
 			PlayerControls.Instance._activePlayerObject = false;
 			_resumeButton.SetActive(true);
 			_pauseButton.SetActive(false);
+			_storeTimeScale = Time.timeScale;
 			Time.timeScale = 0;
 			S88Signals.ON_GAME_PAUSE.Dispatch();
 		}
@@ -135,7 +140,7 @@ public class GameControls : MonoBehaviour {
 			PlayerControls.Instance._activePlayerObject = true;
 			_resumeButton.SetActive(false);
 			_pauseButton.SetActive(true);
-			Time.timeScale = 1.5f;
+			Time.timeScale = _storeTimeScale;
 			S88Signals.ON_GAME_RESUME.Dispatch();
 		}
 	}
@@ -165,7 +170,7 @@ public class GameControls : MonoBehaviour {
 				StartCoroutine(GameOverDelay());
 				ifGameOverplayed = true;
 			}
-			SoundControls.Instance._sfxBGM.mute = true;
+			SoundControls.Instance._sfxBGM.gameObject.SetActive(false);
 			PlayerControls.Instance.gameObject.GetComponent<PlayerControls>().enabled = false;
 		}
 
@@ -198,7 +203,7 @@ public class GameControls : MonoBehaviour {
 		//SET DELAY
 		yield return new WaitForSeconds(2);
 		_resultCharParent.SetActive(true);
-		_resultCharParent.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0) ).gameObject.SetActive(true);
+		_resultCharParent.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0)+1 ).gameObject.SetActive(true);
 
 		S88Scene.Load<ResultsRoot>(EScene.Results);
 		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
