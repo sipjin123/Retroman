@@ -47,14 +47,14 @@ public class CameraControls : MonoBehaviour {
 			_oBjToLerpTo = _LeftPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
-			_lerpSpeed =  2f;
+			_lerpSpeed =  1f;
 		}
 		else if(_direction == 0)
 		{
 			_oBjToLerpTo = _RightPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
-			_lerpSpeed =  2f;
+			_lerpSpeed =  1f;
 		}
 		else if(_direction == 2)
 		{
