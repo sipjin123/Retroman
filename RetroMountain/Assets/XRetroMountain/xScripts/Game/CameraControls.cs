@@ -12,6 +12,7 @@ public class CameraControls : MonoBehaviour {
 	bool _lerpToCamSwitch;
 	Vector3  _oBjToLerpTo, _objtoLerpFrom;
 
+	float _lerpSpeed;
 	public bool _startFollow;
 
 	void Awake()
@@ -33,6 +34,12 @@ public class CameraControls : MonoBehaviour {
 			LerpThoThisCam();
 		}
 	}
+	public void _ResetToDirection(int _direction)
+	{
+		_lerpToCamSwitch = false;
+		_lerpValue = 0;
+		SwitchCam(_direction);
+	}
 	public void SwitchCam(int _direction)
 	{
 		if(_direction == 180 )
@@ -40,18 +47,21 @@ public class CameraControls : MonoBehaviour {
 			_oBjToLerpTo = _LeftPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
+			_lerpSpeed =  2f;
 		}
 		else if(_direction == 0)
 		{
 			_oBjToLerpTo = _RightPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
+			_lerpSpeed =  2f;
 		}
 		else if(_direction == 2)
 		{
 			_oBjToLerpTo = _midPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
+			_lerpSpeed =  2f;
 		}
 	}
 
@@ -60,7 +70,7 @@ public class CameraControls : MonoBehaviour {
 	{
 		if(_lerpValue < 1)
 		{
-			_lerpValue += 1.75f * Time.deltaTime;	
+			_lerpValue += _lerpSpeed * Time.deltaTime;	
 			_CamObj.transform.localPosition = Vector3.Lerp(_objtoLerpFrom, _oBjToLerpTo, _lerpValue);
 		}
 		else

@@ -229,7 +229,7 @@ public class PlayerControls : MonoBehaviour {
 			{
 				_playerAction = PlayerAction.FORWARD;
 				rotatedValue = 0;
-				CameraControls.Instance.SwitchCam(180);
+				//CameraControls.Instance._ResetToDirection(180);
 			}
 			transform.eulerAngles = new Vector3( 0,player_rotation,0 );
 			LerpToPosition( lerpToThisObject, lerpToThisObject.transform.position , 0);
@@ -242,7 +242,7 @@ public class PlayerControls : MonoBehaviour {
 			{
 				_playerAction = PlayerAction.FORWARD;
 				rotatedValue = 0;
-				CameraControls.Instance.SwitchCam(0);
+				//CameraControls.Instance._ResetToDirection(0);
 			}
 			transform.eulerAngles = new Vector3( 0,player_rotation,0 );
 			LerpToPosition( lerpToThisObject, lerpToThisObject.transform.position , 0);
@@ -261,15 +261,17 @@ public class PlayerControls : MonoBehaviour {
 	void OnTriggerEnter(Collider hit)
 	{
 		//TURNING
-		if(hit.gameObject.name == "Left" || hit.gameObject.name == "Right"  || hit.gameObject.name == "Mid")
+		if(hit.gameObject.name == "Left" || hit.gameObject.name == "Right"  || hit.gameObject.name == "MidLeft" || hit.gameObject.name == "MidRight")
 		{
 			lerpToThisObject = hit.gameObject;
 			if(hit.gameObject.name == "Left")
 				_playerAction = PlayerAction.TURNLEFT;
 			if(hit.gameObject.name == "Right")
 				_playerAction = PlayerAction.TURNRIGHT;
-			if(hit.gameObject.name == "Mid")
-				CameraControls.Instance.SwitchCam(2);
+			if(hit.gameObject.name == "MidRight")
+				CameraControls.Instance._ResetToDirection(0);
+			if(hit.gameObject.name == "MidLeft")
+				CameraControls.Instance._ResetToDirection(180);
 			hit.gameObject.SetActive(false);
 		}
 		//FALLING
