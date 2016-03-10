@@ -44,6 +44,7 @@ public class PlatformLord: MonoBehaviour {
 	public int _levelProgression;
 	public int _levelProgressionCap;
 	public int _totalPlatformsSpawned;
+	public int _speedProgression;
 
 	//DIFFICULTY
 	[SerializeField]
@@ -71,8 +72,10 @@ public class PlatformLord: MonoBehaviour {
 	//VFX
 	public int _vfxCounter;
 	public int _vfxCap;
+	public int _ranbdomizeVFX;
 
 
+	//PATTERNS
 	public List<int[]> _patternDict;
 
 	public int [] _pattern1; 
@@ -109,8 +112,10 @@ public class PlatformLord: MonoBehaviour {
 		_totalPlatformsSpawned = 0;
 		_levelProgression = 0;
 		_levelProgressionCap = 50;
+		_speedProgression = 0;
 
 		//VFX
+		_ranbdomizeVFX = Random.Range(0,10);
 		_vfxCounter = 0;
 		_vfxCap = Random.Range(1,20);
 	
@@ -233,8 +238,22 @@ public class PlatformLord: MonoBehaviour {
 				_vfxCounter ++;
 				if( _vfxCounter > _vfxCap )
 				{
-					_platformMinion._hasTree = true;
-					_vfxCap = Random.Range(5,20);
+					if(_ranbdomizeVFX < 7)
+					{
+						_platformMinion._hasTree = true;
+						_vfxCap = Random.Range(3,15);
+					}
+					else if (_ranbdomizeVFX > 7)
+					{
+						_platformMinion._hasCloud = true;
+						_vfxCap = Random.Range(7,20);
+					}
+					else if (_ranbdomizeVFX == 7)
+					{
+						_platformMinion._hasMountain = true;
+						_vfxCap = Random.Range(15,30);
+					}
+					_ranbdomizeVFX = Random.Range(0,3);
 					_vfxCounter = 0;
 				}
 			}
@@ -292,12 +311,20 @@ public class PlatformLord: MonoBehaviour {
 		_previousPlatformAction = _platformAction;
 
 
-
 		if(_totalPlatformsSpawned > _levelProgressionCap)
 		{
-			_levelProgressionCap = (int) (_levelProgressionCap * 1.5f);
+			_levelProgressionCap += (int) (_levelProgressionCap * 1.25f);
 			if(_levelProgression < 6)
+			{
 				_levelProgression++;
+				Time.timeScale += 0.1f;
+				_platMinion.transform.eulerAngles = new Vector3(0,45,0);
+			}
+			else
+			{
+				Time.timeScale += 0.1f;
+				_speedProgression ++;
+			}
 
 		}
 

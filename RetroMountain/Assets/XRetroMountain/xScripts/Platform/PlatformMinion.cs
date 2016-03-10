@@ -34,17 +34,15 @@ public class PlatformMinion : MonoBehaviour {
 	public GameObject _meshParent;
 	public GameObject _trapParent;
 
-	public GameObject _coinObject, _spikeObject, _holeObject, _coinBoxObject, _leftObject, _rightObject;
+	public GameObject _coinObject, _spikeObject, _holeObject, _coinBoxObject, _coinBoxMesh, _coinBoxEffects, _leftObject, _rightObject;
 	public GameObject _higherPlatform, _lowerPlatform;
 
-	public GameObject _treeObject, _shadowObject;
+	public GameObject _treeObject, _cloudObject, _mountainObject, _shadowObject;
 
-	public bool _hasTree;
+	public bool _hasTree, _hasCloud, _hasMountain;
 
 	void OnDisable()
 	{
-
-		_hasTree = false;
 	}
 	public void UpdateThisPlatform()
 	{
@@ -52,6 +50,10 @@ public class PlatformMinion : MonoBehaviour {
 		switch(_typeOfPlatform)
 		{
 			case TypeofPlatform.UNKNOWN:
+
+				_hasTree = false;
+				_hasCloud = false;
+				_hasMountain = false;
 				return;
 				break;
 			case TypeofPlatform.SPIKED:
@@ -71,8 +73,9 @@ public class PlatformMinion : MonoBehaviour {
 				GetComponent<BoxCollider>().enabled = false;
 				break;
 			case TypeofPlatform.COINBOX:
-			_coinBoxObject.SetActive(true);
-			_coinBoxObject.transform.GetChild(0).gameObject.SetActive(true);
+				_coinBoxObject.SetActive(true);
+				_coinBoxMesh.SetActive(true);
+				_coinBoxEffects.SetActive(false);
 				break;
 			case TypeofPlatform.LEFT:
 				_leftObject.SetActive(true);
@@ -111,8 +114,10 @@ public class PlatformMinion : MonoBehaviour {
 		}
 
 		_previousTypeOfPlatform = _typeOfPlatform;
-		if(_hasTree)
-			_treeObject.SetActive(true);
+		_treeObject.SetActive(_hasTree);
+		_cloudObject.SetActive(_hasCloud);
+		_mountainObject.SetActive(_hasMountain);
+
 		_shadowObject.transform.position = new Vector3 ( _shadowObject.transform.position.x, -3 , _shadowObject.transform.position.z );
 	}
 	public void DisableAll()
@@ -136,7 +141,8 @@ public class PlatformMinion : MonoBehaviour {
 				_holeObject.SetActive(false);
 				break;
 			case TypeofPlatform.COINBOX:
-			_coinBoxObject.transform.GetChild(0).GetComponent<Trigger_Master>()._coinEffects.SetActive(false);
+				_coinBoxMesh.SetActive(false);
+				_coinBoxEffects.SetActive(false);
 				_coinBoxObject.SetActive(false);
 				break;
 			case TypeofPlatform.LEFT:
@@ -149,7 +155,7 @@ public class PlatformMinion : MonoBehaviour {
 		_higherPlatform.SetActive(false);
 		_lowerPlatform.SetActive(false);
 
-		_treeObject.SetActive(false);
+
 
 	}
 }
