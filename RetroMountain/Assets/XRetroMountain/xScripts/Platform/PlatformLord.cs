@@ -354,9 +354,9 @@ public class PlatformLord: MonoBehaviour {
 		else if(_previousPlatformAction == PlatformAction.SPAWNNORMAL)
 		{
 			//TURNING CONDITION
-			if(_stacksBeforeTurn > _stacksBeforeTurnCAP)
+			if(Random.Range ( 0, 4) == 3)
 			{
-				if(Random.Range ( 0, 4) == 3)
+				if(_stacksBeforeTurn > _stacksBeforeTurnCAP)
 				{
 					_platformAction = PlatformAction.SPAWNTURN;
 					SwitchDirection(_temp, _platMinion);
@@ -372,6 +372,7 @@ public class PlatformLord: MonoBehaviour {
 
 		SetDifficulty();
 		SetStackableObstacles();
+
 	}
 	//==================================================================================================================================================
 	#region SWITCHDIRECTION

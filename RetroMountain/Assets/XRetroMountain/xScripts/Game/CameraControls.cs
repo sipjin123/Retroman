@@ -6,7 +6,7 @@ public class CameraControls : MonoBehaviour {
 
 	public GameObject PlayerObject;
 	public float[] RandomizedRotationAxis;
-	public GameObject _LeftPosition, _RightPosition;
+	public GameObject _LeftPosition, _RightPosition ,_midPosition;
 	public GameObject _CamObj;
 
 	bool _lerpToCamSwitch;
@@ -41,9 +41,15 @@ public class CameraControls : MonoBehaviour {
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
 		}
-		else
+		else if(_direction == 0)
 		{
 			_oBjToLerpTo = _RightPosition.transform.localPosition;
+			_objtoLerpFrom = _CamObj.transform.localPosition;
+			_lerpToCamSwitch = true;
+		}
+		else if(_direction == 2)
+		{
+			_oBjToLerpTo = _midPosition.transform.localPosition;
 			_objtoLerpFrom = _CamObj.transform.localPosition;
 			_lerpToCamSwitch = true;
 		}
