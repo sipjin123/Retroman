@@ -3,12 +3,14 @@ using System.Collections;
 
 using Common.Signal;
 using UnityEngine.UI;
+using UnityEngine.Advertisements;
 
 namespace Synergy88 {
 	
 	public class ResultsRoot : S88Scene {
 
 		public GameObject _Avatar;
+		public GameObject _WAtchVidButton;
 
 		public Text HiScore1,HiScore2, CScore1,CScore2;
 
@@ -73,6 +75,12 @@ namespace Synergy88 {
 			}
 			_Avatar.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0) ).gameObject.SetActive(true);
 		
+			if(Advertisement.IsReady()) 
+				_WAtchVidButton.gameObject.SetActive(true);
+			else
+				_WAtchVidButton.gameObject.SetActive(false);
+				
+
 			CScore1.text = ""+PlayerPrefs.GetInt("curSkor",0);
 			CScore2.text = ""+PlayerPrefs.GetInt("curSkor",0);
 			HiScore1.text = "Best "+PlayerPrefs.GetInt("hiSkor",0);

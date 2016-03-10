@@ -17,6 +17,13 @@ namespace Synergy88 {
 
 		private Dictionary<EButtonType, Action> buttonMap;
 
+		public GameObject _tutorialScreen;
+		public void _EnableTutorial(bool _switch)
+		{
+			_tutorialScreen.SetActive(_switch);
+			SoundControls.Instance._buttonClick.Play();
+		}
+
 		protected override void Awake() {
 			base.Awake();
 			this.buttonMap = new Dictionary<EButtonType, Action>();
@@ -41,7 +48,8 @@ namespace Synergy88 {
 			this.AddButtonHandler(EButtonType.Help, (ISignalParameters parameters) => {
 				// dummy
 				//this.LoadScene<ResultsRoot>(EScene.Results);
-				this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
+				//this.LoadSceneAdditive<CurrencyRoot>(EScene.Currency);
+				_EnableTutorial(true);
 			});
 
 			this.AddButtonHandler(EButtonType.Leaderboard, (ISignalParameters parameters) => {

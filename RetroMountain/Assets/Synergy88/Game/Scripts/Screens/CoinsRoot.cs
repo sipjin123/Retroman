@@ -40,7 +40,7 @@ namespace Synergy88 {
 		protected override void OnEnable() {
 			base.OnEnable();
 
-			//this.StartCoroutine(this.ProcessStoreItems());
+			this.StartCoroutine(this.ProcessStoreItems());
 
 			S88Signals.ON_STORE_ITEM_PURCHASE_SUCCESSFUL.AddListener(this.OnStorePurchaseSuccessful);
 			S88Signals.ON_STORE_ITEM_PURCHASE_FAILED.AddListener(this.OnStorePurchaseFailed);
@@ -56,7 +56,7 @@ namespace Synergy88 {
 		protected override void OnDestroy() {
 			base.OnDestroy();
 		}
-		/*
+
 		private IEnumerator ProcessStoreItems() {
 			yield return new WaitForSeconds(1.0f);
 
@@ -87,7 +87,7 @@ namespace Synergy88 {
 			// propulate views
 			this.PopulateItems();
 		}
-*/
+
 		public void PopulateItems() {
 			Transform parent = this.template.transform.parent;
 			Vector3 localScale = this.template.transform.localScale;

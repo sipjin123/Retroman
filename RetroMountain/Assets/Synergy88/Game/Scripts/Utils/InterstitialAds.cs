@@ -19,7 +19,7 @@ namespace Synergy88 {
 		private const string DUMMY_TEST_DEVICE = "0123456789ABCDEF0123456789ABCDEF";
 		private const string DUMMY_KEYWORD = "game";
 		private static readonly DateTime DUMMY_DATE = new DateTime(1985, 1, 1);
-		private const string DUMMY_KEY = "key";
+		private const string DUMMY_KEY = "ca-app-pub-5250363041223975/3434529249";
 		private const string DUMMY_VALUE = "value";
 
 		// interstitals

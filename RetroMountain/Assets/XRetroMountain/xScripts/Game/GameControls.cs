@@ -213,7 +213,8 @@ public class GameControls : MonoBehaviour {
 		PlayerPrefs.SetInt("AdCounter",  PlayerPrefs.GetInt("AdCounter",0) + 1  );
 		if( PlayerPrefs.GetInt("AdCounter",0) >= 3)
 		{
-			ShowADS();
+			//ShowADS();
+			S88Signals.ON_SHOW_INTERSTITIAL_ADS.Dispatch();
 			PlayerPrefs.SetInt("AdCounter", 0);
 		}
 	}
