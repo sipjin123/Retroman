@@ -30,7 +30,6 @@ public class PlayerControls : MonoBehaviour {
 
 	//RAYCAST 
 	public bool isGrounded;
-	public GameObject RayCastLimit;
 	public GameObject RayObject;
 	public RaycastHit Rayhit;
 
@@ -52,11 +51,6 @@ public class PlayerControls : MonoBehaviour {
 	public GameObject _deathAnim;
 	public GameObject _splash;
 	public GameObject _bodySpin;
-	public float _bodySpinRotation;
-
-	public GameObject _DKEffects;
-	public GameObject _CatEffects;
-	public GameObject _UnicornEffects;
 
 	public bool _activePlayerObject;
 
@@ -78,30 +72,30 @@ public class PlayerControls : MonoBehaviour {
 	public void Start () 
 	{
 		isGrounded = true;
-
-		movementSpeed = 0.15f;
-		//movementSpeed = 0.15f;
-		_rigidbody = GetComponent<Rigidbody>();
-		_bodySpinRotation = 0;
 		_activePlayerObject = false;
-		_playerAction = PlayerAction.FORWARD;
+
+
+		//TRANSFORM AND ROTATION RELATED
+		movementSpeed = 0.15f;
 		rotatedValue = 0;
 		player_rotation = 0;
-		isJumping = false;
-		Time.timeScale = 1.5f;
 
+		//PHYSICS RELATED
+		_rigidbody = GetComponent<Rigidbody>();
+		_rigidbody.useGravity = false;
+
+		_playerAction = PlayerAction.FORWARD;
+		isJumping = false;
 		_doubleJumpConsumed = false;
+
+		Time.timeScale = 1.5f;
 
 		//COSTUME
 		_bodySpin.transform.GetChild((int)_playerType).gameObject.SetActive(true);
 		_deathAnim.transform.GetChild(0).GetChild((int)_playerType).gameObject.SetActive(true);
 
 		SetupPlayerType( PlayerPrefs.GetInt("CurrentCharacter", 0) );
-
-
-		_rigidbody.useGravity = false;
 	}
-	#endregion
 	public void SetupPlayerType(int _playaTyp)
 	{
 		_playerType = (PlayerType)_playaTyp;
@@ -115,10 +109,7 @@ public class PlayerControls : MonoBehaviour {
 		_bodySpin.transform.GetChild((int)_playerType).gameObject.SetActive(true);
 		_deathAnim.transform.GetChild(0).GetChild((int)_playerType).gameObject.SetActive(true);
 	}
-	public void REstarer()
-	{
-		Application.LoadLevel(Application.loadedLevelName);
-	}
+	#endregion
 //==========================================================================================================================================
 	void FixedUpdate () 
 	{
@@ -126,8 +117,6 @@ public class PlayerControls : MonoBehaviour {
 			return;
 		
 
-
-		//if(Input.GetKey(KeyCode.W))
 		if(_playerAction == PlayerAction.FORWARD)
 		{
 			transform.position += (transform.forward * movementSpeed)  ;
@@ -148,8 +137,6 @@ public class PlayerControls : MonoBehaviour {
 				_rigidbody.AddForce(transform.up * 15000);
 				isJumping = true;
 
-				RayCastLimit.SetActive(false);
-				StartCoroutine(waitforRaycastActive());
 				SoundControls.Instance._sfxJump.Play();
 				return;
 
@@ -166,8 +153,7 @@ public class PlayerControls : MonoBehaviour {
 				}
 			}
 		}
-
-			_rigidbody.AddForce(-transform.up *1000);
+		_rigidbody.AddForce(-transform.up *1000);
 
 		PlayerTurnFunction();
 		RaycastFunction();
@@ -179,16 +165,6 @@ public class PlayerControls : MonoBehaviour {
 	{
 		yield return new WaitForSeconds(0.25f);
 		_jumpDelaySwitch = false;
-	}
-	IEnumerator waitforJumpActive(float _time)
-	{
-		yield return new WaitForSeconds(_time);
-		_doubleJumpConsumed = true;
-	}
-	IEnumerator waitforRaycastActive()
-	{
-		yield return new WaitForSeconds(0.05f);
-		RayCastLimit.SetActive(true);
 	}
 	#endregion
 	//==========================================================================================================================================
@@ -261,7 +237,10 @@ public class PlayerControls : MonoBehaviour {
 	void OnTriggerEnter(Collider hit)
 	{
 		//TURNING
-		if(hit.gameObject.name == "Left" || hit.gameObject.name == "Right"  || hit.gameObject.name == "MidLeft" || hit.gameObject.name == "MidRight")
+		if(hit.gameObject.name == "Left" 
+			|| hit.gameObject.name == "Right"  
+			|| hit.gameObject.name == "MidLeft"
+			|| hit.gameObject.name == "MidRight")
 		{
 			lerpToThisObject = hit.gameObject;
 			if(hit.gameObject.name == "Left")

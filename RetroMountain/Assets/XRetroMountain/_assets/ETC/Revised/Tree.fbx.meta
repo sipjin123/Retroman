@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: d7354a202a9b7fe4ba70c17083e95e19
-timeCreated: 1455590357
-licenseType: Free
+guid: 0b9c1002d35a66b4aa1b02e3ce1ead14
+timeCreated: 1457662915
+licenseType: Pro
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: pPlane1
+    4300000: pCube7
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -53,7 +53,7 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 4
+    tangentImportMode: 3
   importAnimation: 0
   copyAvatar: 0
   humanDescription:

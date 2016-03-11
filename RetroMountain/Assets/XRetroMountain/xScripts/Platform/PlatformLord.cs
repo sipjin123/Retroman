@@ -74,7 +74,6 @@ public class PlatformLord: MonoBehaviour {
 	public int _vfxCap;
 	public int _ranbdomizeVFX;
 
-
 	//PATTERNS
 	public List<int[]> _patternDict;
 
@@ -125,8 +124,10 @@ public class PlatformLord: MonoBehaviour {
 
 		//TURNING
 		_stacksBeforeTurn = 0;
-		//_stacksBeforeTurnCAP = Random.Range( 10, 20);
 		_stacksBeforeTurnCAP = Random.Range( 50, 250);
+
+		//RANDOMIZER
+
 
 		//MESH CHANGING
 		_meshCurrentlySet = 0;
@@ -231,6 +232,7 @@ public class PlatformLord: MonoBehaviour {
 		_platformMinion._heightOfPlatform = (PlatformMinion.HeightOfPlatform) _meshCurrentlySet;
 
 		//VFX PHASE
+		/*
 		if(_stacksBeforeTurn < _stacksBeforeTurnCAP - 5 && _stacksBeforeTurn > 5)
 		{
 			if(Random.Range ( 1 , 5) == 3)
@@ -238,27 +240,12 @@ public class PlatformLord: MonoBehaviour {
 				_vfxCounter ++;
 				if( _vfxCounter > _vfxCap )
 				{
-					if(_ranbdomizeVFX < 7)
-					{
-						_platformMinion._hasTree = true;
-						_vfxCap = Random.Range(3,15);
-					}
-					else if (_ranbdomizeVFX > 7)
-					{
-						_platformMinion._hasCloud = true;
-						_vfxCap = Random.Range(7,20);
-					}
-					else if (_ranbdomizeVFX == 7)
-					{
-						_platformMinion._hasMountain = true;
-						_vfxCap = Random.Range(15,30);
-					}
-					_ranbdomizeVFX = Random.Range(0,3);
+					_platformMinion._hasTree = true;
 					_vfxCounter = 0;
 				}
 			}
 		}
-
+		*/
 		//ACTION PHASE
 		if(_spawnStackCounter >= 0)
 		{
@@ -268,26 +255,35 @@ public class PlatformLord: MonoBehaviour {
 					_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
 					break;
 
-			case PlatformAction.SPAWNTRAP:
+				case PlatformAction.SPAWNTRAP:
 					if(_trapType == TrapType.SPIKE)
-					{
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
-					}
-					else if(_trapType == TrapType.HOLE)
-					{
+					if(_trapType == TrapType.HOLE)
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.HOLED;
-					}
-					else if(_trapType == TrapType.COINBOX)
-					{
+					if(_trapType == TrapType.COINBOX)
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.COINBOX;
+						
+				/*
+					switch(_trapType)
+					{
+						case TrapType.SPIKE:
+							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
+							break;
+						case TrapType.HOLE:
+							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.HOLED;
+							break;
+						case TrapType.COINBOX:
+							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.COINBOX;
+							break;
+
 					}
+*/
 					break;
 				case PlatformAction.SPAWNHEIGHCHANGE:
 					_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
 					break;
 				case PlatformAction.SPAWNTRAPPATTERN:
 						_platformMinion._typeOfPlatform = (PlatformMinion.TypeofPlatform)  _patternDict[_patternRandomizer].GetValue(_spawnStackCounter) ;
-						//_platformMinion.transform.eulerAngles = new Vector3(0,45,0);
 						break;
 			}
 		}
@@ -328,12 +324,6 @@ public class PlatformLord: MonoBehaviour {
 
 		}
 
-
-
-
-
-
-
 		if(_previousPlatformAction == PlatformAction.SPAWNHEIGHCHANGE)
 		{
 			SetAppearance();
@@ -342,10 +332,12 @@ public class PlatformLord: MonoBehaviour {
 		else if(_previousPlatformAction == PlatformAction.SPAWNTRAP)
 		{
 			_platformAction = PlatformAction.SPAWNHEIGHCHANGE;
+			
 		}
 		else if(_previousPlatformAction == PlatformAction.SPAWNTRAPPATTERN)
 		{
 			_platformAction = PlatformAction.SPAWNNORMAL;
+
 		}
 		else if(_previousPlatformAction == PlatformAction.SPAWNTURN)
 		{
@@ -369,10 +361,43 @@ public class PlatformLord: MonoBehaviour {
 				_platformAction = PlatformAction.SPAWNTRAP;
 			}
 		}
+		/*
+		switch(_previousPlatformAction)
+		{
+			case PlatformAction.SPAWNHEIGHCHANGE:
+				SetAppearance();
+				_platformAction = PlatformAction.SPAWNNORMAL;
+				break;
+			case PlatformAction.SPAWNTRAP:
+				_platformAction = PlatformAction.SPAWNHEIGHCHANGE;
+				break;
+			case PlatformAction.SPAWNTRAPPATTERN:
+				_platformAction = PlatformAction.SPAWNNORMAL;
+				break;
+			case PlatformAction.SPAWNTURN:
+				_platformAction = PlatformAction.SPAWNNORMAL;
+				break;
+			case PlatformAction.SPAWNNORMAL:
+				//TURNING CONDITION
+				if(Random.Range ( 0, 4) == 3)
+				{
+					if(_stacksBeforeTurn > _stacksBeforeTurnCAP)
+					{
+						_platformAction = PlatformAction.SPAWNTURN;
+						SwitchDirection(_temp, _platMinion);
+					}
+				}
+				//TRAP CONDITION
+				else
+				{
+					_trapType = (TrapType)Random.Range(0,3);
+					_platformAction = PlatformAction.SPAWNTRAP;
+				}
+				break;
+		}*/
 
 		SetDifficulty();
 		SetStackableObstacles();
-
 	}
 	//==================================================================================================================================================
 	#region SWITCHDIRECTION
@@ -407,16 +432,16 @@ public class PlatformLord: MonoBehaviour {
 	#region DIFFICULTY LEVEL
 	private void SetDifficulty()
 	{
-		int randomizer = Random.Range(0,10);
-		if(randomizer < EasyValues[_levelProgression] ) 
+		int _randomizer10 = Random.Range(0,10);
+		if(_randomizer10 < EasyValues[_levelProgression] ) 
 		{
 			_difficultyType = DifficultyType.EASY;
 		}
-		else if(randomizer < EasyValues[ _levelProgression ] + MediumValues[ _levelProgression ]) 
+		else if(_randomizer10 < EasyValues[ _levelProgression ] + MediumValues[ _levelProgression ]) 
 		{
 			_difficultyType = DifficultyType.MEDIUM;
 		}
-		else if(randomizer < EasyValues[ _levelProgression ] + MediumValues[ _levelProgression ] + HardValues[ _levelProgression ] )
+		else if(_randomizer10 < EasyValues[ _levelProgression ] + MediumValues[ _levelProgression ] + HardValues[ _levelProgression ] )
 		{
 			_difficultyType = DifficultyType.HARD;
 		}
@@ -525,18 +550,18 @@ public class PlatformLord: MonoBehaviour {
 			}
 			else if(_meshCurrentlySet == 1)
 			{
-				int _randomizer = Random.Range(0,2);
-				if(_randomizer == 0)
+				int _randomizer2 = Random.Range(0,2);
+				if(_randomizer2 == 0)
 					_meshCurrentlySet = 0;
-				else if(_randomizer == 1)
+				else if(_randomizer2 == 1)
 					_meshCurrentlySet = 2;
 			}
 			else if(_meshCurrentlySet == 2)
 			{
-				int _randomizer = Random.Range(0,2);
-				if(_randomizer == 0)
+				int _randomizer2 = Random.Range(0,2);
+				if(_randomizer2 == 0)
 					_meshCurrentlySet = Random.Range(0,2);
-				else if(_randomizer == 1)
+				else if(_randomizer2 == 1)
 					_meshCurrentlySet = 3;
 			}
 			else if(_meshCurrentlySet == 3)
@@ -544,7 +569,6 @@ public class PlatformLord: MonoBehaviour {
 				_meshCurrentlySet = Random.Range(0,3);
 			}
 			_meshChangeCap = 10;
-			//_meshChangeCap = Random.Range (9 , 35);
 		}
 	}
 	#endregion

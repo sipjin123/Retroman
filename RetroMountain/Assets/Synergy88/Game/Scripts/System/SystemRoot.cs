@@ -148,7 +148,9 @@ namespace Synergy88 {
 		}
 
 		private void OnSplashDone(ISignalParameters parameters) {
+
 			this.fsm.SendEvent(START_PRELOAD);
+			S88Signals.ON_FACEBOOK_LOGIN_SUCCESSFUL.Dispatch();//B0NTA
 		}
 
 		private void OnLoginDone(ISignalParameters parameters) {
