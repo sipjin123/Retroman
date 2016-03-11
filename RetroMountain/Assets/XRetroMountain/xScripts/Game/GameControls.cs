@@ -6,6 +6,7 @@ using Common.Signal;
 
 
 public class GameControls : MonoBehaviour {
+	#region VARIABLES
 	private static GameControls _instance;
 	public static GameControls Instance { get { return _instance; } }
 
@@ -38,7 +39,9 @@ public class GameControls : MonoBehaviour {
 	public GameObject _startUpDesign;
 
 	float _storeTimeScale;
+	#endregion
 	//==========================================================================================================================================
+	#region INITIALIZATION
 	void Awake()
 	{
 		_instance = this;
@@ -54,15 +57,19 @@ public class GameControls : MonoBehaviour {
 		yield return new WaitForSeconds( 5 );
 		Destroy(_startUpDesign);
 	}
+	#endregion
 	//==========================================================================================================================================
-	//SIGNALS
+	#region SIGNALS
 	void OnEnable()
 	{
 		S88Signals.ON_GAME_START.AddListener(OnGameSTartup);
 		S88Signals.ON_GAME_PAUSE.AddListener(OnGamePause);
 		S88Signals.ON_GAME_RESUME.AddListener(OnGameResume);
 
+		try{
 		SoundControls.Instance._sfxBGM.gameObject.SetActive(true);
+		}
+		catch{}
 	}
 	void OnDisable()
 	{
@@ -81,6 +88,7 @@ public class GameControls : MonoBehaviour {
 	private void OnGameSTartup(ISignalParameters parameters) {
 		StartButton();
 	}
+	#endregion
 	//==========================================================================================================================================
 	public void UptateScoreing()
 	{
@@ -124,6 +132,7 @@ public class GameControls : MonoBehaviour {
 		StartCoroutine(TimeBombStartDesign());
 	}
 	//==========================================================================================================================================
+	#region IN GAME BUTTONS
 	public void LevelPause( bool _switch)
 	{
 		if(_switch)
@@ -149,16 +158,14 @@ public class GameControls : MonoBehaviour {
 		S88Scene.Load<HomeRoot>(EScene.Home);
 		S88Scene.Load<GameRoot>(EScene.Game);
 		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
-		/*
-		S88Scene.Load<GameRoot>(EScene.Game);
-		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
-		S88Scene.Load<HomeRoot>(EScene.Home);*/
 	}
 	public void ShowADS()
 	{
 		S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
 	}
+	#endregion
 	//==========================================================================================================================================
+	#region GAME OVER
 	public void GameOverIT()
 	{
 		_gameState = GameState.GAMEOVER;
@@ -173,7 +180,6 @@ public class GameControls : MonoBehaviour {
 			SoundControls.Instance._sfxBGM.gameObject.SetActive(false);
 			PlayerControls.Instance.gameObject.GetComponent<PlayerControls>().enabled = false;
 		}
-
 	}
 	public IEnumerator GameOverDelay()
 	{
@@ -205,6 +211,8 @@ public class GameControls : MonoBehaviour {
 		_resultCharParent.SetActive(true);
 		_resultCharParent.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0)+1 ).gameObject.SetActive(true);
 
+		Time.timeScale = 0;
+
 		S88Scene.Load<ResultsRoot>(EScene.Results);
 		S88Scene.LoadAdditive<CurrencyRoot>(EScene.Currency);
 		S88Signals.ON_GAME_OVER.Dispatch();
@@ -218,5 +226,5 @@ public class GameControls : MonoBehaviour {
 			PlayerPrefs.SetInt("AdCounter", 0);
 		}
 	}
-
+	#endregion
 }

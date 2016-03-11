@@ -32,12 +32,12 @@ public class MountainObject : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void FixedUpdate () {
+	/*void FixedUpdate () {
 	
 		if(_isPaused)
 			return;
 		transform.position -= transform.forward * 0.05f;
-	}
+	}*/
 	void OnTriggerEnter(Collider hit)
 	{
 		if(hit.gameObject.name == "AntiMountain")

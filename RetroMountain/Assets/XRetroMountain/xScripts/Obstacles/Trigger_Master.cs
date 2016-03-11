@@ -57,7 +57,7 @@ public class Trigger_Master: MonoBehaviour {
 				case TypeOfTrigger.WATER:
 						SoundControls.Instance._sfxSplash.Play();
 						PlayerControls.Instance._splash.SetActive(true);
-				PlayerControls.Instance._splash.transform.position = PlayerControls.Instance._deathAnim.transform.GetChild(0).transform.position;
+						PlayerControls.Instance._splash.transform.position = PlayerControls.Instance._deathAnim.transform.GetChild(0).transform.position;
 						GameControls.Instance.GameOverIT();
 					break;
 				case TypeOfTrigger.COUNTER:

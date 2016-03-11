@@ -9,7 +9,6 @@ namespace Synergy88 {
 	
 	public class ResultsRoot : S88Scene {
 
-		public GameObject _Avatar;
 		public GameObject _WAtchVidButton;
 
 		public Text HiScore1,HiScore2, CScore1,CScore2;
@@ -69,12 +68,6 @@ namespace Synergy88 {
 			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.AddListener(ResetGame);
 
-			foreach(Transform child in _Avatar.transform)
-			{
-				child.gameObject.SetActive(false);
-			}
-			_Avatar.transform.GetChild( PlayerPrefs.GetInt("CurrentCharacter",0) ).gameObject.SetActive(true);
-		
 			if(Advertisement.IsReady()) 
 				_WAtchVidButton.gameObject.SetActive(true);
 			else

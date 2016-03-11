@@ -30,9 +30,10 @@ public class CoinRotation : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
+	/*
 	void FixedUpdate () {
 		if(_isPaused)
 			return;
 		transform.Rotate(0,2,0);
-	}
+	}*/
 }

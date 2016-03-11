@@ -34,15 +34,18 @@ public class PlatformMinion : MonoBehaviour {
 	public GameObject _meshParent;
 	public GameObject _trapParent;
 
-	public GameObject _coinObject, _spikeObject, _holeObject, _coinBoxObject, _coinBoxMesh, _coinBoxEffects, _leftObject, _rightObject;
+	public GameObject  _spikeObject, _holeObject, _coinBoxObject, _coinBoxMesh, _coinBoxEffects, _leftObject, _rightObject;
 	public GameObject _higherPlatform, _lowerPlatform;
 
-	public GameObject _treeObject, _cloudObject, _mountainObject, _shadowObject;
+	public GameObject _treeObject, _shadowObject;
 
-	public bool _hasTree, _hasCloud, _hasMountain;
+	public bool _hasTree;
 
-	void OnDisable()
+
+	BoxCollider _boxCollider;
+	void Start()
 	{
+		_boxCollider = GetComponent<BoxCollider>();
 	}
 	public void UpdateThisPlatform()
 	{
@@ -50,10 +53,7 @@ public class PlatformMinion : MonoBehaviour {
 		switch(_typeOfPlatform)
 		{
 			case TypeofPlatform.UNKNOWN:
-
 				_hasTree = false;
-				_hasCloud = false;
-				_hasMountain = false;
 				return;
 				break;
 			case TypeofPlatform.SPIKED:
@@ -62,7 +62,7 @@ public class PlatformMinion : MonoBehaviour {
 			case TypeofPlatform.HOLED:
 				_holeObject.SetActive(true);
 				_meshParent.SetActive(false);
-				GetComponent<BoxCollider>().enabled = false;
+				_boxCollider.enabled = false;
 				break;
 			case TypeofPlatform.UPSPIKE:
 				_spikeObject.SetActive(true);
@@ -104,6 +104,7 @@ public class PlatformMinion : MonoBehaviour {
 				transform.position = new Vector3( transform.position.x, 3, transform.position.z);
 				break;
 		}
+
 		if(_typeOfPlatform == TypeofPlatform.UPGROUND || _typeOfPlatform == TypeofPlatform.UPSPIKE)
 		{
 			transform.position = new Vector3( transform.position.x, transform.position.y +1.5f, transform.position.z);
@@ -115,8 +116,6 @@ public class PlatformMinion : MonoBehaviour {
 
 		_previousTypeOfPlatform = _typeOfPlatform;
 		_treeObject.SetActive(_hasTree);
-		_cloudObject.SetActive(_hasCloud);
-		_mountainObject.SetActive(_hasMountain);
 
 		_shadowObject.transform.position = new Vector3 ( _shadowObject.transform.position.x, -3 , _shadowObject.transform.position.z );
 	}
@@ -132,12 +131,12 @@ public class PlatformMinion : MonoBehaviour {
 				break;
 			case TypeofPlatform.HOLED:
 				_meshParent.SetActive(true);
-				GetComponent<BoxCollider>().enabled = true;
+				_boxCollider.enabled = true;
 				_holeObject.SetActive(false);
 				break;
 			case TypeofPlatform.LOWHOLE:
 				_meshParent.SetActive(true);
-				GetComponent<BoxCollider>().enabled = true;
+				_boxCollider.enabled = true;
 				_holeObject.SetActive(false);
 				break;
 			case TypeofPlatform.COINBOX:
