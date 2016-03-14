@@ -43,7 +43,7 @@ public class PlatformMinion : MonoBehaviour {
 
 
 	BoxCollider _boxCollider;
-	void Start()
+	void Awake()
 	{
 		_boxCollider = GetComponent<BoxCollider>();
 	}

@@ -258,9 +258,9 @@ public class PlatformLord: MonoBehaviour {
 				case PlatformAction.SPAWNTRAP:
 					if(_trapType == TrapType.SPIKE)
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
-					if(_trapType == TrapType.HOLE)
+					else if(_trapType == TrapType.HOLE)
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.HOLED;
-					if(_trapType == TrapType.COINBOX)
+					else if(_trapType == TrapType.COINBOX)
 						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.COINBOX;
 						
 				/*
