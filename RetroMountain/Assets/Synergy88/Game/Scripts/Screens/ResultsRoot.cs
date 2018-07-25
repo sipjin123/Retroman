@@ -68,10 +68,6 @@ namespace Synergy88 {
 			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.AddListener(ResetGame);
 
-			if(Advertisement.IsReady()) 
-				_WAtchVidButton.gameObject.SetActive(true);
-			else
-				_WAtchVidButton.gameObject.SetActive(false);
 				
 
 			CScore1.text = ""+PlayerPrefs.GetInt("curSkor",0);

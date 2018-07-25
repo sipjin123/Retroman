@@ -35,7 +35,6 @@ namespace Synergy88 {
 			this.AddButtonHandler(EButtonType.ShopItem, (ISignalParameters parameters) => {
 				ShopItem item = (ShopItem)parameters.GetParameter(S88Params.BUTTON_DATA);
 				item.Purchase();
-				Factory.Get<UnityAnalytics>().Track(item);
 			});
 
 			this.AddButtonHandler(EButtonType.Play, (ISignalParameters parameters) => {

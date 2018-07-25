@@ -1,17 +1,17 @@
-﻿using System;
+﻿#if !UNITY_5_5_OR_NEWER
+
+using System;
 using UnityEngine;
 
 namespace UniRx
 {
-    // not yet obsolete
-    // [Obsolete("ObservableMonoBehaviour is legacy component. use triggres instead")]
-
     /// <summary>
     /// <para>Note: TypedMonoBehaviour and ObservableMonoBehaviour cause some performance issues.</para>
     /// <para>This is legacy interface.</para>
     /// <para>I recommend use ObservableTriggers(UniRx.Triggers) instead.</para>
     /// <para>More information, see github page.</para>
     /// </summary>
+    [Obsolete("ObservableMonoBehaviour is legacy component. use triggers instead")]
     public class ObservableMonoBehaviour : TypedMonoBehaviour
     {
         bool calledAwake = false;
@@ -387,20 +387,6 @@ namespace UniRx
         public IObservable<float> OnJointBreakAsObservable()
         {
             return onJointBreak ?? (onJointBreak = new Subject<float>());
-        }
-
-        Subject<int> onLevelWasLoaded;
-
-        /// <summary>This function is called after a new level was loaded.</summary>
-        public override void OnLevelWasLoaded(int level)
-        {
-            if (onLevelWasLoaded != null) onLevelWasLoaded.OnNext(level);
-        }
-
-        /// <summary>This function is called after a new level was loaded.</summary>
-        public IObservable<int> OnLevelWasLoadedAsObservable()
-        {
-            return onLevelWasLoaded ?? (onLevelWasLoaded = new Subject<int>());
         }
 
 #if !(UNITY_IPHONE || UNITY_ANDROID || UNITY_METRO)
@@ -878,6 +864,7 @@ namespace UniRx
     }
 }
 
+#endif
 
 // above code is generated from template
 

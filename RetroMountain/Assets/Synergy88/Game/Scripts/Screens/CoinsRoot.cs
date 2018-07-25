@@ -29,7 +29,7 @@ namespace Synergy88 {
 			this.AddButtonHandler(EButtonType.CoinItem, (ISignalParameters parameters) => {
 				CoinItem item = (CoinItem)parameters.GetParameter(S88Params.BUTTON_DATA);
 				item.Purchase();
-				Factory.Get<UnityAnalytics>().Track(item);
+
 			});
 		}
 

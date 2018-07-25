@@ -6,13 +6,10 @@ namespace Synergy88 {
 	public abstract class Platform {
 
 		public static bool IsEditor() {
-			if ((Application.platform == RuntimePlatform.OSXDashboardPlayer)
-			||	(Application.platform == RuntimePlatform.OSXEditor)
+			if ((Application.platform == RuntimePlatform.OSXEditor)
 			||	(Application.platform == RuntimePlatform.OSXPlayer)
-			||	(Application.platform == RuntimePlatform.OSXWebPlayer)
 			||	(Application.platform == RuntimePlatform.WindowsEditor)
 			||	(Application.platform == RuntimePlatform.WindowsPlayer)
-			||	(Application.platform == RuntimePlatform.WindowsWebPlayer)
 			) {
 				//Debug.Log("#### Editor:" + Application.platform);
 				return true;
