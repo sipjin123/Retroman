@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using System; // Required for WP8 and Store APPS
+﻿#if !(UNITY_IPHONE || UNITY_ANDROID || UNITY_METRO)
+
+using System; // require keep for Windows Universal App
+using UnityEngine;
+
 namespace UniRx.Triggers
 {
-#if !(UNITY_IPHONE || UNITY_ANDROID)
-
     [DisallowMultipleComponent]
     public class ObservableMouseTrigger : ObservableTriggerBase
     {
@@ -137,5 +138,6 @@ namespace UniRx.Triggers
             }
         }
     }
-#endif
 }
+
+#endif

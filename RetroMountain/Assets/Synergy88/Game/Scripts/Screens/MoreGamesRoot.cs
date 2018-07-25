@@ -41,7 +41,6 @@ namespace Synergy88 {
 				item.OpenLink();
 
 				SoundControls.Instance._buttonClick.Play();
-				Factory.Get<UnityAnalytics>().Track(item);
 			});
 		}
 

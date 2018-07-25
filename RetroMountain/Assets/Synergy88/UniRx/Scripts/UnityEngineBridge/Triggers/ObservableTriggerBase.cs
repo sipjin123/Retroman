@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System; // Required for WP8 and Store APPS
+﻿using System; // require keep for Windows Universal App
+using UnityEngine;
+
 namespace UniRx.Triggers
 {
     public abstract class ObservableTriggerBase : MonoBehaviour

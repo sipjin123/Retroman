@@ -1,6 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
+/*
+PresenterBase works enough, but too complex.
+You can use simple Initialize method and call parent to child, it works for most scenario.
+So I don't recommend using PresenterBase, sorry.
+*/
+
 namespace UniRx
 {
     // InEditor : Construct Children Dependency
@@ -9,7 +15,7 @@ namespace UniRx
     // Start(Bubbling phase) : Child to Parent, initialize(like constructor)
 
     /// <summary>
-    /// Infrastructure interface for PresenterBase`T
+    /// [Obsolete]Infrastructure interface for PresenterBase`T
     /// </summary>
     public interface IPresenter
     {
@@ -18,10 +24,12 @@ namespace UniRx
         void RegisterParent(IPresenter parent);
         void InitializeCore();
         void StartCapturePhase();
+        void Awake();
+        void ForceInitialize(object argument);
     }
 
     /// <summary>
-    /// PresenterBase can control dependency of presenter's hierarchy.
+    /// [Obsolete]PresenterBase can control dependency of presenter's hierarchy.
     /// </summary>
     public abstract class PresenterBase : PresenterBase<Unit>
     {
@@ -41,13 +49,21 @@ namespace UniRx
         }
 
         /// <summary>
+        /// Force Start BeforeInitialize/Initialize. If you create presenter dynamically, maybe useful.
+        /// </summary>
+        public void ForceInitialize()
+        {
+            ForceInitialize(Unit.Default);
+        }
+
+        /// <summary>
         /// Same as Start but called after all children are initialized.
         /// </summary>
         protected abstract void Initialize();
     }
 
     /// <summary>
-    /// PresenterBase can control dependency of presenter's hierarchy.
+    /// [Obsolete]PresenterBase can control dependency of presenter's hierarchy.
     /// </summary>
     public abstract class PresenterBase<T> : MonoBehaviour, IPresenter
     {
@@ -55,6 +71,7 @@ namespace UniRx
 
         int childrenCount = 0;
         int currentCalledCount = 0;
+        bool isAwaken = false;
         bool isInitialized = false;
         bool isStartedCapturePhase = false;
         Subject<Unit> initializeSubject = null;
@@ -63,7 +80,7 @@ namespace UniRx
         IPresenter parent = null;
         T argument = default(T);
 
-        IPresenter IPresenter.Parent
+        public IPresenter Parent
         {
             get
             {
@@ -103,9 +120,26 @@ namespace UniRx
         /// </summary>
         protected abstract void Initialize(T argument);
 
-        /// <summary>Infrastructure method called by UnityEngine. If you needs override Awake, override OnAwake.</summary>
-        protected void Awake()
+        /// <summary>
+        /// Force Start BeforeInitialize/Initialize. If you create presenter dynamically, maybe useful.
+        /// </summary>
+        public virtual void ForceInitialize(T argument)
         {
+            Awake();
+            PropagateArgument(argument);
+            Start();
+        }
+
+        void IPresenter.ForceInitialize(object argument)
+        {
+            ForceInitialize((T)argument);
+        }
+
+        void IPresenter.Awake()
+        {
+            if (isAwaken) return;
+            isAwaken = true;
+
             children = Children;
             childrenCount = children.Length;
 
@@ -113,13 +147,15 @@ namespace UniRx
             {
                 var child = children[i];
                 child.RegisterParent(this);
-                if (!child.gameObject.activeSelf)
-                {
-                    child.gameObject.SetActive(true); // force activate children
-                    child.gameObject.SetActive(false);
-                }
+                child.Awake(); // call Awake directly
             }
             OnAwake();
+        }
+
+        /// <summary>Infrastructure method called by UnityEngine. If you needs override Awake, override OnAwake.</summary>
+        protected void Awake()
+        {
+            (this as IPresenter).Awake();
         }
 
         /// <summary>An alternative of Awake.</summary>

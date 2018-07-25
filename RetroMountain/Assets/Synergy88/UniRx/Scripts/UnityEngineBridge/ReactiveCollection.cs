@@ -4,81 +4,129 @@ using System.Collections.ObjectModel;
 
 namespace UniRx
 {
-    public class CollectionAddEvent<T>
+    public struct CollectionAddEvent<T> : IEquatable<CollectionAddEvent<T>>
     {
         public int Index { get; private set; }
         public T Value { get; private set; }
 
         public CollectionAddEvent(int index, T value)
+            :this()
         {
-            this.Index = index;
-            this.Value = value;
+            Index = index;
+            Value = value;
         }
 
         public override string ToString()
         {
             return string.Format("Index:{0} Value:{1}", Index, Value);
         }
+
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode() ^ EqualityComparer<T>.Default.GetHashCode(Value) << 2;
+        }
+
+        public bool Equals(CollectionAddEvent<T> other)
+        {
+            return Index.Equals(other.Index) && EqualityComparer<T>.Default.Equals(Value, other.Value);
+        }
     }
 
-    public class CollectionRemoveEvent<T>
+    public struct CollectionRemoveEvent<T> : IEquatable<CollectionRemoveEvent<T>>
     {
         public int Index { get; private set; }
         public T Value { get; private set; }
 
         public CollectionRemoveEvent(int index, T value)
+            : this()
         {
-            this.Index = index;
-            this.Value = value;
+            Index = index;
+            Value = value;
         }
 
         public override string ToString()
         {
             return string.Format("Index:{0} Value:{1}", Index, Value);
         }
+
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode() ^ EqualityComparer<T>.Default.GetHashCode(Value) << 2;
+        }
+
+        public bool Equals(CollectionRemoveEvent<T> other)
+        {
+            return Index.Equals(other.Index) && EqualityComparer<T>.Default.Equals(Value, other.Value);
+        }
     }
 
-    public class CollectionMoveEvent<T>
+    public struct CollectionMoveEvent<T> : IEquatable<CollectionMoveEvent<T>>
     {
         public int OldIndex { get; private set; }
         public int NewIndex { get; private set; }
         public T Value { get; private set; }
 
         public CollectionMoveEvent(int oldIndex, int newIndex, T value)
+            : this()
         {
-            this.OldIndex = oldIndex;
-            this.NewIndex = newIndex;
-            this.Value = value;
+            OldIndex = oldIndex;
+            NewIndex = newIndex;
+            Value = value;
         }
 
         public override string ToString()
         {
-            return string.Format("OldIndex:{0} NewIndex:{1} Value:{2}", OldIndex,NewIndex, Value);
+            return string.Format("OldIndex:{0} NewIndex:{1} Value:{2}", OldIndex, NewIndex, Value);
+        }
+
+        public override int GetHashCode()
+        {
+            return OldIndex.GetHashCode() ^ NewIndex.GetHashCode() << 2 ^ EqualityComparer<T>.Default.GetHashCode(Value) >> 2;
+        }
+
+        public bool Equals(CollectionMoveEvent<T> other)
+        {
+            return OldIndex.Equals(other.OldIndex) && NewIndex.Equals(other.NewIndex) && EqualityComparer<T>.Default.Equals(Value, other.Value);
         }
     }
 
-    public class CollectionReplaceEvent<T>
+    public struct CollectionReplaceEvent<T> : IEquatable<CollectionReplaceEvent<T>>
     {
         public int Index { get; private set; }
         public T OldValue { get; private set; }
         public T NewValue { get; private set; }
 
         public CollectionReplaceEvent(int index, T oldValue, T newValue)
+            : this()
         {
-            this.Index = index;
-            this.OldValue = oldValue;
-            this.NewValue = newValue;
+            Index = index;
+            OldValue = oldValue;
+            NewValue = newValue;
         }
 
         public override string ToString()
         {
             return string.Format("Index:{0} OldValue:{1} NewValue:{2}", Index, OldValue, NewValue);
         }
+
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode() ^ EqualityComparer<T>.Default.GetHashCode(OldValue) << 2 ^ EqualityComparer<T>.Default.GetHashCode(NewValue) >> 2;
+        }
+
+        public bool Equals(CollectionReplaceEvent<T> other)
+        {
+            return Index.Equals(other.Index)
+                && EqualityComparer<T>.Default.Equals(OldValue, other.OldValue)
+                && EqualityComparer<T>.Default.Equals(NewValue, other.NewValue);
+        }
     }
 
-    public interface IReactiveCollection<T> : IList<T>
+    // IReadOnlyList<out T> is from .NET 4.5
+    public interface IReadOnlyReactiveCollection<T> : IEnumerable<T>
     {
-        void Move(int oldIndex, int newIndex);
+        int Count { get; }
+        T this[int index] { get; }
         IObservable<CollectionAddEvent<T>> ObserveAdd();
         IObservable<int> ObserveCountChanged(bool notifyCurrentCount = false);
         IObservable<CollectionMoveEvent<T>> ObserveMove();
@@ -87,9 +135,19 @@ namespace UniRx
         IObservable<Unit> ObserveReset();
     }
 
-    [Serializable]
-    public class ReactiveCollection<T> : Collection<T>, IReactiveCollection<T>
+    public interface IReactiveCollection<T> : IList<T>, IReadOnlyReactiveCollection<T>
     {
+        new int Count { get; }
+        new T this[int index] { get; set; }
+        void Move(int oldIndex, int newIndex);
+    }
+
+    [Serializable]
+    public class ReactiveCollection<T> : Collection<T>, IReactiveCollection<T>, IDisposable
+    {
+        [NonSerialized]
+        bool isDisposed = false;
+
         public ReactiveCollection()
         {
 
@@ -166,6 +224,8 @@ namespace UniRx
         Subject<int> countChanged = null;
         public IObservable<int> ObserveCountChanged(bool notifyCurrentCount = false)
         {
+            if (isDisposed) return Observable.Empty<int>();
+
             var subject = countChanged ?? (countChanged = new Subject<int>());
             if (notifyCurrentCount)
             {
@@ -181,6 +241,7 @@ namespace UniRx
         Subject<Unit> collectionReset = null;
         public IObservable<Unit> ObserveReset()
         {
+            if (isDisposed) return Observable.Empty<Unit>();
             return collectionReset ?? (collectionReset = new Subject<Unit>());
         }
 
@@ -188,6 +249,7 @@ namespace UniRx
         Subject<CollectionAddEvent<T>> collectionAdd = null;
         public IObservable<CollectionAddEvent<T>> ObserveAdd()
         {
+            if (isDisposed) return Observable.Empty<CollectionAddEvent<T>>();
             return collectionAdd ?? (collectionAdd = new Subject<CollectionAddEvent<T>>());
         }
 
@@ -195,6 +257,7 @@ namespace UniRx
         Subject<CollectionMoveEvent<T>> collectionMove = null;
         public IObservable<CollectionMoveEvent<T>> ObserveMove()
         {
+            if (isDisposed) return Observable.Empty<CollectionMoveEvent<T>>();
             return collectionMove ?? (collectionMove = new Subject<CollectionMoveEvent<T>>());
         }
 
@@ -202,6 +265,7 @@ namespace UniRx
         Subject<CollectionRemoveEvent<T>> collectionRemove = null;
         public IObservable<CollectionRemoveEvent<T>> ObserveRemove()
         {
+            if (isDisposed) return Observable.Empty<CollectionRemoveEvent<T>>();
             return collectionRemove ?? (collectionRemove = new Subject<CollectionRemoveEvent<T>>());
         }
 
@@ -209,8 +273,53 @@ namespace UniRx
         Subject<CollectionReplaceEvent<T>> collectionReplace = null;
         public IObservable<CollectionReplaceEvent<T>> ObserveReplace()
         {
+            if (isDisposed) return Observable.Empty<CollectionReplaceEvent<T>>();
             return collectionReplace ?? (collectionReplace = new Subject<CollectionReplaceEvent<T>>());
         }
+
+        void DisposeSubject<TSubject>(ref Subject<TSubject> subject)
+        {
+            if (subject != null)
+            {
+                try
+                {
+                    subject.OnCompleted();
+                }
+                finally
+                {
+                    subject.Dispose();
+                    subject = null;
+                }
+            }
+        }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    DisposeSubject(ref collectionReset);
+                    DisposeSubject(ref collectionAdd);
+                    DisposeSubject(ref collectionMove);
+                    DisposeSubject(ref collectionRemove);
+                    DisposeSubject(ref collectionReplace);
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        
+        #endregion
     }
 
     public static partial class ReactiveCollectionExtensions
