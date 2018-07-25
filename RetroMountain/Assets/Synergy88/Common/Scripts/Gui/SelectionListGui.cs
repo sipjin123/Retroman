@@ -38,7 +38,7 @@ public static class SelectionListGui {
 			} else if (hover && callback != null && Event.current.type == EventType.MouseUp && Event.current.clickCount == 2) {
 				callback(i);
 				Event.current.Use();
-			} else if (Event.current.type == EventType.repaint) {
+			} else if (Event.current.type == EventType.Repaint) {
 				elementStyle.Draw(elementRect, list[i], hover, false, i == selected, false);
 			}
 		}
@@ -68,7 +68,7 @@ public static class SelectionListGui {
 			} else if (hover && callback != null && Event.current.type == EventType.MouseUp && Event.current.clickCount == 2) {
 				callback(i);
 				Event.current.Use();
-			} else if (Event.current.type == EventType.repaint) {
+			} else if (Event.current.type == EventType.Repaint) {
 				elementStyle.Draw(elementRect, list[i], hover, false, i == selected, i == selected);
 			}
 		}

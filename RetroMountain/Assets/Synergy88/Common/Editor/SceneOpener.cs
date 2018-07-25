@@ -54,7 +54,7 @@ public class SceneOpener : EditorWindow {
 		Event e = Event.current;
 		
 		switch(e.type) {
-		case EventType.keyDown:
+		case EventType.KeyDown:
 			if(e.keyCode == KeyCode.Return) {
 				LoadScene();
 			}
