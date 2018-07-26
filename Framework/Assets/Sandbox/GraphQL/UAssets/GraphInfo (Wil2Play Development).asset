@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad31426356717b41bd856489aebf3dd, type: 3}
+  m_Name: GraphInfo (Wil2Play Development)
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys: []
+  _serializedStateValues: []
+  _GameId: f6da3d40-1df9-11e8-9a22-7d072d18e9eb
+  _Build: 0.0.1
+  _GraphURL: https://hu94g063b1.execute-api.ap-southeast-1.amazonaws.com/dev/graph
+  _GameSlug: wil_to_play

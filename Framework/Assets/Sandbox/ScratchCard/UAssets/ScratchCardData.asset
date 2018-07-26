@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e95b2600a0f3d294f9c3685dbf82ead3, type: 3}
+  m_Name: ScratchCardData
+  m_EditorClassIdentifier: 
+  _objectReferences:
+  - {fileID: 21300000, guid: e75d39817b8103b41bec50cd51837b09, type: 3}
+  - {fileID: 21300000, guid: 8380ad10be0fe774fb340e3691a7f192, type: 3}
+  - {fileID: 21300000, guid: 84e1bf6cb2603a94f8a45878d0e71185, type: 3}
+  - {fileID: 21300000, guid: 3041e63d30292384eb6c1bf2b66bb461, type: 3}
+  - {fileID: 21300000, guid: 92e7cb125265cda4c83573dffe222a1b, type: 3}
+  - {fileID: 21300000, guid: a15c1dd151e7c7a4da346a12d9dce6f7, type: 3}
+  - {fileID: 21300000, guid: 7b161d9e3f324314cb361a9755c8c93e, type: 3}
+  - {fileID: 21300000, guid: 542fa0c2604185b49928a167f33c369c, type: 3}
+  _serializedStateKeys:
+  - scratchDimension
+  - scratchType
+  - rewardList
+  - itemProbabilityList
+  _serializedStateValues:
+  - '"THREE_SCRATCH"'
+  - '"MATCH_THREE"'
+  - '{"gold_50":{"rewardID":"coins_50","rewardName":"50 Coins","rewardValue":50,"rewardDesc":"You
+    won 50 Coins!","rewardSprite":0,"rewardType":"COIN","BigWin":false},"gold_80":{"rewardID":"coins_80","rewardName":"80
+    Coins","rewardValue":80,"rewardDesc":"You won 80 Coins!","rewardSprite":1,"rewardType":"COIN","BigWin":false},"gold_150":{"rewardID":"coins_150","rewardName":"150
+    Coins","rewardValue":150,"rewardDesc":"You won 150 Coins!","rewardSprite":2,"rewardType":"COIN","BigWin":false},"gold_key_1":{"rewardID":"key_1","rewardName":"1
+    Keys","rewardValue":1,"rewardDesc":"You won 1 Keys!","rewardSprite":3,"rewardType":"KEY","BigWin":true},"gold_key_2":{"rewardID":"key_2","rewardName":"2
+    Keys","rewardValue":2,"rewardDesc":"You won 2 Keys!","rewardSprite":4,"rewardType":"KEY","BigWin":true},"gem_5":{"rewardID":"gem_5","rewardName":"5
+    Gems","rewardValue":5,"rewardDesc":"You won 5 Gems!","rewardSprite":5,"rewardType":"GEM","BigWin":false},"gem_10":{"rewardID":"gem_10","rewardName":"10
+    Gems","rewardValue":10,"rewardDesc":"You won 10 Gems!","rewardSprite":6,"rewardType":"GEM","BigWin":false},"gem_15":{"rewardID":"gem_15","rewardName":"15
+    Gems","rewardValue":15,"rewardDesc":"You won 15 Gems!","rewardSprite":7,"rewardType":"GEM","BigWin":false}}'
+  - '[{"itemKey":"coins_50","probabilityRate":49,"randomRate":20.59},{"itemKey":"coins_80","probabilityRate":29,"randomRate":12.18},{"itemKey":"coins_150","probabilityRate":33,"randomRate":13.87},{"itemKey":"key_1","probabilityRate":21,"randomRate":8.82},{"itemKey":"key_2","probabilityRate":39,"randomRate":16.39},{"itemKey":"gem_5","probabilityRate":33,"randomRate":13.87},{"itemKey":"gem_10","probabilityRate":24,"randomRate":10.08},{"itemKey":"gem_15","probabilityRate":10,"randomRate":4.2}]'
+  scratchDimension: 3
+  scratchType: 1
+  achievedRewardID: gold_80
+  referenceTexture: {fileID: 2800000, guid: 89322c524acb690429a2ecb58d9cd446, type: 3}
+  referenceMaterial: {fileID: 2100000, guid: b092e14b95bf34f4996d5b6d21930b6a, type: 2}
+  referenceBrush: {fileID: 2800000, guid: aacad8fd2b3247543992e9bbad88f347, type: 3}
+  randomIndex: 218

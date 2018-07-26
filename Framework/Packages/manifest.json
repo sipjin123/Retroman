@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "com.unity.probuilder": "3.0.8",
+    "com.unity.progrids": "3.0.2-preview",
+    "com.unity.shadergraph": "1.1.9-preview",
+    "com.unity.textmeshpro": "1.2.2"
+  }
+}

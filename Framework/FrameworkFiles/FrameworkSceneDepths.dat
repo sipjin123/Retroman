@@ -1,0 +1,7 @@
+Invalid = 1
+Background = 2
+Middleground = 3
+Foreground = 4
+PopUp = 7
+Overlay = 8
+Max = 10
