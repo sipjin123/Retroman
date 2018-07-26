@@ -1,0 +1,198 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1838293482913270}
+  m_IsPrefabParent: 1
+--- !u!1 &1013866696391972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4371353496499530}
+  - component: {fileID: 114358082230879118}
+  m_Layer: 0
+  m_Name: GraphQLOfflineData
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1822403449427848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4086816148092492}
+  - component: {fileID: 114077605606245042}
+  m_Layer: 0
+  m_Name: GraphQLAdDownloader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1838293482913270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4118171062788240}
+  - component: {fileID: 114567063539418374}
+  m_Layer: 0
+  m_Name: GraphQLDataManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4086816148092492
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1822403449427848}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4118171062788240}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4118171062788240
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1838293482913270}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4086816148092492}
+  - {fileID: 4371353496499530}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4371353496499530
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013866696391972}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4118171062788240}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114077605606245042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1822403449427848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75715e5a406fbac4198c87aaecbcf0c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys:
+  - CompletedAds
+  - Ads
+  _serializedStateValues:
+  - '{}'
+  - '[]'
+  Ads: []
+--- !u!114 &114358082230879118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1013866696391972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab9e8898471be02458a2f6922fd97c18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys:
+  - LoginData
+  - LocalAdsData
+  - PendingTransactions
+  - _AdsPlayData
+  _serializedStateValues:
+  - '{"Token":null}'
+  - '{"Ads":[]}'
+  - '{"IncompleteAdTransactions":[]}'
+  - '{"InterstitialAds":0,"RewardAds":0,"DateOfService":"0001-01-01T00:00:00.0000000"}'
+  LoginData:
+    Token: 
+  LocalAdsData:
+    Ads: []
+  PendingTransactions:
+    IncompleteAdTransactions: []
+  _AdsPlayData:
+    InterstitialAds: 0
+    RewardAds: 0
+--- !u!114 &114567063539418374
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1838293482913270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57a9ff80a605d13479fb0d3e3fae972c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys:
+  - _CurrentServiceState
+  - AllOldAds
+  - AllNewAds
+  - AdsToServe
+  - CurrAdPlayTransaction
+  - PendingTransactions
+  - FailedTransactions
+  - RecentTransactions
+  _serializedStateValues:
+  - '{"value":"Uninitialized"}'
+  - '[]'
+  - '[]'
+  - '[]'
+  - '{"id":null,"status":null}'
+  - '[]'
+  - '[]'
+  - '[]'
+  _IsServiceRequired: 1
+  _DebugEvents: 0
+  GraphQLSetupData: {fileID: 11400000, guid: 0af270642c449ff4fab0e3c1522ab9ef, type: 2}
+  GraphQLAdDownloader: {fileID: 114077605606245042}
+  GraphQLOfflineData: {fileID: 114358082230879118}
+  AllOldAds: []
+  AllNewAds: []
+  AdsToServe: []
+  CurrAdPlayTransaction:
+    id: 
+    status: 
+  PendingTransactions: []
+  FailedTransactions: []
+  RecentTransactions: []
+  DebugUseUnityAds: 0
+  DebugIsSkipable: 0

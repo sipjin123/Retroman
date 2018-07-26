@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38db44cb2e37e9242b0b9d086f5a44a9, type: 3}
+  m_Name: AssetDownloadProfile
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys:
+  - Downloads
+  _serializedStateValues:
+  - '[{"ImageId":"","Timestamp":"","LocalPath":""},{"ImageId":"68304040-414d-11e8-a287-43e8101978b8","Timestamp":"2018-06-28T10:14:12.924Z","LocalPath":"C:/Users/aries.sulit/AppData/LocalLow/Synergy88
+    Digital/Let''s GO Sports\\Assets\\Downloaded\\Textures\\68304040-414d-11e8-a287-43e8101978b8.jpeg"},{"ImageId":"cb5c2a30-1df8-11e8-9a22-7d072d18e9eb","Timestamp":"2018-06-28T10:14:12.924Z","LocalPath":"C:/Users/aries.sulit/AppData/LocalLow/Synergy88
+    Digital/Let''s GO Sports\\Assets\\Downloaded\\Textures\\cb5c2a30-1df8-11e8-9a22-7d072d18e9eb.jpeg"},{"ImageId":"c1895d20-1df8-11e8-9a22-7d072d18e9eb","Timestamp":"2018-06-28T10:14:12.945Z","LocalPath":"C:/Users/aries.sulit/AppData/LocalLow/Synergy88
+    Digital/Let''s GO Sports\\Assets\\Downloaded\\Textures\\c1895d20-1df8-11e8-9a22-7d072d18e9eb.mp4"},{"ImageId":"e282d780-283a-11e8-ba9d-f16634e33062","Timestamp":"2018-06-28T10:14:12.950Z","LocalPath":"C:/Users/aries.sulit/AppData/LocalLow/Synergy88
+    Digital/Let''s GO Sports\\Assets\\Downloaded\\Textures\\e282d780-283a-11e8-ba9d-f16634e33062.jpeg"},{"ImageId":"df359020-79ae-11e8-8f84-dbe923d9de7e","Timestamp":"2018-06-27T03:00:11.240Z","LocalPath":"C:/Users/aries.sulit/AppData/LocalLow/Synergy88
+    Digital/Let''s GO Sports\\Assets\\Downloaded\\Textures\\df359020-79ae-11e8-8f84-dbe923d9de7e.mp4"}]'
+  DirectoryPath: C:/Users/aries.sulit/AppData/LocalLow/Synergy88 Digital/Let's GO
+    Sports\Assets\Downloaded\Profiles\
+  Profile: C:/Users/aries.sulit/AppData/LocalLow/Synergy88 Digital/Let's GO Sports\Assets\Downloaded\Profiles\Profiles

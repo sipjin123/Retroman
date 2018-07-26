@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf22692994a9b4e44a653e2203fcc6fd, type: 3}
+  m_Name: BuildProfile (ANNA)
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys: []
+  _serializedStateValues: []
+  Company: Synergy88 Digital
+  AppName: Wil to Play
+  Package: com.synergy88digital.wiltoplay
+  KeyStore: D:/UnityProjects/Wowowin/Files/wiltoplay.keystore
+  Alias: com.synergy88digital.wiltoplay
+  Password: 88Synergy88
+  SceneAsset: {fileID: 0}
+  AssetbundleScenes:
+  - Synergy88/Game/Scenes/ParesoMami
+  - Wowowillie/BigyanNgJacket/Scenes/BigyanNgJacket
+  - Sandbox/SpinTheWheelSandbox/Scenes/SpintheWheel
