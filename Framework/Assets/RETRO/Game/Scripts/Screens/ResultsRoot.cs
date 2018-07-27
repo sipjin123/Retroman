@@ -5,6 +5,8 @@ using Common.Signal;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
 using Framework;
+using Retroman;
+using Common.Utils;
 
 namespace Synergy88 {
 	
@@ -68,7 +70,7 @@ namespace Synergy88 {
 
 		protected override void OnEnable() {
 			try{
-				GameControls.Instance._resultCharParent.SetActive(true);
+                Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(true);
 			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.AddListener(ResetGame);
 
@@ -85,7 +87,7 @@ namespace Synergy88 {
 
 		protected override void OnDisable() {
 			try{
-			GameControls.Instance._resultCharParent.SetActive(false);
+                Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(false);
 			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.RemoveListener(ResetGame);
 			base.OnDisable();

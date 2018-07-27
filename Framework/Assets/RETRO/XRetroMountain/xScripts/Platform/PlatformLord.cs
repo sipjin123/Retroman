@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using Common.Utils;
+using Retroman;
+using UniRx;
 public class PlatformLord: MonoBehaviour {
 
 	#region VARIABLES
-	private static PlatformLord _instance;
-	public static PlatformLord Instance { get { return _instance; } }
 
 	//ENUMS
 	public enum PlatformDirection
@@ -92,11 +92,7 @@ public class PlatformLord: MonoBehaviour {
 	#endregion
 	//==================================================================================================================================================
 	#region INITIALIZATION
-	void Awake()
-	{
-		_instance = this;
-	}
-	void Start () 
+    void Start () 
 	{
 		InitializeVariables();
 		for(int i = 0 ; i < 15 ; i++)
@@ -177,10 +173,18 @@ public class PlatformLord: MonoBehaviour {
 		_platformAction = PlatformAction.SPAWNNORMAL;
 		//Debug.LogError(_patternDict[0].GetValue(3));
 	}
-	#endregion
-	//==================================================================================================================================================
-	#region TESTING
-	void Update () 
+    #endregion
+    //==================================================================================================================================================
+    private void Awake()
+    {
+        Factory.Get<DataManagerService>().MessageBroker.Receive<SpawnAPlatform>().Subscribe(_ => 
+        {
+            SpawnAPlatform();
+        }).AddTo(this);
+    }
+
+    #region TESTING
+    void Update () 
 	{
 		if(Input.GetKeyDown(KeyCode.Z))
 		{

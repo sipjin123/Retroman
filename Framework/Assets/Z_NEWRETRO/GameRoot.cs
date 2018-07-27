@@ -31,7 +31,7 @@ namespace Retroman
         void ShowResults()
         {
             ResultsCanvas.enabled = true;
-            GameControls.Instance._resultCharParent.SetActive(true);
+            Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(true);
 
 
             CScore1.text = "" + PlayerPrefs.GetInt("curSkor", 0);

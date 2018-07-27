@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Common.Utils;
+using Retroman;
+using UniRx;
 public class CameraControls : MonoBehaviour {
-	private static CameraControls _instance;
-	public static CameraControls Instance { get { return _instance; } }
 
 	public GameObject PlayerObject;
 	public float[] RandomizedRotationAxis;
@@ -15,15 +16,19 @@ public class CameraControls : MonoBehaviour {
 	float _lerpSpeed;
 	public bool _startFollow;
 
-	void Awake()
+    void Awake()
 	{
-		_instance = this;
+        Factory.Get<DataManagerService>().MessageBroker.Receive<ChangeCamAngle>().Subscribe(_ => 
+        {
+            Debug.LogError("NEED TO LERP");
+            _ResetToDirection((int)_.Angle);
+        }).AddTo(this);
 	}
-	void Start () 
+    void Start () 
 	{
 		_lerpToCamSwitch = false;
 		_startFollow = false;
-	}
+    }
 
 	void FixedUpdate () {
 		if(_startFollow)
@@ -42,6 +47,7 @@ public class CameraControls : MonoBehaviour {
 	}
 	public void SwitchCam(int _direction)
 	{
+        Debug.LogError("------------------------------------------------------------------------------ SWITCHING CAM TO :: " + _direction);
 		if(_direction == 180 )
 		{
 			_oBjToLerpTo = _LeftPosition.transform.localPosition;

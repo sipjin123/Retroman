@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Common.Utils;
 
 namespace Retroman
 {
@@ -31,6 +32,7 @@ namespace Retroman
         }
         void OnTriggerEnter(Collider hit)
         {
+            Debug.LogError("HITTING SOMETHING:: " + hit.gameObject.name + " :: " + hit.gameObject.tag + " :: " + hit.gameObject.layer);
             if (hit.tag == "Player")
             {
                 switch (_typeOfTrigger)
@@ -45,28 +47,28 @@ namespace Retroman
                         if (gameObject.name == "CoinOBJ")
                         {
                             SoundControls.Instance._sfxCoin.Play();
-                            GameControls.Instance.Score++;
-                            GameControls.Instance.UptateScoreing();
+                            Factory.Get<DataManagerService>().GameControls.Score++;
+                            Factory.Get<DataManagerService>().GameControls.UptateScoreing();
                         }
                         break;
                     case TypeOfTrigger.SPIKE:
-                        GameControls.Instance.GameOverIT();
+                        Factory.Get<DataManagerService>().GameControls.GameOverIT();
                         SoundControls.Instance._sfxSpikes.Play();
                         break;
                     case TypeOfTrigger.LEFT:
-                        PlayerControls.Instance._playerAction = PlayerControls.PlayerAction.TURNLEFT;
+                        Factory.Get<DataManagerService>().PlayerControls._playerAction = PlayerControls.PlayerAction.TURNLEFT;
                         break;
                     case TypeOfTrigger.RIGHT:
-                        PlayerControls.Instance._playerAction = PlayerControls.PlayerAction.TURNLEFT;
+                        Factory.Get<DataManagerService>().PlayerControls._playerAction = PlayerControls.PlayerAction.TURNLEFT;
                         break;
                     case TypeOfTrigger.WATER:
                         SoundControls.Instance._sfxSplash.Play();
-                        PlayerControls.Instance._splash.SetActive(true);
-                        PlayerControls.Instance._splash.transform.position = PlayerControls.Instance._deathAnim.transform.GetChild(0).transform.position;
-                        GameControls.Instance.GameOverIT();
+                        Factory.Get<DataManagerService>().PlayerControls._splash.SetActive(true);
+                        Factory.Get<DataManagerService>().PlayerControls._splash.transform.position = Factory.Get<DataManagerService>().PlayerControls._deathAnim.transform.GetChild(0).transform.position;
+                        Factory.Get<DataManagerService>().GameControls.GameOverIT();
                         break;
                     case TypeOfTrigger.COUNTER:
-                        PlatformLord.Instance.SpawnAPlatform();
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new SpawnAPlatform());
                         break;
                 }
             }

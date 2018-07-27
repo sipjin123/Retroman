@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Purchasing;
 
 using System;
 using System.Collections;
@@ -195,8 +194,8 @@ namespace Synergy88 {
 		#region Signals
 
 		private void OnStorePurchaseSuccessful(ISignalParameters parameters) {
-			Product product = (Product)parameters.GetParameter(S88Params.STORE_ITEM);
-			Debug.LogFormat("ShopRoot::OnStorePurchaseSuccessful ItemId:{0}\n", product.definition.id);
+			//Product product = (Product)parameters.GetParameter(S88Params.STORE_ITEM);
+			//Debug.LogFormat("ShopRoot::OnStorePurchaseSuccessful ItemId:{0}\n", product.definition.id);
 		}
 
 		private void OnStorePurchaseFailed(ISignalParameters parameters) {

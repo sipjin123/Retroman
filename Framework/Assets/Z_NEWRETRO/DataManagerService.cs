@@ -53,6 +53,19 @@ namespace Retroman
             return GameCoins;
         }
 
+        private PlayerControls _PlayerControls;
+        public PlayerControls PlayerControls { get { return _PlayerControls; } }
+        public void SetPlayer(PlayerControls controls)
+        {
+            _PlayerControls = controls;
+        }
+        private GameControls _GameControls;
+        public GameControls GameControls { get { return _GameControls; } }
+        public void SetGameControls(GameControls controls)
+        {
+            _GameControls = controls;
+        }
+        
 
         public static string CurrentCharacterSelected = "CurrentCharacterSelected";
         public static string TotalGold = "TotalGold";

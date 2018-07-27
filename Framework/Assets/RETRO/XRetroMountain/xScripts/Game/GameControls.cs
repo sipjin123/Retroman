@@ -10,8 +10,6 @@ using UniRx;
 public class GameControls : MonoBehaviour
     {
         #region VARIABLES
-        private static GameControls _instance;
-        public static GameControls Instance { get { return _instance; } }
 
         public enum GameState
         {
@@ -47,7 +45,7 @@ public class GameControls : MonoBehaviour
         #region INITIALIZATION
         void Awake()
         {
-            _instance = this;
+            Factory.Get<DataManagerService>().SetGameControls(this);
             Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_=> 
             {
                 StartButton();
@@ -146,7 +144,7 @@ public class GameControls : MonoBehaviour
         {
             if (_switch)
             {
-                PlayerControls.Instance._activePlayerObject = false;
+                Factory.Get<DataManagerService>().PlayerControls._activePlayerObject = false;
                 _resumeButton.SetActive(true);
                 _pauseButton.SetActive(false);
                 _storeTimeScale = Time.timeScale;
@@ -155,7 +153,7 @@ public class GameControls : MonoBehaviour
             }
             else
             {
-                PlayerControls.Instance._activePlayerObject = true;
+                Factory.Get<DataManagerService>().PlayerControls._activePlayerObject = true;
                 _resumeButton.SetActive(false);
                 _pauseButton.SetActive(true);
                 Time.timeScale = _storeTimeScale;
@@ -177,19 +175,19 @@ public class GameControls : MonoBehaviour
             {
                 if (!ifGameOverplayed)
                 {
-                    PlayerControls.Instance._deathAnim.SetActive(true);
+                    Factory.Get<DataManagerService>().PlayerControls._deathAnim.SetActive(true);
                     StartCoroutine(GameOverDelay());
                     ifGameOverplayed = true;
                 }
                 SoundControls.Instance._sfxBGM.gameObject.SetActive(false);
-                PlayerControls.Instance.gameObject.GetComponent<PlayerControls>().enabled = false;
+                Factory.Get<DataManagerService>().PlayerControls.enabled = false;
             }
         }
         public IEnumerator GameOverDelay()
         {
             InGameWindow.SetActive(false);
-            PlayerControls.Instance.transform.GetChild(0).gameObject.SetActive(false);
-            PlayerControls.Instance._shadowObject.SetActive(false);
+            Factory.Get<DataManagerService>().PlayerControls.transform.GetChild(0).gameObject.SetActive(false);
+            Factory.Get<DataManagerService>().PlayerControls._shadowObject.SetActive(false);
 
             Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = (int)Score });
 

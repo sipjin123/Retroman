@@ -1,16 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Synergy88;
-using Common.Signal;
-using UnityEngine.UI;
 using Common.Utils;
 using UniRx;
 namespace Retroman
 {
     public class PlayerControls : MonoBehaviour {
         #region VARIABLES
-        private static PlayerControls _instance;
-        public static PlayerControls Instance { get { return _instance; } }
         public enum PlayerType
         {
             NORMAL,
@@ -65,16 +60,33 @@ namespace Retroman
 
         bool _jumpDelaySwitch = false;
 
+        [SerializeField]
+        private LayerMask GroundWaterMask, WaterMask,GroundMask, FallStopperMask;
+
+        const string GroundMaskID = "GroundOnly";
+        const string WaterMaskID = "WaterOnly";
+        const string FallStopperMaskID = "FallStopperMask";
+
+        [SerializeField]
+        private CameraControls _CameraControls;
+        public PlatformLord _PlatformLord;
+
+        int WaterMaskLayerIndex = 0;
+        int GroundMaskLayerIndex = 0;
+        int FallStopperMaskLayerIndex = 0;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
         void Awake()
         {
-            _instance = this;
+            Factory.Get<DataManagerService>().SetPlayer(this);
+            WaterMaskLayerIndex = LayerMask.NameToLayer(WaterMaskID);
+            GroundMaskLayerIndex = LayerMask.NameToLayer(GroundMaskID);
+            FallStopperMaskLayerIndex = LayerMask.NameToLayer(FallStopperMaskID);
         }
         public void Start()
         {
-            isGrounded = true;
+               isGrounded = true;
             _activePlayerObject = false;
 
 
@@ -126,7 +138,7 @@ namespace Retroman
                 _walkCounter += movementSpeed;
                 if (_walkCounter > 1)
                 {
-                    PlatformLord.Instance.SpawnAPlatform();
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new SpawnAPlatform());
                     _walkCounter--;
                 }
             }
@@ -171,28 +183,43 @@ namespace Retroman
         }
         #endregion
         //==========================================================================================================================================
+      
+
         #region RAYCAST
         void RaycastFunction()
         {
-            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 1f, out Rayhit))
+            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 1f, out Rayhit))// ,GroundWaterMask))
             {
                 //Debug.LogError(Rayhit.collider.gameObject.tag+" "+Rayhit.collider.gameObject.name);
                 //Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 1, Color.red);
-                if (Rayhit.collider.gameObject.tag == "Ground")
+
+                //_shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
+
+                //Debug.LogError("Rayhit is :: (" + Rayhit.collider.gameObject.name + ") Tag is : )" + Rayhit.collider.tag + ") Layer : " + LayerMask.LayerToName(Rayhit.collider.gameObject.layer)+" LayerPure: ("+Rayhit.collider.gameObject.layer+")");
+
+
+               // _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
+                if((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {
                     _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
                 }
+
                 if (isJumping)
                 {
-                    if (Rayhit.collider.gameObject.name == "FallStopper")
+                    if (Rayhit.collider.gameObject.layer == FallStopperMaskLayerIndex)
                     {
                         _shadowObject.SetActive(false);
                     }
-                    else if (Rayhit.collider.gameObject.tag == "Ground")
+                    else if (Rayhit.collider.gameObject.layer == GroundMaskLayerIndex)
                     {
                         _shadowObject.SetActive(true);
                     }
                 }
+
+            }
+            else
+            {
+              //  _shadowObject.SetActive(false);
             }
         }
         #endregion
@@ -208,7 +235,7 @@ namespace Retroman
                 {
                     _playerAction = PlayerAction.FORWARD;
                     rotatedValue = 0;
-                    //CameraControls.Instance._ResetToDirection(180);
+                    //CameraControls.._ResetToDirection(180);
                 }
                 transform.eulerAngles = new Vector3(0, player_rotation, 0);
                 LerpToPosition(lerpToThisObject, lerpToThisObject.transform.position, 0);
@@ -221,7 +248,7 @@ namespace Retroman
                 {
                     _playerAction = PlayerAction.FORWARD;
                     rotatedValue = 0;
-                    //CameraControls.Instance._ResetToDirection(0);
+                    //CameraControls.._ResetToDirection(0);
                 }
                 transform.eulerAngles = new Vector3(0, player_rotation, 0);
                 LerpToPosition(lerpToThisObject, lerpToThisObject.transform.position, 0);
@@ -239,6 +266,7 @@ namespace Retroman
         #region COLLISIONS
         void OnTriggerEnter(Collider hit)
         {
+           // Debug.LogError("Trigger Hit is :: " + hit.gameObject.name + " Tag is : " + hit.tag + " Layer : " + LayerMask.LayerToName(hit.gameObject.layer));
             //TURNING
             if (hit.gameObject.name == "Left"
                 || hit.gameObject.name == "Right"
@@ -251,9 +279,9 @@ namespace Retroman
                 if (hit.gameObject.name == "Right")
                     _playerAction = PlayerAction.TURNRIGHT;
                 if (hit.gameObject.name == "MidRight")
-                    CameraControls.Instance._ResetToDirection(0);
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 0 });
                 if (hit.gameObject.name == "MidLeft")
-                    CameraControls.Instance._ResetToDirection(180);
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 180 });
                 hit.gameObject.SetActive(false);
             }
             //FALLING
@@ -304,13 +332,15 @@ namespace Retroman
             _activePlayerObject = false;
             _rigidbody.useGravity = false;
         }
+
         void OnGameResume( )
         {
             _shadowObject.SetActive(true);
             _activePlayerObject = true;
             _rigidbody.useGravity = true;
-            CameraControls.Instance._startFollow = true;
+            _CameraControls._startFollow = true;
         }
+        
         #endregion
     }
 }

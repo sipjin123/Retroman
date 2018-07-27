@@ -131,7 +131,6 @@
 
         private void CameraDurationCallback(ProfilerCameraListener listener, double duration)
         {
-            UnityEngine.Debug.Log("HAHHAHA");
             /*// Time to first camera
 			if (_reportedCameras == 0) {
 				_updateToRenderDuration = _stopwatch.Elapsed.TotalSeconds - duration - _updateDuration;
