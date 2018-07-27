@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.Purchasing;
+
 using UnityEngine.UI;
 
 using System;
@@ -64,7 +64,7 @@ namespace Synergy88 {
 
 			if (!QuerySystem.Query<bool>(QueryIds.StoreIsReady)) {
 				yield break;
-			}
+			}/*
 
 			//IEnumerable<Product> products = QuerySystem.Query<IEnumerable<Product>>(QueryIds.StoreItems);
 			IQueryRequest request = QuerySystem.Start(QueryIds.StoreItemsWithType);
@@ -84,7 +84,7 @@ namespace Synergy88 {
 					item.ItemPrice = meta.localizedPriceString;
 					this.items.Add(item);
 				}
-			}
+			}*/
 
 			// propulate views
 			this.PopulateItems();
@@ -125,8 +125,8 @@ namespace Synergy88 {
 		#region Signals
 
 		private void OnStorePurchaseSuccessful(ISignalParameters parameters) {
-			Product product = (Product)parameters.GetParameter(S88Params.STORE_ITEM);
-			Debug.LogFormat("CoinsRoot::OnStorePurchaseSuccessful ItemId:{0}\n", product.definition.id);
+			//Product product = (Product)parameters.GetParameter(S88Params.STORE_ITEM);
+			//Debug.LogFormat("CoinsRoot::OnStorePurchaseSuccessful ItemId:{0}\n", product.definition.id);
 		}
 
 		private void OnStorePurchaseFailed(ISignalParameters parameters) {

@@ -53,4 +53,13 @@ namespace Retroman
     {
         public float CoinsToAdd;
     }
+    public class SpawnAPlatform
+    {
+
+    }
+    public class ChangeCamAngle
+    {
+        public int Angle;
+    }
+
 }

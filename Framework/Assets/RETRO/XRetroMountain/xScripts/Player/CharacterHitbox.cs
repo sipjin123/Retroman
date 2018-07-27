@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Common.Utils;
+using Retroman;
 
 public class CharacterHitbox : MonoBehaviour {
 
@@ -7,7 +9,7 @@ public class CharacterHitbox : MonoBehaviour {
 	{
 		if(hit.gameObject.tag == "Ground")
 		{
-			GameControls.Instance.GameOverIT();
+			Factory.Get<DataManagerService>().GameControls.GameOverIT();
 		}
 	}
 }
