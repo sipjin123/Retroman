@@ -79,10 +79,24 @@ public class PlatformMinion : MonoBehaviour {
 				break;
 			case TypeofPlatform.LEFT:
 				_leftObject.SetActive(true);
-				break;
+                _leftObject.transform.GetChild(0).gameObject.SetActive(true);
+
+                _leftObject.GetComponent<BoxCollider>().enabled = true;
+                _leftObject.transform.GetChild(0).GetComponent<BoxCollider>().enabled = true;
+
+                _leftObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                _leftObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.red;
+                break;
 			case TypeofPlatform.RIGHT:
 				_rightObject.SetActive(true);
-				break;
+                _rightObject.transform.GetChild(0).gameObject.SetActive(true);
+
+                _rightObject.GetComponent<BoxCollider>().enabled = true;
+                _rightObject.transform.GetChild(0).GetComponent<BoxCollider>().enabled = true;
+
+                _rightObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+                _rightObject.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = Color.blue;
+                break;
 		}
 
 		switch(_heightOfPlatform)

@@ -50,41 +50,57 @@ namespace Retroman
         public Text _testTExt;
 
         [SerializeField]
+        private GameObject _InsufficientFunds;
+
+        [SerializeField]
         private GameObject template;
-
-        [SerializeField]
-        private GameObject ItemImages;
-
-        [SerializeField]
-        private List<ShopItemData> items;
+        
+        
         public Transform _ShopListParent;
         public ShopItemData SelectedItem;
         public List<ShopItem> _GeneratedItems;
-
+        public UnityEngine.UI.Button PlayButton;
         void SetupListeners()
         {
             Debug.LogError("Listeners Yes");
+
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
+            {
+                if(_.BackButtonType == BackButtonType.SceneIsShop)
+                {
+                    if (_InsufficientFunds.activeSelf)
+                    {
+                        _InsufficientFunds.SetActive(false);
+                    }
+                    else if(_confirmationWindow.active)
+                    {
+                        _confirmationWindow.SetActive(false);
+
+                    }
+                    else
+                    {
+                        GoBack();
+                    }
+                }
+            }).AddTo(this);
+
+
+
             Factory.Get<DataManagerService>().MessageBroker.Receive<RefreshShopItems>().Subscribe(_ => 
             {
                 RefreshGeneratedItems();
             }).AddTo(this);
-
+            Factory.Get<DataManagerService>().MessageBroker.Receive<InsufficientCoins>().Subscribe(_ =>
+            {
+                _InsufficientFunds.SetActive(true);
+            }).AddTo(this);
+            
             Factory.Get<DataManagerService>().MessageBroker.Receive<SelectItem>().Subscribe(_ =>
             {
-                Debug.LogError("Item Selected");
                 SelectedItem = _.ShopItem;
 
-                if (PlayerPrefs.GetInt("Bought" + SelectedItem.ItemId, 0) == 1)
-                {
-                    PlayerPrefs.SetInt(DataManagerService.CurrentCharacterSelected, int.Parse(SelectedItem.ItemStoreId));
-
-                    Debug.LogError("I Bought this already");
-                }
-                else
-                {
-                    Debug.LogError("I want to buy this");
-                    ActivateConrimationWindow();
-                }
+                ActivateConrimationWindow();
 
                 RefreshGeneratedItems();
             }).AddTo(this);
@@ -101,16 +117,26 @@ namespace Retroman
             }
         }
 
+        public void GoBack()
+        {
+
+            SoundControls.Instance._buttonClick.Play();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+
+        }
 
         void SetupButtons()
         {
             AddButtonHandler(EButton.GoToTitle, delegate (ButtonClickedSignal signal)
             {
                 Debug.LogError("Title Button");
+                SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
             });
             AddButtonHandler(EButton.StartGame, delegate (ButtonClickedSignal signal)
             {
+                PlayButton.interactable = false;
+                SoundControls.Instance._buttonClick.Play();
                 Debug.LogError("STart GAme Button");
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
             });
@@ -120,7 +146,7 @@ namespace Retroman
         {
             Transform parent = this.template.transform.parent;
             Vector3 localScale = this.template.transform.localScale;
-            int len = this.items.Count;
+            int len = Factory.Get<DataManagerService>().ShopItems.Count;
             int children = parent.childCount - 1; ;
             bool create = len == children;
 
@@ -132,13 +158,13 @@ namespace Retroman
 
                 try
                 {
-                    item = this.items[i];
+                    item = Factory.Get<DataManagerService>().ShopItems[i];
                     itemObject = parent.GetChild(i + 1).gameObject;
                     gameItem = itemObject.GetComponent<ShopItem>();
                 }
                 catch (UnityException e)
                 {
-                    item = this.items[i];
+                    item = Factory.Get<DataManagerService>().ShopItems[i];
                     itemObject = (GameObject)GameObject.Instantiate(this.template);
                     gameItem = itemObject.GetComponent<ShopItem>();
 
@@ -172,27 +198,20 @@ namespace Retroman
         public void ConfirmationYes()
         {
             DisableConrimationWindow();
-            Debug.LogError("Buying :: " + float.Parse(SelectedItem.ItemPrice));
-            Debug.LogError("My Current Coins are :: " + Factory.Get<DataManagerService>().GetTotalCoins());
 
 
-            if ( Factory.Get<DataManagerService>().GetTotalCoins() >=  float.Parse(SelectedItem.ItemPrice) )
-            {
-                Debug.LogError("Success Buy");
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = -float.Parse(SelectedItem.ItemPrice) });
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = -(SelectedItem.ItemPrice) });
 
-                PlayerPrefs.SetInt("Bought" +SelectedItem.ItemId,1);
-    
+            Factory.Get<DataManagerService>().SaveThisItem(SelectedItem.ItemNameId);
+            Factory.Get<DataManagerService>().UpdateCurrentCharacter(SelectedItem.ItemStoreId);
 
-                PlayerPrefs.SetInt(DataManagerService.CurrentCharacterSelected, int.Parse(SelectedItem.ItemStoreId));
-
-                RefreshGeneratedItems();
-            }
-            else
-            {
-                Debug.LogError("You are Poor");
-            }
+            RefreshGeneratedItems();
             SoundControls.Instance._buttonClick.Play();
+        }
+        public void CloseInsufficientPanel()
+        {
+            SoundControls.Instance._buttonClick.Play();
+            _InsufficientFunds.SetActive(false);
         }
 
 

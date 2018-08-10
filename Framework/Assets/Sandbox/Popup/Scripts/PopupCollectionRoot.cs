@@ -25,8 +25,7 @@ using Framework;
 namespace Sandbox.Popup
 {
     using UnityEngine;
-
-    using Sandbox.GraphQL;
+    
     using Sandbox.UnityAds;
 
     // alias
@@ -312,14 +311,14 @@ namespace Sandbox.Popup
         [Button(25)]
         public void PlayRewardedAds()
         {
-            this.Publish(new PlayAdRequestSignal() { IsSkippable = false, CustomAdType = CustomAdType.Reward, FallbackAdType = UnityAds.AdReward.FreeCoins });
+         //   this.Publish(new PlayAdRequestSignal() { IsSkippable = false, CustomAdType = CustomAdType.Reward, FallbackAdType = UnityAds.AdReward.FreeCoins });
         }
 
         [TabGroup("New Group", "Popup")]
         [Button(25)]
         public void PlayInterstitialsAds()
         {
-            this.Publish(new PlayAdRequestSignal() { IsSkippable = true, CustomAdType = CustomAdType.Interstitial, FallbackAdType = UnityAds.AdReward.NoReward });
+          //  this.Publish(new PlayAdRequestSignal() { IsSkippable = true, CustomAdType = CustomAdType.Interstitial, FallbackAdType = UnityAds.AdReward.NoReward });
         }
     }
 }
