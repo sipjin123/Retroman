@@ -44,4 +44,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/Audio/Scenes/Audio.unity
     guid: 37c97b3d2498b794497f04a704ef2bec
+  - enabled: 1
+    path: Assets/RETRO/Game/Scenes/SettingsRoot.unity
+    guid: 7066eec7dce574ecfb30b153e6b235eb
+  - enabled: 1
+    path: Assets/RETRO/Game/Scenes/CoinsRoot.unity
+    guid: ca65916d87ab5e1459f391812f431ce7
   m_configObjects: {}

@@ -3,10 +3,12 @@ using System.Collections;
 
 using Common.Signal;
 using Framework;
+using Common.Utils;
 
-namespace Synergy88 {
+namespace Retroman {
 	
-	public class SettingsRoot : Scene {
+	public class SettingsRoot : Scene
+    {
 
 		public GameObject _toggleBGM, _toggleSFX;
 		bool _BGMswitch, _SFXswitch;
@@ -52,6 +54,12 @@ namespace Synergy88 {
 			});*/
 		}
 
+        public void CreditsOnClick()
+        {
+            _CreditsWindow.SetActive(true);
+            SoundControls.Instance._buttonClick.Play();
+        }
+
         void OnEnable() {
 			base.OnEnable();
 			_CreditsWindow.SetActive(false);
@@ -91,6 +99,12 @@ namespace Synergy88 {
 			}
 			SoundControls.Instance.SetUpSounds();
 		}
+        public void BackButtonClick()
+        {
+            SoundControls.Instance._buttonClick.Play();
+
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+        }
 	}
 
 }

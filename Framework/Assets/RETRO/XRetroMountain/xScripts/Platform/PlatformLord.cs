@@ -318,8 +318,9 @@ public class PlatformLord: MonoBehaviour {
 			{
 				_levelProgression++;
 				Time.timeScale += 0.1f;
-				_platMinion.transform.eulerAngles = new Vector3(0,45,0);
-			}
+				_platMinion.transform.GetChild(0).eulerAngles = new Vector3(0,45,0);
+
+            }
 			else
 			{
 				Time.timeScale += 0.1f;
@@ -332,21 +333,31 @@ public class PlatformLord: MonoBehaviour {
 		{
 			SetAppearance();
 			_platformAction = PlatformAction.SPAWNNORMAL;
-		}
+            
+        }
 		else if(_previousPlatformAction == PlatformAction.SPAWNTRAP)
 		{
 			_platformAction = PlatformAction.SPAWNHEIGHCHANGE;
-			
-		}
+
+        }
 		else if(_previousPlatformAction == PlatformAction.SPAWNTRAPPATTERN)
 		{
 			_platformAction = PlatformAction.SPAWNNORMAL;
+            
 
-		}
+            //  TEST
+            //  NICE TO HAVE HERE
+            /*
+            _platformAction = PlatformAction.SPAWNTURN;
+            SwitchDirection(_temp, _platMinion);
+            */
+
+        }
 		else if(_previousPlatformAction == PlatformAction.SPAWNTURN)
 		{
 			_platformAction = PlatformAction.SPAWNNORMAL;
-		}
+
+        }
 		else if(_previousPlatformAction == PlatformAction.SPAWNNORMAL)
 		{
 			//TURNING CONDITION
@@ -363,7 +374,9 @@ public class PlatformLord: MonoBehaviour {
 			{
 				_trapType = (TrapType)Random.Range(0,3);
 				_platformAction = PlatformAction.SPAWNTRAP;
-			}
+
+
+            }
 		}
 		/*
 		switch(_previousPlatformAction)

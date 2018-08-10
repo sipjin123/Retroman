@@ -64,6 +64,11 @@ namespace Framework
             LabelVersion.gameObject.SetActive(false);
             //#endif
         }
+        public void Show()
+        {
+            LabelVersion.gameObject.SetActive(true);
+
+        }
 
         public void UpdateLabel()
         {

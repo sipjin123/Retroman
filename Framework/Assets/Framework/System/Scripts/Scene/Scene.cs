@@ -20,7 +20,7 @@ using Common.Query;
 using Common.Signal;
 
 using Common.Utils;
-
+using Sirenix.OdinInspector;
 namespace Framework
 {
     using UScene = UnityEngine.SceneManagement.Scene;
@@ -41,7 +41,7 @@ namespace Framework
     /// <summary>
     /// This is the base MVP Presenter class to be extended by each scene root.
     /// </summary>
-    public partial class Scene : MonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour
     {
         /// <summary>
         /// String Dropdown representation of EScene enum in Editor

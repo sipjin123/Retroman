@@ -7,9 +7,9 @@ public class CharacterHitbox : MonoBehaviour {
 
 	void OnTriggerEnter(Collider hit)
 	{
-		if(hit.gameObject.tag == "Ground")
+		if(LayerMask.LayerToName( hit.gameObject.layer) == "GroundOnly")
 		{
-			Factory.Get<DataManagerService>().GameControls.GameOverIT();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOver());
 		}
 	}
 }

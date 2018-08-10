@@ -15,8 +15,6 @@ using Common.Query;
 
 using Framework;
 
-using Sandbox.Security;
-
 namespace Sandbox.Audio
 {
     /// <summary>
@@ -41,6 +39,7 @@ namespace Sandbox.Audio
                 result.Set(AudioPlayer.IsMuted);
             });
 
+            /*
             if (Prefs.GetInt(Const.MUSIC_MUTE, 0) == 1)
             {
                 AudioPlayer.MuteAllAudio(true);
@@ -48,7 +47,7 @@ namespace Sandbox.Audio
             else
             {
                 AudioPlayer.MuteAllAudio(false);
-            }
+            }*/
         }
 
         protected override void Start()

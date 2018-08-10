@@ -17,7 +17,7 @@ public class ManualAnimationScene : MonoBehaviour {
 	int _waypoint;
 
 	Vector3 _thispos;
-
+    public GameObject[] shadowsToDisable;
 	// Use this for initialization
 	void Start () {
 		_waypoint = 1;
@@ -57,8 +57,14 @@ public class ManualAnimationScene : MonoBehaviour {
 			}
 			catch{}
 		}
+        if (_waypoint == 1)
+            shadowsToDisable[0].SetActive(false);
+        if (_waypoint == 2)
+            shadowsToDisable[1].SetActive(true);
+        if (_waypoint == 3)
+            shadowsToDisable[1].SetActive(false);
 
-	}
+    }
 	float _distLenght;
 	float _startTime;
 	float _moveSpeed = 10;
