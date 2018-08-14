@@ -328,7 +328,8 @@ namespace Retroman
                     .Then(_=> Scene.UnloadScenePromise(EScene.Preloader))
                     .Then(_=> 
                     {
-
+                        Factory.Get<DataManagerService>().IfCanBack = true;
+                    RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
                         RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                     });
             }));
