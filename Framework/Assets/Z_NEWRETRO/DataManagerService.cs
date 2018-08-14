@@ -18,12 +18,13 @@ namespace Retroman
         public int CurrentCharacterSelected ;
 
         public bool IFTestMode;
-
+        public bool IfCanBack;
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
-
+                if (IfCanBack == false)
+                    return;
                 SoundControls.Instance._buttonClick.Play();
                 _MessageBroker.Publish(new PressBackButtonINIT());
             }
