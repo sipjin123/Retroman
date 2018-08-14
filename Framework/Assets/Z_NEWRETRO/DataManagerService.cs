@@ -17,16 +17,26 @@ namespace Retroman
 
         public int CurrentCharacterSelected ;
 
+        public bool IFTestMode;
+
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
+
+                SoundControls.Instance._buttonClick.Play();
                 _MessageBroker.Publish(new PressBackButtonINIT());
+            }
+            if(Input.GetKeyDown(KeyCode.X) || Input.touchCount >2)
+            {
+                IFTestMode = !IFTestMode;
             }
         }
         
         void Awake()
         {
+            Input.multiTouchEnabled = false;
+            IFTestMode = false;
             Factory.Register<DataManagerService>(this);
 
             GameCoins = PlayerPrefs.GetFloat(TotalGold_Key,0);

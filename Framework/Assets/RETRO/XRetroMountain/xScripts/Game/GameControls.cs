@@ -59,12 +59,14 @@ public class GameControls : MonoBehaviour
             }).AddTo(this);
             Factory.Get<DataManagerService>().MessageBroker.Receive<GameOver>().Subscribe(_ =>
             {
-
+                if (Factory.Get<DataManagerService>().IFTestMode)
+                {
+                    return;
+                }
                 GameOverIT();
             }).AddTo(this);
             Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_=>
             {
-
                 StartButton();
             }).AddTo(this);
 
@@ -115,12 +117,12 @@ public class GameControls : MonoBehaviour
 
         public void StartButton()
         {
-            _camAnim.enabled = true;
-            _playerAnim.enabled = true;
             StartCoroutine(DelayStart());
         }
         public IEnumerator DelayStart()
         {
+            _camAnim.enabled = true;
+            _playerAnim.enabled = true;
             yield return new WaitForSeconds(2.55f);
 
             Debug.LogError("game controls :: delayed start");
@@ -128,7 +130,7 @@ public class GameControls : MonoBehaviour
             _playerAnim.enabled = false;
 
             Factory.Get<DataManagerService>().MessageBroker.Publish(new PauseGame { IfPause = false });
-            InGameWindow.SetActive(true);
+        InGameWindow.SetActive(true);
 
             UIScore.text = "0";
             UIScore2.text = "0";

@@ -768,27 +768,27 @@ MonoBehaviour:
     IfInGameItem: 1
   - ItemNameId: Cat
     ItemStoreId: 2
-    ItemPrice: 5
+    ItemPrice: 10
     ItemImage: {fileID: 479630115}
     IfInGameItem: 1
   - ItemNameId: Donkey
     ItemStoreId: 3
-    ItemPrice: 5
+    ItemPrice: 15
     ItemImage: {fileID: 1611251263}
     IfInGameItem: 1
   - ItemNameId: Sonic
     ItemStoreId: 4
-    ItemPrice: 5
+    ItemPrice: 20
     ItemImage: {fileID: 135792071}
     IfInGameItem: 1
   - ItemNameId: Unicorn
     ItemStoreId: 5
-    ItemPrice: 5
+    ItemPrice: 25
     ItemImage: {fileID: 1727470735}
     IfInGameItem: 1
   - ItemNameId: Yoshi
     ItemStoreId: 6
-    ItemPrice: 5
+    ItemPrice: 40
     ItemImage: {fileID: 1074943383}
     IfInGameItem: 1
   CurrentCharacterSelected: 0

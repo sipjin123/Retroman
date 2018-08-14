@@ -135,17 +135,31 @@ namespace Retroman
 
             RetroMessageBroker.Receive<ToggleSetting>().Subscribe(__ =>
             {
+                Debug.LogError("Toggle my settings :: "+__.IfActive);
                 if (__.IfActive)
                 {
                     RetroMessageBroker.Publish(new ToggleCoins { IfActive = false });
                     ifSettingsActive = true;
-                    Scene.LoadSceneAdditivePromise<SettingsRoot>(EScene.SettingsRoot);
+                    Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot);
                 }
                 else
                 {
-                    RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                     ifSettingsActive = false;
-                    Scene.UnloadScenePromise(EScene.SettingsRoot);
+                   // Scene.UnloadScenePromise(EScene.SettingsRoot);
+                  //  Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot);
+                    //RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
+
+
+                    Promise.AllSequentially(Scene.EndFramePromise)
+                        .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
+                        .Then(_ => Scene.UnloadScenePromise(EScene.SettingsRoot))
+                        // .Then(_ => Scene.LoadScenePromise<SplashMovieRoot>(splashMoveScene))
+                        .Then(_ => Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot))
+                        .Then(_ => Scene.UnloadScenePromise(EScene.Preloader))
+                        .Then(_ =>
+                        {
+                            RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
+                        });
                 }
             }).AddTo(this);
 
