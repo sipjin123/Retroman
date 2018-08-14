@@ -132,6 +132,10 @@ namespace Retroman
         //==========================================================================================================================================
         void FixedUpdate()
         {
+            if (Factory.Get<DataManagerService>().IFTestMode)
+            {
+                transform.position = new Vector3(transform.position.x, 7, transform.position.z);
+            }
             RaycastFunction();
             if (!_activePlayerObject)
             {

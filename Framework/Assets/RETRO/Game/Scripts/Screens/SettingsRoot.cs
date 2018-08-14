@@ -4,6 +4,8 @@ using System.Collections;
 using Common.Signal;
 using Framework;
 using Common.Utils;
+using UniRx;
+using Common.Query;
 
 namespace Retroman {
 	
@@ -14,7 +16,8 @@ namespace Retroman {
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
 
-        void Awake() {
+        void Awake()
+        {
 			if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
 				_BGMswitch = false;
 			else
@@ -27,8 +30,19 @@ namespace Retroman {
 			_toggleSFX.SetActive( _SFXswitch );
 			_toggleBGM.SetActive( _BGMswitch );
 
+            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
+            {
+                if (_.BackButtonType == BackButtonType.SceneIsTitle)
+                {
+                    if (QuerySystem.Query<bool>(QueryIds.IF_SETTINGS_ACTIVE) == true)
+                    {
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+                    }
+                }
+            });
 
-			base.Awake();
+             base.Awake();
 		}
 
         void Start() {

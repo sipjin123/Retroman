@@ -80,7 +80,7 @@ public class CameraControls : MonoBehaviour {
 			return;
 		}
 	}
-    private void OnGUI()
+    private void saddaOnGUI()
     {
         GUI.Box(new Rect(0, 0, 100, 30), ""+_lerpValue);
         GUI.Box(new Rect(0, 30, 100, 30), "" + _lerpToCamSwitch);

@@ -38,8 +38,8 @@ namespace Retroman
 
             CScore1.text = "" + PlayerPrefs.GetInt("curSkor", 0);
             CScore2.text = "" + PlayerPrefs.GetInt("curSkor", 0);
-            HiScore1.text = "" + PlayerPrefs.GetInt("hiSkor", 0);
-            HiScore2.text = "" + PlayerPrefs.GetInt("hiSkor", 0);
+            HiScore1.text = "Best Score " + PlayerPrefs.GetInt("hiSkor", 0);
+            HiScore2.text = "Best Score " + PlayerPrefs.GetInt("hiSkor", 0);
 
             int currChar = Factory.Get<DataManagerService>().CurrentCharacterSelected -1;
             CharImage.sprite = Factory.Get<DataManagerService>().ShopItems[currChar].ItemImage.sprite;
@@ -65,8 +65,7 @@ namespace Retroman
                 {
                     if (ResultsCanvas.enabled)
                     {
-                        SoundControls.Instance._buttonClick.Play();
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+                        GoToTitlebutton();
                     }
                     else
                     {
@@ -97,19 +96,24 @@ namespace Retroman
         {
             base.OnDestroy();
         }
-
-
+        public Canvas SpamBlocker;
+        public void GoToTitlebutton()
+        {
+            SpamBlocker.enabled = true;
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+            Debug.LogError("Toggle OFF!!");
+            SoundControls.Instance._buttonClick.Play();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+        }
         void SetupButtons()
         {
             AddButtonHandler(EButton.GoToTitle, delegate (ButtonClickedSignal signal)
             {
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
-                Debug.LogError("Toggle OFF!!");
-                SoundControls.Instance._buttonClick.Play();
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+                GoToTitlebutton();
             });
             AddButtonHandler(EButton.ResetGame, delegate (ButtonClickedSignal signal)
             {
+                SpamBlocker.enabled = true;
                 SoundControls.Instance._buttonClick.Play();
                 GameBlocker.SetActive(true);
                 if(PauseResetButton)
@@ -118,6 +122,7 @@ namespace Retroman
             });
             AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
             {
+                SpamBlocker.enabled = true;
                 SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });

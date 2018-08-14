@@ -594,6 +594,10 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11466576, guid: 516b647640d714551be76175a7efb3ce, type: 2}
+      propertyPath: m_RaycastTarget
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11450192, guid: 516b647640d714551be76175a7efb3ce, type: 2}
     - {fileID: 11437968, guid: 516b647640d714551be76175a7efb3ce, type: 2}
