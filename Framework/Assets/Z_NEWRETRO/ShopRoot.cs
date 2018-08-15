@@ -22,6 +22,11 @@ namespace Retroman
         protected override void Awake()
         {
             base.Awake();
+
+            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            {
+                GoBack();
+            });
         }
 
         protected override void Start()
