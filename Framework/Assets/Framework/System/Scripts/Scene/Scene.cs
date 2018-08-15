@@ -112,11 +112,11 @@ namespace Framework
         /// <summary>
         /// Mapping of button types and click, hover, unhover, press, and release handlers.
         /// </summary>
-        protected Dictionary<EButton, Action<ButtonClickedSignal>> ButtonClickedMap = new Dictionary<EButton, Action<ButtonClickedSignal>>();
-        protected Dictionary<EButton, Action<ButtonHoveredSignal>> ButtonHoveredMap = new Dictionary<EButton, Action<ButtonHoveredSignal>>();
-        protected Dictionary<EButton, Action<ButtonUnhoveredSignal>> ButtonUnhoveredMap = new Dictionary<EButton, Action<ButtonUnhoveredSignal>>();
-        protected Dictionary<EButton, Action<ButtonPressedSignal>> ButtonPressedMap = new Dictionary<EButton, Action<ButtonPressedSignal>>();
-        protected Dictionary<EButton, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<EButton, Action<ButtonReleasedSignal>>();
+        [SerializeField] protected Dictionary<EButton, Action<ButtonClickedSignal>> ButtonClickedMap = new Dictionary<EButton, Action<ButtonClickedSignal>>();
+        [SerializeField] protected Dictionary<EButton, Action<ButtonHoveredSignal>> ButtonHoveredMap = new Dictionary<EButton, Action<ButtonHoveredSignal>>();
+        [SerializeField] protected Dictionary<EButton, Action<ButtonUnhoveredSignal>> ButtonUnhoveredMap = new Dictionary<EButton, Action<ButtonUnhoveredSignal>>();
+        [SerializeField] protected Dictionary<EButton, Action<ButtonPressedSignal>> ButtonPressedMap = new Dictionary<EButton, Action<ButtonPressedSignal>>();
+        [SerializeField] protected Dictionary<EButton, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<EButton, Action<ButtonReleasedSignal>>();
 
 
         [SerializeField]

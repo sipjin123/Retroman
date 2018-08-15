@@ -22,11 +22,6 @@ namespace Retroman
         protected override void Awake()
         {
             base.Awake();
-
-            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
-            {
-                GoBack();
-            });
         }
 
         protected override void Start()
@@ -138,12 +133,18 @@ namespace Retroman
                 SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
             });
+
             AddButtonHandler(EButton.StartGame, delegate (ButtonClickedSignal signal)
             {
                 PlayButton.interactable = false;
                 SoundControls.Instance._buttonClick.Play();
                 Debug.LogError("STart GAme Button");
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
+            });
+
+            AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            {
+                GoBack();
             });
         }
 
