@@ -46,30 +46,33 @@ namespace Framework
             private set { _ButtonType = value; }
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             // Update Button Type & Depth from Editor
             SelectedButton = CachedButton;
             ButtonType = CachedButton.ToEnum<EButton>();
         }
 
-        private void Start()
+        protected virtual void Start()
         {
             Assertion.Assert(ButtonType != EButton.Invalid);
 
         }
         
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             // Update Button Type & Depth from Editor
             SelectedButton = CachedButton;
             ButtonType = CachedButton.ToEnum<EButton>();
         }
 
-        private void Reset()
+        protected virtual void Reset()
         {
             Debug.LogFormat(D.CHECK + "Button::Reset Name:{0} Setup EventTrigger!\n", gameObject.name);
-            SetupButtonEvents();
+        }
+
+        protected virtual void OnDestroy()
+        {
         }
         
         /// <summary>

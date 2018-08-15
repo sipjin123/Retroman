@@ -53,45 +53,6 @@ namespace Framework
         private UnityAction<BaseEventData> OnPressedAction;
         private UnityAction<BaseEventData> OnReleasedAction;
 
-        [Button(25)]
-        public void SetupButtonEvents()
-        {
-            EventTrigger trigger = GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
-
-            Action<EventTriggerType, UnityAction<BaseEventData>> AddEvent = (EventTriggerType type, UnityAction<BaseEventData> action) =>
-            {
-                EventTrigger.Entry entry = new EventTrigger.Entry();
-                entry.eventID = type;
-                entry.callback = new EventTrigger.TriggerEvent();
-                entry.callback.AddListener(action);
-                trigger.triggers.Add(entry);
-            };
-
-            OnClickedAction += _ => OnClickedButton();
-            OnHoveredAction += _ => OnHoveredButton();
-            OnUnhoveredAction += _ => OnUnhoveredButton();
-            OnPressedAction += _ => OnPressedButton();
-            OnReleasedAction += _ => OnReleasedButton();
-
-            AddEvent(EventTriggerType.PointerClick, OnClickedAction);
-            AddEvent(EventTriggerType.PointerEnter, OnHoveredAction);
-            AddEvent(EventTriggerType.PointerExit, OnUnhoveredAction);
-            AddEvent(EventTriggerType.PointerDown, OnPressedAction);
-            AddEvent(EventTriggerType.PointerUp, OnReleasedAction);
-        }
-
-        [Button(25)]
-        public void CleanupButtonEvents()
-        {
-            OnClickedAction -= _ => OnClickedButton();
-            OnHoveredAction -= _ => OnHoveredButton();
-            OnUnhoveredAction -= _ => OnUnhoveredButton();
-            OnPressedAction -= _ => OnPressedButton();
-            OnReleasedAction -= _ => OnReleasedButton();
-
-            //EventTrigger trigger = GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
-        }
-        
         public ValueDropdownList<string> Buttons()
         {
             Buttonlist = Buttonlist ?? GenerateButtonList();
