@@ -43,6 +43,11 @@ namespace Retroman {
             });
 
              base.Awake();
+
+            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            {
+                BackButtonClick();
+            });
 		}
 
         public void CreditsOnClick()
