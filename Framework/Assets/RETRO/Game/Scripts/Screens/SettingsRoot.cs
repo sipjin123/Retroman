@@ -16,7 +16,7 @@ namespace Retroman {
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
 
-        void Awake()
+        protected override void Awake()
         {
 			if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
 				_BGMswitch = false;
@@ -45,36 +45,13 @@ namespace Retroman {
              base.Awake();
 		}
 
-        void Start() {
-
-            /*
-
-			this.AddButtonHandler(EButtonType.Credits, (ISignalParameters parameters) => {
-
-
-				_CreditsWindow.SetActive(true);
-				SoundControls.Instance._buttonClick.Play();
-			});
-
-			this.AddButtonHandler(EButtonType.Restore, (ISignalParameters parameters) => {
-				// toggle interstitals
-				S88Signals.ON_TOGGLE_INTERSTITIAL_ADS.Dispatch();
-
-				// test unity ads
-				S88Signals.ON_SHOW_UNITY_ADS.ClearParameters();
-				S88Signals.ON_SHOW_UNITY_ADS.AddParameter(S88Params.UNITY_ADS_REGION, "001Region");
-				S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
-				SoundControls.Instance._buttonClick.Play();
-			});*/
-		}
-
         public void CreditsOnClick()
         {
             _CreditsWindow.SetActive(true);
             SoundControls.Instance._buttonClick.Play();
         }
 
-        void OnEnable() {
+        protected override void OnEnable() {
 			base.OnEnable();
 			_CreditsWindow.SetActive(false);
 		}
