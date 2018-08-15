@@ -7,9 +7,9 @@ namespace Synergy88 {
 	[Serializable]
 	public class ShopItemData : IItemData {
 		
-		public string ItemId;
-		public string ItemStoreId;
-		public string ItemPrice;
+		public string ItemNameId;
+		public int ItemStoreId;
+		public float ItemPrice;
 		public Image ItemImage;
 		public bool IfInGameItem;
 	}

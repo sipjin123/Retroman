@@ -192,5 +192,10 @@ namespace Framework
         //OS Related
         public const string AndroidSDKVersion = "AndroidSDKVersion";
         public const string IOsDeviceGeneration = "IOsDeviceGeneration";
+
+
+
+
+        public const string IF_SETTINGS_ACTIVE = "IfACtiveSettings";
     }
 }

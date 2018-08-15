@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{8AB9500B-1473-3BF7-C068-E2B9DBAB7317}|">
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Z_NEWRETRO/ShopRoot.cs">
+    <Files>
+      <File FileName="Assets/Framework/System/Scripts/Buttons/StreamedButton.cs" Line="30" Column="6" />
+      <File FileName="Assets/Framework/System/Scripts/Utils/Button.cs" Line="1" Column="1" />
+      <File FileName="Assets/RETRO/Game/Scripts/Screens/SettingsRoot.cs" Line="48" Column="14" />
+      <File FileName="Assets/Z_NEWRETRO/ShopRoot.cs" Line="26" Column="49" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -3,30 +3,61 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using Sirenix.OdinInspector;
+using Synergy88;
 
 namespace Retroman
 {
-    public class DataManagerService : MonoBehaviour {
+    public class DataManagerService : SerializedMonoBehaviour {
+
+        public List<ShopItemData> ShopItems;
 
         MessageBroker _MessageBroker;
         public MessageBroker MessageBroker { get { return _MessageBroker; } }
+
+        public int CurrentCharacterSelected ;
+
+        public bool IFTestMode;
+        public bool IfCanBack;
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (IfCanBack == false)
+                    return;
+                SoundControls.Instance._buttonClick.Play();
+                _MessageBroker.Publish(new PressBackButtonINIT());
+            }
+            if(Input.GetKeyDown(KeyCode.X) || Input.touchCount >2)
+            {
+                IFTestMode = !IFTestMode;
+            }
+        }
+        
         void Awake()
         {
+            Input.multiTouchEnabled = false;
+            IFTestMode = false;
             Factory.Register<DataManagerService>(this);
 
-            GameCoins = PlayerPrefs.GetFloat(TotalGold,0);
-
+            GameCoins = PlayerPrefs.GetFloat(TotalGold_Key,0);
+            SaveThisItem(ShopItems[0].ItemNameId);
+            CurrentCharacterSelected = PlayerPrefs.GetInt(CurrentCharacterSelected_Key,1);
         }
 
-        public void ResetPlayerPrefs()
+        public void SaveThisItem(string item)
         {
 
-            PlayerPrefs.SetInt("BoughtCat", 0);
-            PlayerPrefs.SetInt("BoughtUnicorn", 0);
-            PlayerPrefs.SetInt("BoughtYoshi", 0);
-            PlayerPrefs.SetInt("BoughtSonic", 0);
-            PlayerPrefs.SetInt("BoughtDonkey", 0);
-            PlayerPrefs.SetInt("CurrentCharacter", 0);
+            PlayerPrefs.SetInt(item, 1);
+        }
+
+        public bool DoesThisExist(string item)
+        {
+
+            if(PlayerPrefs.GetInt(item,0) == 1)
+            return true;
+            return false;
+
         }
 
         public void InjectBroker(MessageBroker broker)
@@ -45,29 +76,33 @@ namespace Retroman
         private void UpdateCoin(float coins)
         {
             GameCoins += coins;
-            PlayerPrefs.SetFloat(TotalGold, GameCoins);
+            PlayerPrefs.SetFloat(TotalGold_Key, GameCoins);
         }
+
+        public void UpdateCurrentCharacter(int currentChar)
+        {
+            CurrentCharacterSelected = currentChar;
+            PlayerPrefs.SetInt(CurrentCharacterSelected_Key, currentChar);
+        }
+        public int GetCurrentCharacter()
+        {
+            return PlayerPrefs.GetInt(CurrentCharacterSelected_Key, 1);
+        }
+
         public float GetTotalCoins()
         {
 
             return GameCoins;
         }
-
-        private PlayerControls _PlayerControls;
-        public PlayerControls PlayerControls { get { return _PlayerControls; } }
-        public void SetPlayer(PlayerControls controls)
-        {
-            _PlayerControls = controls;
-        }
-        private GameControls _GameControls;
-        public GameControls GameControls { get { return _GameControls; } }
-        public void SetGameControls(GameControls controls)
-        {
-            _GameControls = controls;
-        }
         
+        
+        [Button]
+        void AddCoins()
+        {
+            PlayerPrefs.SetFloat(TotalGold_Key, 100);
+        }
 
-        public static string CurrentCharacterSelected = "CurrentCharacterSelected";
-        public static string TotalGold = "TotalGold";
+        public static string CurrentCharacterSelected_Key = "CurrentCharacterSelected";
+        public static string TotalGold_Key = "TotalGold";
     }
 }

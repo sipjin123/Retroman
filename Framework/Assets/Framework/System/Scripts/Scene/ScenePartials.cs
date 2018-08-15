@@ -12,7 +12,7 @@ using UniRx;
 using Common;
 using Common.Query;
 using Common.Signal;
-
+using Sirenix.OdinInspector;
 namespace Framework
 {
     using System;
@@ -27,7 +27,7 @@ namespace Framework
 
     #region Scene extension (Load, Unload, and Wait)
 
-    public partial class Scene : MonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour
     {
         public static ValueDropdownList<string> SceneList;
 

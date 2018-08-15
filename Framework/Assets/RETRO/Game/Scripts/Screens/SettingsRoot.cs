@@ -3,16 +3,21 @@ using System.Collections;
 
 using Common.Signal;
 using Framework;
+using Common.Utils;
+using UniRx;
+using Common.Query;
 
-namespace Synergy88 {
+namespace Retroman {
 	
-	public class SettingsRoot : Scene {
+	public class SettingsRoot : Scene
+    {
 
 		public GameObject _toggleBGM, _toggleSFX;
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
 
-        void Awake() {
+        protected override void Awake()
+        {
 			if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
 				_BGMswitch = false;
 			else
@@ -25,34 +30,33 @@ namespace Synergy88 {
 			_toggleSFX.SetActive( _SFXswitch );
 			_toggleBGM.SetActive( _BGMswitch );
 
+            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
+            {
+                if (_.BackButtonType == BackButtonType.SceneIsTitle)
+                {
+                    if (QuerySystem.Query<bool>(QueryIds.IF_SETTINGS_ACTIVE) == true)
+                    {
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+                    }
+                }
+            });
 
-			base.Awake();
+             base.Awake();
+
+            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            {
+                BackButtonClick();
+            });
 		}
 
-        void Start() {
+        public void CreditsOnClick()
+        {
+            _CreditsWindow.SetActive(true);
+            SoundControls.Instance._buttonClick.Play();
+        }
 
-            /*
-
-			this.AddButtonHandler(EButtonType.Credits, (ISignalParameters parameters) => {
-
-
-				_CreditsWindow.SetActive(true);
-				SoundControls.Instance._buttonClick.Play();
-			});
-
-			this.AddButtonHandler(EButtonType.Restore, (ISignalParameters parameters) => {
-				// toggle interstitals
-				S88Signals.ON_TOGGLE_INTERSTITIAL_ADS.Dispatch();
-
-				// test unity ads
-				S88Signals.ON_SHOW_UNITY_ADS.ClearParameters();
-				S88Signals.ON_SHOW_UNITY_ADS.AddParameter(S88Params.UNITY_ADS_REGION, "001Region");
-				S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
-				SoundControls.Instance._buttonClick.Play();
-			});*/
-		}
-
-        void OnEnable() {
+        protected override void OnEnable() {
 			base.OnEnable();
 			_CreditsWindow.SetActive(false);
 		}
@@ -91,6 +95,12 @@ namespace Synergy88 {
 			}
 			SoundControls.Instance.SetUpSounds();
 		}
+        public void BackButtonClick()
+        {
+            SoundControls.Instance._buttonClick.Play();
+
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+        }
 	}
 
 }

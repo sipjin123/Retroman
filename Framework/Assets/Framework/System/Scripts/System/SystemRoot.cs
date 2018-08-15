@@ -26,6 +26,7 @@ namespace Framework
     // alias
     using UColor = UnityEngine.Color;
     using CColor = Framework.Color;
+    using Retroman;
 
     public class SystemRoot : Scene
     {
@@ -63,6 +64,16 @@ namespace Framework
 
             // Call parent's awake
             base.Awake();
+
+            _SystemVersion.Hide();
+            MessageBroker.Default.Receive<ShowVersion>().Subscribe(_ => 
+            {
+                if (_.IfActive)
+                    _SystemVersion.Show();
+                else
+                    _SystemVersion.Hide();
+
+            }).AddTo(this);
             
             Install();
 
@@ -134,6 +145,7 @@ namespace Framework
         {
             StartCoroutine(UnloadAllScenes());
         }
+
         #endregion
     }
 }

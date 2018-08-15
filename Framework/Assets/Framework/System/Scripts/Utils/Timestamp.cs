@@ -13,11 +13,11 @@ using Common.Signal;
 
 namespace Framework
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
 
     [Serializable]
     public class Timestamp
     {
+        /*
         private ObscuredString Key = "Timestamp";
 
         private ObscuredFloat RootTime;
@@ -45,6 +45,6 @@ namespace Framework
         private float GetTime()
         {
             return Time.time * 1000;
-        }
+        }*/
     }
 }

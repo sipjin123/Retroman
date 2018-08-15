@@ -1,6 +1,9 @@
 ﻿ using UnityEngine;
 using System.Collections;
+using Common.Utils;
 
+using UniRx;
+using Retroman;
 public class SoundControls : MonoBehaviour {
 	private static SoundControls _instance;
 	public static SoundControls Instance { get { return _instance; } }
@@ -15,6 +18,16 @@ public class SoundControls : MonoBehaviour {
 	{
 		_instance = this;
 	}
+    public void SetupMessageBroker(MessageBroker broker)
+    {
+        broker.Receive<LaunchGamePlay>().Subscribe(_ =>
+        {
+            REsetupBGM();
+
+
+        }).AddTo(this);
+    }
+
 	void OnEnable()
 	{
 		SetUpSounds();
@@ -41,4 +54,25 @@ public class SoundControls : MonoBehaviour {
 			child.GetComponent<AudioSource>().mute = !sfxswitch;
 		}
 	}
+
+    public void PauseBGM()
+    {
+        _sfxBGM.Pause();
+    }
+    public void REsumeBGM()
+    {
+        _sfxBGM.UnPause();
+    }
+
+    public void REsetupBGM()
+    {
+
+        if (PlayerPrefs.GetInt("BGMSWITCH", 1) == 1)
+        {
+            _sfxBGM.gameObject.SetActive(true);
+            _sfxBGM.time = 0;
+            _sfxBGM.Play();
+        }
+    }
+    
 }
