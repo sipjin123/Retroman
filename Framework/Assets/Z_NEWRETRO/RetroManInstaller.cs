@@ -111,31 +111,29 @@ namespace Retroman
             RetroMessageBroker.Receive<PressBackButtonINIT>().Subscribe(_ => 
             {
                 Debug.LogError("recive signal back");
-                Debug.LogError(Fsm.GetCurrentStateName()
-                    );
-                switch(Fsm.GetCurrentStateName())
-                {
-                    case "game":
-                        Debug.LogError("Cu STate is game");
-                        RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsGame});
-                        break;
-                    case "shop":
+                Debug.LogError(Fsm.GetCurrentStateName() );
+                    switch (Fsm.GetCurrentStateName())
+                    {
+                        case "game":
+                            Debug.LogError("Cu STate is game");
+                            RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsGame });
+                            break;
+                        case "shop":
 
-                        RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsShop });
-                        Debug.LogError("Cu STate is shop");
-                        break;
-                    case "title":
+                            RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsShop });
+                            Debug.LogError("Cu STate is shop");
+                            break;
+                        case "title":
 
-                        RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsTitle });
-                        Debug.LogError("Cu STate is title");
-                        break;
-                    case "settings":
+                            RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsTitle });
+                            Debug.LogError("Cu STate is title");
+                            break;
+                        case "settings":
 
-                        RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsSettings });
-                        Debug.LogError("Cu STate is settings");
-                        break;
-                }
-
+                            RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsSettings });
+                            Debug.LogError("Cu STate is settings");
+                            break;
+                    }
             }).AddTo(this);
 
             RetroMessageBroker.Receive<ChangeScene>().Subscribe(_ =>
@@ -245,19 +243,15 @@ namespace Retroman
             idle.AddAction(new FsmDelegateAction(idle, delegate (FsmState owner)
             {
                 string splashScene = "Splash";
-                string splashMoveScene = "SplashMovie";
 
                 Preloaders preloaders = Preloaders.Preloader001;
 
                 // idle state
                 Promise.All(Scene.LoadScenePromise<SplashRoot>(splashScene))
                     .Then(_ => FSceneObject.GetScene<SplashRoot>(splashScene).Wait())
-                    //.Then(_ => Scene.LoadScenePromise<SplashMovieRoot>(splashMoveScene))
-                   // .Then(_ => FSceneObject.GetScene<SplashMovieRoot>(splashMoveScene).Wait())
                     .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Preloader = Scene.GetSceneRoot<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Preloader.LoadLoadingScreenPromise(preloaders))
-                     //.Then(_ => Fsm.SendEvent(ON_TITLE));
                     .Then(_ => Fsm.SendEvent(ON_PRELOAD));
             }));
 
@@ -290,8 +284,10 @@ namespace Retroman
             {
                 
                 Promise.AllSequentially(Scene.EndFramePromise)
-                    .Then(_ => Scene.LoadScenePromise<GameRoot>(EScene.GameRoot))
+                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
+                    .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
+                    .Then(_ => Scene.UnloadScenePromise(EScene.Preloader))
                     .Then(_=> 
                     {
                         Factory.Get<DataManagerService>().IfCanBack = true;
@@ -322,15 +318,17 @@ namespace Retroman
 
             shop.AddAction(new FsmDelegateAction(shop, delegate (FsmState owner)
             {
-                Debug.LogErrorFormat(D.LOG + "RetroManInstaller::PrepareFsm::Shop\n");
                 Promise.AllSequentially(Scene.EndFramePromise)
                        .Then(_ => Scene.LoadScenePromise<ShopRoot>(EScene.ShopRoot))
-                       .Then(_ => Debug.LogErrorFormat(D.LOG + "RetroManInstaller::PrepareFsm::Shop Shop loaded.\n"));
+                       .Then(_=> {
+                       });
             }));
             settings.AddAction(new FsmDelegateAction(settings, delegate (FsmState owner)
             {
                 Promise.AllSequentially(Scene.EndFramePromise)
-                    .Then(_ => Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot));
+                    .Then(_ => Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot))
+                    .Then(_ => {
+                    });
             }));
 
 

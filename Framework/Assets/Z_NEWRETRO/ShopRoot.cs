@@ -46,8 +46,15 @@ namespace Retroman
         {
             base.OnDestroy();
         }
+
+
+        bool _DisableBackButton;
+        public CanvasGroup InteractiveCanvas;
+
+
+
+
         public GameObject _confirmationWindow;
-        public Text _testTExt;
 
         [SerializeField]
         private GameObject _InsufficientFunds;
@@ -60,6 +67,9 @@ namespace Retroman
         public ShopItemData SelectedItem;
         public List<ShopItem> _GeneratedItems;
         public UnityEngine.UI.Button PlayButton;
+
+
+
         void SetupListeners()
         {
             Debug.LogError("Listeners Yes");
@@ -117,14 +127,6 @@ namespace Retroman
             }
         }
 
-        public void GoBack()
-        {
-            Debug.LogError(D.B + " Going Back ");
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
-            SoundControls.Instance._buttonClick.Play();
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
-
-        }
 
         void SetupButtons()
         {
@@ -145,8 +147,26 @@ namespace Retroman
 
             AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
             {
+
+
                 GoBack();
             });
+        }
+        public void GoBack()
+        {
+            if (_DisableBackButton)
+            {
+                Debug.LogError(D.ERROR + " SPAM IS BLOCKED BY SHOP");
+                return;
+            }
+            _DisableBackButton = true;
+            InteractiveCanvas.interactable = false;
+
+            Debug.LogError(D.B + " Going Back ");
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+            SoundControls.Instance._buttonClick.Play();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+
         }
 
         public void PopulateItems()

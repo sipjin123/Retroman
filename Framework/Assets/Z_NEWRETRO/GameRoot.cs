@@ -26,6 +26,7 @@ namespace Retroman
         public GameObject GameBlocker;
         public GameObject PauseResetButton;
         public Canvas ResultsCanvas;
+        public GameControls _GameControls;
         //--------
         public Image CharImage;
         void ShowResults()
@@ -54,9 +55,14 @@ namespace Retroman
             {
                 if (_.BackButtonType == BackButtonType.SceneIsGame)
                 {
+                    
                     if (ResultsCanvas.enabled)
                     {
                         GoToTitlebutton();
+                    }
+                    else if (_GameControls.CanAccessBackButton() == false)
+                    {
+                        return;
                     }
                     else
                     {

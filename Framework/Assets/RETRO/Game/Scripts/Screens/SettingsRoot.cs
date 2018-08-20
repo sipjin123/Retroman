@@ -16,6 +16,9 @@ namespace Retroman {
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
 
+        public CanvasGroup InteractiveCanvas;
+        bool _DisableBackButton;
+
         protected override void Awake()
         {
 			if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
@@ -30,10 +33,25 @@ namespace Retroman {
 			_toggleSFX.SetActive( _SFXswitch );
 			_toggleBGM.SetActive( _BGMswitch );
 
+
+             base.Awake();
+            SetupSignals();
+            SetupButtons();
+		}
+
+        void SetupButtons()
+        {
+            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            {
+                BackButtonClick();
+            });
+        }
+        void SetupSignals()
+        {
             Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
             {
                 Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button");
-                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button"+ _.BackButtonType);
+                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button" + _.BackButtonType);
                 if (_.BackButtonType == BackButtonType.SceneIsSettings)
                 {
                     Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
@@ -41,14 +59,7 @@ namespace Retroman {
                     BackButtonClick();
                 }
             });
-
-             base.Awake();
-
-            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
-            {
-                BackButtonClick();
-            });
-		}
+        }
 
         public void CreditsOnClick()
         {
@@ -97,10 +108,16 @@ namespace Retroman {
 		}
         public void BackButtonClick()
         {
-            SoundControls.Instance._buttonClick.Play();
+            if (_DisableBackButton)
+            {
+                Debug.LogError(D.ERROR + " SPAM IS BLOCKED BY SETTINGS");
+                return;
+            }
+            _DisableBackButton = true;
+            InteractiveCanvas.interactable = false;
 
+            SoundControls.Instance._buttonClick.Play();
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
-            //Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
         }
 	}
 

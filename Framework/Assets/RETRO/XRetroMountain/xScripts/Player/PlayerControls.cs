@@ -73,6 +73,7 @@ namespace Retroman
         int WaterMaskLayerIndex = 0;
         int GroundMaskLayerIndex = 0;
         int FallStopperMaskLayerIndex = 0;
+
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
