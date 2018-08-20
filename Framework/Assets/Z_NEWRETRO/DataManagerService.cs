@@ -16,6 +16,8 @@ namespace Retroman
         public MessageBroker MessageBroker { get { return _MessageBroker; } }
 
         public int CurrentCharacterSelected ;
+        public float HighScore;
+        public float Score;
 
         public bool IFTestMode;
         public bool IfCanBack;
@@ -43,6 +45,7 @@ namespace Retroman
             GameCoins = PlayerPrefs.GetFloat(TotalGold_Key,0);
             SaveThisItem(ShopItems[0].ItemNameId);
             CurrentCharacterSelected = PlayerPrefs.GetInt(CurrentCharacterSelected_Key,1);
+            HighScore = PlayerPrefs.GetInt(HighScore_Key, 0);
         }
 
         public void SaveThisItem(string item)
@@ -94,8 +97,24 @@ namespace Retroman
 
             return GameCoins;
         }
-        
-        
+        public float GetHighScore()
+        {
+            return HighScore;
+        }
+        public float GetScore()
+        {
+            return Score;
+        }
+        public void SetScore(float score)
+        {
+            Score = score;
+        }
+        public void SetHighScore(float highScore)
+        {
+            HighScore = highScore;
+        }
+
+
         [Button]
         void AddCoins()
         {
@@ -104,5 +123,6 @@ namespace Retroman
 
         public static string CurrentCharacterSelected_Key = "CurrentCharacterSelected";
         public static string TotalGold_Key = "TotalGold";
+        public static string HighScore_Key = "HighScore";
     }
 }

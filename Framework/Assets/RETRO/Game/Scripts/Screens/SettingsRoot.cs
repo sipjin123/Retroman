@@ -32,13 +32,13 @@ namespace Retroman {
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
             {
-                if (_.BackButtonType == BackButtonType.SceneIsTitle)
+                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button");
+                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button"+ _.BackButtonType);
+                if (_.BackButtonType == BackButtonType.SceneIsSettings)
                 {
-                    if (QuerySystem.Query<bool>(QueryIds.IF_SETTINGS_ACTIVE) == true)
-                    {
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
-                    }
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+
+                    BackButtonClick();
                 }
             });
 
@@ -99,7 +99,8 @@ namespace Retroman {
         {
             SoundControls.Instance._buttonClick.Play();
 
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+            //Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
         }
 	}
 

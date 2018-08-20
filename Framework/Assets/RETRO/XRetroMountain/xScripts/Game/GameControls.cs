@@ -2,40 +2,38 @@
 using System.Collections;
 using UnityEngine.UI;
 using Common.Utils;
-
-
 using Retroman;
 using UniRx;
-
-public class GameControls : MonoBehaviour
-    {
+using Sirenix.OdinInspector;
+public class GameControls : SerializedMonoBehaviour
+{
         #region VARIABLES
 
-        public enum GameState
-        {
-            START,
-            GAMEOVER
-        }
-        public GameState _gameState;
 
         //SCORING
         private float Score;
-        public Text UIScore;
-        public Text UIScore2;
-        public Text UIHighScore;
-        public Text UIHighScore2;
+        [FoldoutGroup("Scoring"), SerializeField]
+        private Text 
+            UIScore, 
+            UIScore2,
+            UIHighScore,
+            UIHighScore2;
+
+        [FoldoutGroup("Buttons"), SerializeField]
+        private GameObject _pauseButton, _resumeButton;
+        [FoldoutGroup("Buttons"), SerializeField]
+        private UnityEngine.UI.Button ResetButton;
+
+
+
 
         //UI WINDOWS
-        public GameObject InGameWindow;
-        public GameObject _resultCharParent;
-        public GameObject _pauseButton, _resumeButton;
+        public Canvas InGameWindow;
 
-    public UnityEngine.UI.Button ResetButton;
         //INTRO ANIMATIONS
         public ManualAnimationScene _camAnim, _playerAnim;
 
         //IN GAME OPTIONS
-        bool ifGameOverplayed;
         public bool _isPaused;
 
         public GameObject _startUpDesign;
@@ -84,7 +82,6 @@ public class GameControls : MonoBehaviour
         void Start()
         {
             _isPaused = false;
-            _gameState = GameState.START;
             Score = 0;
         }
         public IEnumerator TimeBombStartDesign()
@@ -101,17 +98,6 @@ public class GameControls : MonoBehaviour
 
             UIScore.text = "" + (int)Score;
             UIScore2.text = "" + (int)Score;
-        }
-        void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                StartButton();
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                ResetGame();
-            }
         }
     //==========================================================================================================================================
 
@@ -130,14 +116,13 @@ public class GameControls : MonoBehaviour
             _playerAnim.enabled = false;
 
             Factory.Get<DataManagerService>().MessageBroker.Publish(new PauseGame { IfPause = false });
-        InGameWindow.SetActive(true);
+            InGameWindow.enabled = (true);
 
             UIScore.text = "0";
             UIScore2.text = "0";
-            UIHighScore.text = "Best " + PlayerPrefs.GetInt("hiSkor", 0);
-            UIHighScore2.text = "Best " + PlayerPrefs.GetInt("hiSkor", 0);
+            UIHighScore.text = "Best " + Factory.Get<DataManagerService>().GetHighScore();
+            UIHighScore2.text = "Best " + Factory.Get<DataManagerService>().GetHighScore();
 
-            Debug.LogError("game controls :: Updated UI Stuff");
             StartCoroutine(TimeBombStartDesign());
         }
         //==========================================================================================================================================
@@ -177,61 +162,44 @@ public class GameControls : MonoBehaviour
         #region GAME OVER
         void GameOverIT()
         {
-            _gameState = GameState.GAMEOVER;
-            if (_gameState == GameState.GAMEOVER)
-            {
-                if (!ifGameOverplayed)
-                {
-                //  Factory.Get<DataManagerService>().PlayerControls._deathAnim.SetActive(true);
+                
+                    //  Factory.Get<DataManagerService>().PlayerControls._deathAnim.SetActive(true);
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new EnableRagdoll());
                 StartCoroutine(GameOverDelay());
-                    ifGameOverplayed = true;
-                }
+                
                 SoundControls.Instance._sfxBGM.gameObject.SetActive(false);
                 // Factory.Get<DataManagerService>().PlayerControls.enabled = false;
 
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new EnablePlayerControls { IfACtive = false});
         }
-        }
         public IEnumerator GameOverDelay()
         {
-            InGameWindow.SetActive(false);
-            //Factory.Get<DataManagerService>().PlayerControls.transform.GetChild(0).gameObject.SetActive(false);
-        
+            InGameWindow.enabled = (false);
+
             Factory.Get<DataManagerService>().MessageBroker.Publish(new DisablePlayableCharacter());
-            //Factory.Get<DataManagerService>().PlayerControls._shadowObject.SetActive(false);
-
             Factory.Get<DataManagerService>().MessageBroker.Publish(new EnablePlayerShadows { IfActive = false });
-
-
             Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = (int)Score });
 
             //SET SCORE
-            PlayerPrefs.SetInt("curSkor", (int)Score);
+            Factory.Get<DataManagerService>().SetScore(Score);
+            if (Score > Factory.Get<DataManagerService>().GetHighScore())
+            {
+                Factory.Get<DataManagerService>().SetHighScore(Score);
+            }
 
-            //SET HIGH SCORE
-            if (Score > PlayerPrefs.GetInt("hiSkor", 0))
-                PlayerPrefs.SetInt("hiSkor", (int)Score);
-            UIHighScore.GetComponent<Text>().text = "HS: " + PlayerPrefs.GetInt("hiSkor", 0);
-            UIHighScore2.GetComponent<Text>().text = "HS: " + PlayerPrefs.GetInt("hiSkor", 0);
+            UIHighScore.GetComponent<Text>().text = "HS: " + Factory.Get<DataManagerService>().GetHighScore();
+            UIHighScore2.GetComponent<Text>().text = "HS: " + Factory.Get<DataManagerService>().GetHighScore();
 
             //SOUND EFFECTS
             SoundControls.Instance._sfxDie.Play();
 
-
             //SET DELAY
             yield return new WaitForSeconds(2);
-            /*
-            _resultCharParent.SetActive(true);
-            _resultCharParent.transform.GetChild(PlayerPrefs.GetInt("CurrentCharacter", 0) + 1).gameObject.SetActive(true);
-            */
             Time.timeScale = 0;
 
             Factory.Get<DataManagerService>().MessageBroker.Publish(new EndGame ());
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
 
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
-
-
-    }
+        }
         #endregion
     }

@@ -65,10 +65,6 @@ namespace Retroman
     {
         public int Angle;
     }
-    public class ToggleSetting
-    {
-        public bool IfActive;
-    }
     public class ToggleCoins
     {
         public bool IfActive;
@@ -142,5 +138,6 @@ public enum BackButtonType
     SceneIsTitle,
     SceneIsShop,
     SceneIsGame,
-    ExitGame
+    ExitGame,
+    SceneIsSettings
 }
