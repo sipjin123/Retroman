@@ -30,6 +30,13 @@ public class GameControls : SerializedMonoBehaviour
         //UI WINDOWS
         public Canvas InGameWindow;
 
+        public bool CanAccessBackButton()
+        {
+            if (InGameWindow.enabled)
+                return true;
+            return false;
+        }
+
         //INTRO ANIMATIONS
         public ManualAnimationScene _camAnim, _playerAnim;
 
@@ -129,9 +136,9 @@ public class GameControls : SerializedMonoBehaviour
         #region IN GAME BUTTONS
         public void LevelPause(bool _switch)
         {
-        _isPaused = _switch;
+            _isPaused = _switch;
 
-
+            
             SoundControls.Instance._buttonClick.Play();
             if (_switch)
             {

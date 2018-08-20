@@ -22181,7 +22181,7 @@ MonoBehaviour:
     RenderMode: 0
     SceneDepth: 4
     Canvas: {fileID: 1258604185}
-  - PlaneDistance: 90
+  - PlaneDistance: 100
     RenderMode: 0
     SceneDepth: 7
     Canvas: {fileID: 249442990}
@@ -22306,6 +22306,7 @@ MonoBehaviour:
   GameBlocker: {fileID: 2072757408}
   PauseResetButton: {fileID: 1565255031}
   ResultsCanvas: {fileID: 249442990}
+  _GameControls: {fileID: 1086826655}
   CharImage: {fileID: 396585300}
 --- !u!4 &1372105160
 Transform:

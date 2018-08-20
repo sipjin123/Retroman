@@ -22,7 +22,7 @@ namespace Retroman
     {
         public Canvas MainCanvas;
         public Canvas _TutorialCanvas;
-        public GameObject ExitGamePanel;
+        public Canvas _ExitGameCanvas;
         public Canvas _SpamBlockerCanvas;
 
         MessageBroker _MessageBroker;
@@ -73,13 +73,13 @@ namespace Retroman
                     }
                     else
                     {
-                        if (ExitGamePanel.activeSelf == true)
+                        if (_ExitGameCanvas.enabled == true)
                         {
-                            ExitGamePanel.SetActive(false);
+                            _ExitGameCanvas.enabled = (false);
                         }
                         else
                         {
-                            ExitGamePanel.SetActive(true);
+                            _ExitGameCanvas.enabled = (true);
                         }
                     }
                 }
@@ -149,7 +149,7 @@ namespace Retroman
         public void ExitGameNo()
         {
             SoundControls.Instance._buttonClick.Play();
-            ExitGamePanel.SetActive(false);
+            _ExitGameCanvas.enabled = (false);
         }
         #endregion
     }
