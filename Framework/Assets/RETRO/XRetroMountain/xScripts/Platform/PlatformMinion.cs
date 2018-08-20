@@ -37,23 +37,37 @@ public class PlatformMinion : MonoBehaviour {
 	public GameObject  _spikeObject, _holeObject, _coinBoxObject, _coinBoxMesh, _coinBoxEffects, _leftObject, _rightObject;
 	public GameObject _higherPlatform, _lowerPlatform;
 
-	public GameObject _treeObject, _shadowObject;
+	public GameObject _leftTreeObject,_rightTreeObject, _shadowObject;
 
-	public bool _hasTree;
-
-
+    [SerializeField]
 	BoxCollider _boxCollider;
+
+    
 	void Awake()
 	{
-		_boxCollider = GetComponent<BoxCollider>();
+        int randomizedVAlue = Random.Range(0, 4);
+        if (randomizedVAlue == 1)
+        {
+            _leftTreeObject.SetActive(true);
+        }
+        else if (randomizedVAlue == 2)
+        {
+            _rightTreeObject.SetActive(true);
+        }
+        else if (randomizedVAlue == 3)
+        {
+            _rightTreeObject.SetActive(true);
+            _leftTreeObject.SetActive(true);
+        }
+
 	}
+
 	public void UpdateThisPlatform()
 	{
 		DisableAll();
 		switch(_typeOfPlatform)
 		{
 			case TypeofPlatform.UNKNOWN:
-				_hasTree = false;
 				return;
 				break;
 			case TypeofPlatform.SPIKED:
@@ -129,7 +143,6 @@ public class PlatformMinion : MonoBehaviour {
 		}
 
 		_previousTypeOfPlatform = _typeOfPlatform;
-		_treeObject.SetActive(_hasTree);
 
 		_shadowObject.transform.position = new Vector3 ( _shadowObject.transform.position.x, -3 , _shadowObject.transform.position.z );
 	}

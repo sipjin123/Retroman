@@ -48,6 +48,7 @@ namespace Retroman
         private const string ON_PRELOAD = "ON_PRELOAD";
 
         private const string ON_TITLE = "ON_TITLE";
+        private const string ON_SETTINGS = "ON_SETTINGS";
         private const string ON_GAME = "ON_GAME";
         private const string ON_RESULTS = "ON_RESULTS";
         private const string ON_SHOP = "ON_SHOP";
@@ -97,7 +98,6 @@ namespace Retroman
             PrepareSceneFsm();
         }
         bool skipProcess;
-        bool ifSettingsActive;
         private void WaitForSignals()
         {
             RetroMessageBroker.Receive<LaunchGamePlay>().Subscribe(_ =>
@@ -129,40 +129,18 @@ namespace Retroman
                         RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsTitle });
                         Debug.LogError("Cu STate is title");
                         break;
+                    case "settings":
+
+                        RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsSettings });
+                        Debug.LogError("Cu STate is settings");
+                        break;
                 }
 
             }).AddTo(this);
 
-            RetroMessageBroker.Receive<ToggleSetting>().Subscribe(__ =>
-            {
-                Debug.LogError("Toggle my settings :: "+__.IfActive);
-                if (__.IfActive)
-                {
-                    RetroMessageBroker.Publish(new ToggleCoins { IfActive = false });
-                    ifSettingsActive = true;
-                    Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot);
-                }
-                else
-                {
-                    ifSettingsActive = false;
-                    //Scene.UnloadScenePromise(EScene.SettingsRoot);
-                    //Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot);
-                    //RetroMessageBroker.Publish(new ToggleCoins { IfActive = true })
-
-                    Promise.AllSequentially(Scene.EndFramePromise)
-                        .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
-                        .Then(_ => Scene.UnloadScenePromise(EScene.SettingsRoot))
-                        // .Then(_ => Scene.LoadScenePromise<SplashMovieRoot>(splashMoveScene))
-                        .Then(_ => Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot))
-                        .Then(_ => Scene.UnloadScenePromise(EScene.Preloader))
-                        .Then(_ => RetroMessageBroker.Publish(new ToggleCoins { IfActive = true }));
-                }
-            })
-            .AddTo(this);
-
             RetroMessageBroker.Receive<ChangeScene>().Subscribe(_ =>
             {
-                Debug.LogError("My current fsm is :: " + Fsm.GetCurrentStateName());
+                Debug.LogError(D.B+" :: My current fsm is :: " + Fsm.GetCurrentStateName());
                 switch (_.Scene)
                 {
                         case EScene.GameRoot:
@@ -180,7 +158,11 @@ namespace Retroman
                             RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                             Fsm.SendEvent(ON_SHOP);
                             break;
-                    }
+                        case EScene.SettingsRoot:
+                            RetroMessageBroker.Publish(new ToggleCoins { IfActive = false });
+                            Fsm.SendEvent(ON_SETTINGS);
+                        break;
+                }
             }).AddTo(this);
         }
 
@@ -188,9 +170,6 @@ namespace Retroman
 
         private void SetupQueries()
         {
-            QuerySystem.RegisterResolver(QueryIds.IF_SETTINGS_ACTIVE, delegate (IQueryRequest request, IMutableQueryResult result) {
-                result.Set(ifSettingsActive);
-            });
             QuerySystem.RegisterResolver(CURR_SCENE, delegate (IQueryRequest request, IMutableQueryResult result) {
                 result.Set(CurrentScene);
             });
@@ -259,6 +238,7 @@ namespace Retroman
             FsmState game = Fsm.AddState("game");
             FsmState results = Fsm.AddState("results");
             FsmState shop = Fsm.AddState("shop");
+            FsmState settings = Fsm.AddState("settings");
 
 
             // actions
@@ -308,24 +288,14 @@ namespace Retroman
 
             title.AddAction(new FsmDelegateAction(title, delegate (FsmState owner)
             {
-                string splashMoveScene = "SplashMovie";
-            //Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot);
-
-             //   Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot);
-              //  RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
-
-                
-
                 
                 Promise.AllSequentially(Scene.EndFramePromise)
-                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
-                   // .Then(_ => Scene.LoadScenePromise<SplashMovieRoot>(splashMoveScene))
-                    .Then(_ => Scene.LoadScenePromise<TitleRoot>(EScene.TitleRoot))
-                    .Then(_=> Scene.UnloadScenePromise(EScene.Preloader))
+                    .Then(_ => Scene.LoadScenePromise<GameRoot>(EScene.GameRoot))
+                    .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
                     .Then(_=> 
                     {
                         Factory.Get<DataManagerService>().IfCanBack = true;
-                    RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
+                        RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
                         RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                     });
             }));
@@ -357,13 +327,12 @@ namespace Retroman
                        .Then(_ => Scene.LoadScenePromise<ShopRoot>(EScene.ShopRoot))
                        .Then(_ => Debug.LogErrorFormat(D.LOG + "RetroManInstaller::PrepareFsm::Shop Shop loaded.\n"));
             }));
-
-
-            /*
-            title.AddAction(new FsmDelegateAction(title, delegate (FsmState owner)
+            settings.AddAction(new FsmDelegateAction(settings, delegate (FsmState owner)
             {
+                Promise.AllSequentially(Scene.EndFramePromise)
+                    .Then(_ => Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot));
             }));
-            */
+
 
             idle.AddTransition(ON_SPLASH, splash);
             idle.AddTransition(ON_PRELOAD, preload);
@@ -375,7 +344,11 @@ namespace Retroman
             title.AddTransition(ON_GAME, game);
             title.AddTransition(ON_SHOP, shop);
             title.AddTransition(ON_TITLE, title);
-                
+            title.AddTransition(ON_SETTINGS, settings);
+
+            settings.AddTransition(ON_TITLE, title);
+
+
             game.AddTransition(ON_SHOP, shop);
             game.AddTransition(ON_TITLE, title);
             game.AddTransition(ON_GAME, game);

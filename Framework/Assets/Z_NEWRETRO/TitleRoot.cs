@@ -21,10 +21,12 @@ namespace Retroman
     public class TitleRoot : Scene
     {
         public Canvas MainCanvas;
-        public GameObject TutorialPanel;
+        public Canvas _TutorialCanvas;
         public GameObject ExitGamePanel;
-        public Canvas AntiSpamCanvas;
-        public Canvas BlackBlocker;
+        public Canvas _SpamBlockerCanvas;
+
+        MessageBroker _MessageBroker;
+
         protected override void Awake()
         {
             base.Awake();
@@ -33,6 +35,7 @@ namespace Retroman
         protected override void Start()
         {
             base.Start();
+            _MessageBroker = Factory.Get<DataManagerService>().MessageBroker;
             ButtonSetup();
             InitializeSignals();
         }
@@ -54,15 +57,17 @@ namespace Retroman
 
         void InitializeSignals()
         {
-            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ => 
+            _MessageBroker.Receive<PressBackButton>().Subscribe(_ => 
             {
+                if (ifCoolDownSpam == true)
+                {
+                    Debug.LogError(D.B + "Do Not Spam");
+                    return;
+                }
+
                 if (_.BackButtonType == BackButtonType.SceneIsTitle)
                 {
-                    if (QuerySystem.Query<bool>(QueryIds.IF_SETTINGS_ACTIVE) == true)
-                    {
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
-                    }
-                    else if (TutorialPanel.activeSelf == true)
+                    if (_TutorialCanvas.enabled == true)
                     {
                         CloseTutorial();
                     }
@@ -80,70 +85,61 @@ namespace Retroman
                 }
             }).AddTo(this);
 
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ => { MainCanvas.enabled = false; }).AddTo(this);
+            _MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ => { MainCanvas.enabled = false; }).AddTo(this);
         }
 
         void ButtonSetup()
         {
             AddButtonHandler(EButton.StartGame, delegate (ButtonClickedSignal signal)
             {
-                if (ifCoolDownSpam == false)
-                {
-                    StartCoroutine(DelaySpam());
-                }
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new LaunchGamePlay());
-                SoundControls.Instance._buttonClick.Play();
-                //Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
+                GenericButtonPressed();
+                _MessageBroker.Publish(new LaunchGamePlay());
             });
             AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
             {
-                if (ifCoolDownSpam == false)
-                {
-                    StartCoroutine(DelaySpam());
-                }
-                SoundControls.Instance._buttonClick.Play();
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
+                GenericButtonPressed();
+                _MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });
             AddButtonHandler(EButton.TutorialButton, delegate (ButtonClickedSignal signal)
             {
-
-                if (ifCoolDownSpam == false)
-                {
-                    StartCoroutine(DelaySpam());
-                }
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
-                SoundControls.Instance._buttonClick.Play();
-                TutorialPanel.SetActive(true);
+                GenericButtonPressed();
+                _MessageBroker.Publish(new ToggleCoins { IfActive = false });
+                _TutorialCanvas.enabled = (true);
             });
             AddButtonHandler(EButton.SettingsButton, delegate (ButtonClickedSignal signal)
             {
-                BlackBlocker.enabled = true;
-                if (ifCoolDownSpam == false)
-                {
-                    StartCoroutine(DelaySpam());
-                }
-                SoundControls.Instance._buttonClick.Play();
-                Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = true });
+                GenericButtonPressed();
+                
+                _MessageBroker.Publish(new ChangeScene { Scene = EScene.SettingsRoot });
+                //_MessageBroker.Publish(new ToggleSetting { IfActive = true });
             });
+        }
+
+        void GenericButtonPressed()
+        {
+            if (ifCoolDownSpam == false)
+            {
+                StartCoroutine(DelaySpam());
+            }
+            SoundControls.Instance._buttonClick.Play();
         }
 
         bool ifCoolDownSpam;
         IEnumerator DelaySpam()
         {
+            _SpamBlockerCanvas.enabled = true;
             ifCoolDownSpam = true;
-            AntiSpamCanvas.enabled = true;
             yield return new WaitForSeconds(1);
-            AntiSpamCanvas.enabled = false;
             ifCoolDownSpam = false;
+            _SpamBlockerCanvas.enabled = false;
         }
 
+        #region BUTTONS CLICKS
         public void CloseTutorial()
         {
-
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
             SoundControls.Instance._buttonClick.Play();
-            TutorialPanel.SetActive(false);
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
+            _TutorialCanvas.enabled = (false);
         }
         public void ExitGameYes()
         {
@@ -155,5 +151,6 @@ namespace Retroman
             SoundControls.Instance._buttonClick.Play();
             ExitGamePanel.SetActive(false);
         }
+        #endregion
     }
 }

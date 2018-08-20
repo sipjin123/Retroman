@@ -21,8 +21,6 @@ namespace Retroman
     {
 
 
-        public GameObject _WAtchVidButton;
-
         public Text HiScore1, HiScore2, CScore1, CScore2;
 
         public GameObject GameBlocker;
@@ -33,27 +31,20 @@ namespace Retroman
         void ShowResults()
         {
             ResultsCanvas.enabled = true;
-            //Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(true);
-            Debug.LogError("Repalced to UI");
-
-            CScore1.text = "" + PlayerPrefs.GetInt("curSkor", 0);
-            CScore2.text = "" + PlayerPrefs.GetInt("curSkor", 0);
-            HiScore1.text = "Best Score " + PlayerPrefs.GetInt("hiSkor", 0);
-            HiScore2.text = "Best Score " + PlayerPrefs.GetInt("hiSkor", 0);
+            
+            CScore1.text = "" + Factory.Get<DataManagerService>().GetScore();
+            CScore2.text = "" + Factory.Get<DataManagerService>().GetScore();
+            HiScore1.text = "Best Score " + Factory.Get<DataManagerService>().GetHighScore();
+            HiScore2.text = "Best Score " + Factory.Get<DataManagerService>().GetHighScore();
 
             int currChar = Factory.Get<DataManagerService>().CurrentCharacterSelected -1;
             CharImage.sprite = Factory.Get<DataManagerService>().ShopItems[currChar].ItemImage.sprite;
         }
 
 
-
-        //--------
-        public GameObject _ToSpawnGameStartupScene;
-        public GameObject _CurrentGameStartupScene;
         protected override void Awake()
         {
             base.Awake();
-            StartupGame();
             SetupButtons();
             Factory.Get<DataManagerService>().MessageBroker.Receive<EndGame>().Subscribe(_ =>
             {
@@ -96,10 +87,8 @@ namespace Retroman
         {
             base.OnDestroy();
         }
-        public Canvas SpamBlocker;
         public void GoToTitlebutton()
         {
-            SpamBlocker.enabled = true;
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
             Debug.LogError("Toggle OFF!!");
             SoundControls.Instance._buttonClick.Play();
@@ -113,7 +102,6 @@ namespace Retroman
             });
             AddButtonHandler(EButton.ResetGame, delegate (ButtonClickedSignal signal)
             {
-                SpamBlocker.enabled = true;
                 SoundControls.Instance._buttonClick.Play();
                 GameBlocker.SetActive(true);
                 if(PauseResetButton)
@@ -122,19 +110,9 @@ namespace Retroman
             });
             AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
             {
-                SpamBlocker.enabled = true;
                 SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });
-        }
-        private void StartupGame()
-        {
-            Destroy(_CurrentGameStartupScene);
-            GameObject temp = Instantiate(_ToSpawnGameStartupScene, transform.position, Quaternion.identity) as GameObject;
-            _CurrentGameStartupScene = temp;
-            temp.transform.parent = transform;
-
-           // Factory.Get<DataManagerService>().MessageBroker.Publish(new LaunchGamePlay());
         }
     }
 }

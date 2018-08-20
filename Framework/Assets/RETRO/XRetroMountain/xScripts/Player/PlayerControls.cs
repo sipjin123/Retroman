@@ -69,7 +69,6 @@ namespace Retroman
 
         [SerializeField]
         private CameraControls _CameraControls;
-        public PlatformLord _PlatformLord;
 
         int WaterMaskLayerIndex = 0;
         int GroundMaskLayerIndex = 0;

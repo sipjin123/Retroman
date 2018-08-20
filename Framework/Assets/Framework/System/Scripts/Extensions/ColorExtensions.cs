@@ -20,6 +20,7 @@
         public static readonly string CHECK = Color.white.LogHeader("[CHECK]");
         public static readonly string F = Color.green.LogHeader("[Framework]");
         public static readonly string A = Color.blue.LogHeader("[ARIES]");
+        public static readonly string B = Color.blue.LogHeader("[BURLIN]");
         public static readonly string SOCKETS = Color.white.LogHeader("[SOCKETS]");
         public static readonly string LOBBY = Color.green.LogHeader("[LOBBY]");
         public static readonly string GAME = Color.blue.LogHeader("[GAME]");

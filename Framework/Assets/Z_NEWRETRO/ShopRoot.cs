@@ -119,6 +119,7 @@ namespace Retroman
 
         public void GoBack()
         {
+            Debug.LogError(D.B + " Going Back ");
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
             SoundControls.Instance._buttonClick.Play();
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
