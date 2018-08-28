@@ -9,7 +9,8 @@ public class CharacterHitbox : MonoBehaviour {
 	{
 		if(LayerMask.LayerToName( hit.gameObject.layer) == "GroundOnly")
 		{
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOver());
+            Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
 		}
 	}
 }
