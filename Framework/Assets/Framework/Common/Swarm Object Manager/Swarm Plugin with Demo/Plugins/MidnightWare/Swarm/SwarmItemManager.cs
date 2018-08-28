@@ -28,7 +28,7 @@ using Framework;
 /// When the pruning timer countdown expires, the inactive list will be pruned to the prune percentage set 
 /// for the item. You can shut off pruning by setting the inactivePrunePercentage to zero.
 /// </summary>
-public class SwarmItemManager : Behaviour
+public class SwarmItemManager : SerializedMonoBehaviour
 {
     /// <summary>
     /// This internal class represents the active and inactive lists of a SwarmItem type.

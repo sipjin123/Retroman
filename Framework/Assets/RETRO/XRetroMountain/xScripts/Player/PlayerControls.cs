@@ -74,6 +74,9 @@ namespace Retroman
         int GroundMaskLayerIndex = 0;
         int FallStopperMaskLayerIndex = 0;
 
+
+        public Transform VFXJumpSpawn;
+
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -162,6 +165,7 @@ namespace Retroman
                     _jumpDelaySwitch = true;
                     StartCoroutine(JumpDelayENUM());
                     _rigidbody.AddForce(transform.up * 15000);
+                    Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
                     isJumping = true;
 
                     SoundControls.Instance._sfxJump.Play();
