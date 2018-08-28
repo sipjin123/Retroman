@@ -763,35 +763,39 @@ MonoBehaviour:
   ShopItems:
   - ItemNameId: Normal
     ItemStoreId: 1
-    ItemPrice: 5
+    ItemPrice: 500
     ItemImage: {fileID: 1416139606}
     IfInGameItem: 1
   - ItemNameId: Cat
     ItemStoreId: 2
-    ItemPrice: 10
+    ItemPrice: 500
     ItemImage: {fileID: 479630115}
     IfInGameItem: 1
   - ItemNameId: Donkey
     ItemStoreId: 3
-    ItemPrice: 15
+    ItemPrice: 500
     ItemImage: {fileID: 1611251263}
     IfInGameItem: 1
   - ItemNameId: Sonic
     ItemStoreId: 4
-    ItemPrice: 20
+    ItemPrice: 500
     ItemImage: {fileID: 135792071}
     IfInGameItem: 1
   - ItemNameId: Unicorn
     ItemStoreId: 5
-    ItemPrice: 25
+    ItemPrice: 500
     ItemImage: {fileID: 1727470735}
     IfInGameItem: 1
   - ItemNameId: Yoshi
     ItemStoreId: 6
-    ItemPrice: 40
+    ItemPrice: 500
     ItemImage: {fileID: 1074943383}
     IfInGameItem: 1
   CurrentCharacterSelected: 0
+  HighScore: 0
+  Score: 0
+  IFTestMode: 0
+  IfCanBack: 0
   GameCoins: 0
 --- !u!1 &859921462
 GameObject:
@@ -1158,6 +1162,96 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
+    - Name: ButtonClickedMap
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Framework.EButton, Assembly-CSharp],[System.Action`1[[Framework.ButtonClickedSignal,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Framework.EButton,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: ButtonHoveredMap
+      Entry: 7
+      Data: 2|System.Collections.Generic.Dictionary`2[[Framework.EButton, Assembly-CSharp],[System.Action`1[[Framework.ButtonHoveredSignal,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: ButtonUnhoveredMap
+      Entry: 7
+      Data: 3|System.Collections.Generic.Dictionary`2[[Framework.EButton, Assembly-CSharp],[System.Action`1[[Framework.ButtonUnhoveredSignal,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: ButtonPressedMap
+      Entry: 7
+      Data: 4|System.Collections.Generic.Dictionary`2[[Framework.EButton, Assembly-CSharp],[System.Action`1[[Framework.ButtonPressedSignal,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: ButtonReleasaedMap
+      Entry: 7
+      Data: 5|System.Collections.Generic.Dictionary`2[[Framework.EButton, Assembly-CSharp],[System.Action`1[[Framework.ButtonReleasedSignal,
+        Assembly-CSharp]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: Services
       Entry: 6
       Data: 

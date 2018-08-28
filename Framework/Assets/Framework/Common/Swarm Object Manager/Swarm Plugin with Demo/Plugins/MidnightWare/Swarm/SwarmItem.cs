@@ -11,7 +11,7 @@ using Sirenix.Serialization;
 /// This class serves as the base for all swarm objects. SwarmItems are managed by a SwarmItemManager.
 /// A SwarmItem should be activated by its manager and killed through this class.
 /// </summary>
-public class SwarmItem : Behaviour
+public class SwarmItem : SerializedMonoBehaviour
 {
     /// <summary>
     /// the state of the item (inactive or active)
