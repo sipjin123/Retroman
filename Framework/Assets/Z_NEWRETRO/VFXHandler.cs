@@ -12,7 +12,8 @@ public class VFXHandler : SerializedMonoBehaviour
     {
         JumpVFX,
         NewVFX,
-        None
+        None,
+        BumpVFX
     }
 
 
@@ -27,7 +28,10 @@ public class VFXHandler : SerializedMonoBehaviour
 
         Factory.Register<VFXHandler>(this);
 	}
-
+    private void OnDestroy()
+    {
+        Factory.Clean< VFXHandler>();
+    }
     public void RequestVFX(Vector3 thisLocation,VFXList vfxToRequest)
     {
         GameObject obj =  prefManager.Request(VFXDict[vfxToRequest].name);
