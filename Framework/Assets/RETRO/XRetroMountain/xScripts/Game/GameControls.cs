@@ -62,7 +62,7 @@ public class GameControls : SerializedMonoBehaviour
                     LevelPause(true);
                 }
             }).AddTo(this);
-            Factory.Get<DataManagerService>().MessageBroker.Receive<GameOver>().Subscribe(_ =>
+            Factory.Get<DataManagerService>().MessageBroker.Receive<GameOverSignal>().Subscribe(_ =>
             {
                 if (Factory.Get<DataManagerService>().IFTestMode)
                 {

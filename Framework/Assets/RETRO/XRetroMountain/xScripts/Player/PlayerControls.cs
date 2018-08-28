@@ -76,7 +76,7 @@ namespace Retroman
 
 
         public Transform VFXJumpSpawn;
-
+        public GameObject RunningVFX;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -237,6 +237,13 @@ namespace Retroman
                     {
                         _shadowObject.SetActive(true);
                     }
+
+                    RunningVFX.SetActive(false);
+                }
+                else
+                {
+
+                    RunningVFX.SetActive(true);
                 }
 
             }

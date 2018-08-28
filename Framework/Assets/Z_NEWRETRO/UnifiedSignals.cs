@@ -99,7 +99,7 @@ namespace Retroman
     public class DisablePlayableCharacter
     {
     }
-    public class GameOver
+    public class GameOverSignal
     {
 
     }
