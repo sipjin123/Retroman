@@ -6199,6 +6199,7 @@ GameObject:
   - component: {fileID: 249442989}
   - component: {fileID: 249442988}
   - component: {fileID: 249442991}
+  - component: {fileID: 249442992}
   m_Layer: 5
   m_Name: ResultsCanvas
   m_TagString: Untagged
@@ -6302,6 +6303,17 @@ MonoBehaviour:
   UseSystemCamera: 0
   _Camera: {fileID: 212774717}
   _CanvasList: []
+--- !u!225 &249442992
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 249442986}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &254404499
 GameObject:
   m_ObjectHideFlags: 0
@@ -22661,6 +22673,7 @@ MonoBehaviour:
   _IsPersistent: 0
   Installers: []
   CachedScene: GameRoot
+  InteractiveCanvas: {fileID: 249442992}
   HiScore1: {fileID: 2025492683}
   HiScore2: {fileID: 500746915}
   CScore1: {fileID: 530490964}

@@ -20,6 +20,7 @@ namespace Retroman
     public class GameRoot : Scene
     {
 
+        public CanvasGroup InteractiveCanvas;
 
         public Text HiScore1, HiScore2, CScore1, CScore2;
 
@@ -95,6 +96,7 @@ namespace Retroman
         }
         public void GoToTitlebutton()
         {
+            InteractiveCanvas.interactable = false;
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
             Debug.LogError("Toggle OFF!!");
             SoundControls.Instance._buttonClick.Play();
@@ -108,6 +110,7 @@ namespace Retroman
             });
             AddButtonHandler(EButton.ResetGame, delegate (ButtonClickedSignal signal)
             {
+                InteractiveCanvas.interactable = false;
                 SoundControls.Instance._buttonClick.Play();
                 GameBlocker.SetActive(true);
                 if(PauseResetButton)
@@ -116,6 +119,7 @@ namespace Retroman
             });
             AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
             {
+                InteractiveCanvas.interactable = false;
                 SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });
