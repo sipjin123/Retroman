@@ -77,7 +77,7 @@ namespace Retroman
 
         public Transform VFXJumpSpawn;
         public GameObject RunningVFX;
-        bool hasLanded;
+        public GhostAnimator gA;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -252,7 +252,7 @@ namespace Retroman
                     //RunningVFX.SetActive(true);
                     ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
                     var emission = ps.emission;
-                    emission.rateOverTime = 20;
+                    emission.rateOverTime = 10;
                   
                 }
 
@@ -387,8 +387,12 @@ namespace Retroman
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<SetupPlayerSplash>().Subscribe(_ =>
             {
+                Debug.LogError("WATER DEATH PART 2");
+               //   
                 _splash.SetActive(_.IfActive);
                 _splash.transform.position =  _deathAnim.transform.GetChild(0).transform.position;
+                gA.StartAnimation(true);
+               
             }).AddTo(this);
 
 
@@ -430,9 +434,11 @@ namespace Retroman
             Factory.Get<DataManagerService>().MessageBroker.Receive<EnableRagdoll>().Subscribe(_ =>
             {
                 _deathAnim.SetActive(true);
+                gA.StartAnimation(true);
 
             }).AddTo(this);
             
+
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<PauseGame>().Subscribe(_ =>
             {
