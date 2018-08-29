@@ -11881,6 +11881,7 @@ MonoBehaviour:
     - {fileID: 1774154290696140, guid: f5ef3c77f88e3c04b8790def7e3fa78e, type: 2}
     - {fileID: 1349046421824818, guid: d35aaed038a96404daaa31d095ac632d, type: 2}
     - {fileID: 1297711645415508, guid: 2dce25fe73b49f04f8199ba4802e793a, type: 2}
+    - {fileID: 1998018923681836, guid: 9f1c788e2a061bd40be41682539c0af3, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -11905,7 +11906,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 3
+      Data: 4
     - Name: 
       Entry: 7
       Data: 
@@ -11939,6 +11940,18 @@ MonoBehaviour:
     - Name: 
       Entry: 10
       Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: 
+      Entry: 3
+      Data: 4
+    - Name: 
+      Entry: 10
+      Data: 3
     - Name: 
       Entry: 8
       Data: 
@@ -15456,6 +15469,11 @@ MonoBehaviour:
     inactivePruneTimer: 0
     inactivePrunePercentage: 0
   - prefab: {fileID: 1297711645415508, guid: 2dce25fe73b49f04f8199ba4802e793a, type: 2}
+    maxItemCount: 0
+    inactiveThreshold: 1
+    inactivePruneTimer: 0
+    inactivePrunePercentage: 0
+  - prefab: {fileID: 1998018923681836, guid: 9f1c788e2a061bd40be41682539c0af3, type: 2}
     maxItemCount: 0
     inactiveThreshold: 1
     inactivePruneTimer: 0

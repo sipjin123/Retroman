@@ -166,7 +166,7 @@ namespace Retroman
                     _jumpDelaySwitch = true;
                     StartCoroutine(JumpDelayENUM());
                     _rigidbody.AddForce(transform.up * 15000);
-                   // Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
+                   Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
                     isJumping = true;
 
                     SoundControls.Instance._sfxJump.Play();
