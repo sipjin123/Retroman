@@ -13,7 +13,8 @@ public class VFXHandler : SerializedMonoBehaviour
         JumpVFX,
         NewVFX,
         None,
-        BumpVFX
+        BumpVFX,
+        JumpUpVFX
     }
 
 
