@@ -285,8 +285,9 @@ namespace Retroman
                 
                 Promise.AllSequentially(Scene.EndFramePromise)
                     .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
-                    .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
                     .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
+                    .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
+                    //.Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                     .Then(_ => Scene.UnloadScenePromise(EScene.Preloader))
                     .Then(_=> 
                     {
