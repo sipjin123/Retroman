@@ -265,10 +265,20 @@ namespace Retroman
         #endregion
         //==========================================================================================================================================
         #region FUNCTIONS
+
+        private enum CurrDirection
+        {
+            Left,
+            Right
+        }
+        
+        CurrDirection cD = CurrDirection.Right;
+            
         void PlayerTurnFunction()
         {
             if (_playerAction == PlayerAction.TURNLEFT)
             {
+                cD = CurrDirection.Right;
                 player_rotation -= rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -282,6 +292,7 @@ namespace Retroman
             }
             else if (_playerAction == PlayerAction.TURNRIGHT)
             {
+                cD = CurrDirection.Left;
                 player_rotation += rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -391,7 +402,10 @@ namespace Retroman
                //   
                 _splash.SetActive(_.IfActive);
                 _splash.transform.position =  _deathAnim.transform.GetChild(0).transform.position;
-                gA.StartAnimation(true);
+                if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
                
             }).AddTo(this);
 
@@ -434,8 +448,11 @@ namespace Retroman
             Factory.Get<DataManagerService>().MessageBroker.Receive<EnableRagdoll>().Subscribe(_ =>
             {
                 _deathAnim.SetActive(true);
-                gA.StartAnimation(true);
-
+               if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
+               
             }).AddTo(this);
             
 
