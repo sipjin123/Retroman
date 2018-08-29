@@ -77,6 +77,7 @@ namespace Retroman
 
         public Transform VFXJumpSpawn;
         public GameObject RunningVFX;
+        bool hasLanded;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -165,7 +166,7 @@ namespace Retroman
                     _jumpDelaySwitch = true;
                     StartCoroutine(JumpDelayENUM());
                     _rigidbody.AddForce(transform.up * 15000);
-                    Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
+                   // Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
                     isJumping = true;
 
                     SoundControls.Instance._sfxJump.Play();
@@ -223,12 +224,13 @@ namespace Retroman
                     
                 if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {
-
+                  
                     _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
                 }
 
                 if (isJumping)
                 {
+                  
                     if (Rayhit.collider.gameObject.layer == FallStopperMaskLayerIndex)
                     {
                         _shadowObject.SetActive(false);
@@ -238,12 +240,20 @@ namespace Retroman
                         _shadowObject.SetActive(true);
                     }
 
-                    RunningVFX.SetActive(false);
+                    //RunningVFX.SetActive(false);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 0;
+                 
                 }
                 else
                 {
 
-                    RunningVFX.SetActive(true);
+                    //RunningVFX.SetActive(true);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 20;
+                  
                 }
 
             }
@@ -359,6 +369,8 @@ namespace Retroman
                     if (isJumping)
                     {
                         _rigidbody.velocity = new Vector3(0, 0, 0);
+                         Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
+
                     }
                     isJumping = false;
                 }
