@@ -51,7 +51,9 @@ namespace Retroman
 		}
 		public void StartAnimation(bool isRight)
 		{
-			sr.flipY=isRight;
+			SpriteRenderer sr;
+			sr = this.GetComponent<SpriteRenderer>();
+			sr.flipX=isRight;
 			ghostParent.transform.position = deathCube.transform.position;
 			ghostAnim.Play();
 		}
