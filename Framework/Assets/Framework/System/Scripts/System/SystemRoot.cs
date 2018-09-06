@@ -20,13 +20,12 @@ using Common.Signal;
 
 namespace Framework
 {
+    using Sandbox.ButtonSandbox;
     using Sandbox.Services;
-    using Sandbox.Shooting;
 
     // alias
     using UColor = UnityEngine.Color;
     using CColor = Framework.Color;
-    using Retroman;
 
     public class SystemRoot : Scene
     {
@@ -64,43 +63,8 @@ namespace Framework
 
             // Call parent's awake
             base.Awake();
-
-            _SystemVersion.Hide();
-            MessageBroker.Default.Receive<ShowVersion>().Subscribe(_ => 
-            {
-                if (_.IfActive)
-                    _SystemVersion.Show();
-                else
-                    _SystemVersion.Hide();
-
-            }).AddTo(this);
             
             Install();
-
-            AddButtonHandler(EButton.Close, delegate(ButtonClickedSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(EButton.Close, delegate (ButtonHoveredSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(EButton.Close, delegate (ButtonUnhoveredSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(EButton.Close, delegate (ButtonPressedSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(EButton.Close, delegate (ButtonReleasedSignal signal)
-            {
-
-            });
         }
 
         protected override void OnDestroy()
@@ -145,7 +109,6 @@ namespace Framework
         {
             StartCoroutine(UnloadAllScenes());
         }
-
         #endregion
     }
 }

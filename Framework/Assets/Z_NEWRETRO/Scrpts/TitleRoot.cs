@@ -15,6 +15,7 @@ using Common.Query;
 using Framework;
 using Common.Utils;
 using System.Collections;
+using Sandbox.ButtonSandbox;
 
 namespace Retroman
 {
@@ -90,23 +91,23 @@ namespace Retroman
 
         void ButtonSetup()
         {
-            AddButtonHandler(EButton.StartGame, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.StartGame, delegate (ButtonClickedSignal signal)
             {
                 GenericButtonPressed();
                 _MessageBroker.Publish(new LaunchGamePlay());
             });
-            AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
             {
                 GenericButtonPressed();
                 _MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });
-            AddButtonHandler(EButton.TutorialButton, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.TutorialButton, delegate (ButtonClickedSignal signal) 
             {
                 GenericButtonPressed();
                 _MessageBroker.Publish(new ToggleCoins { IfActive = false });
                 _TutorialCanvas.enabled = (true);
             });
-            AddButtonHandler(EButton.SettingsButton, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.SettingsButton, delegate (ButtonClickedSignal signal)
             {
                 GenericButtonPressed();
                 

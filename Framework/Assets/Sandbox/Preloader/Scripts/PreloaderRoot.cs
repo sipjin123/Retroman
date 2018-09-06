@@ -129,8 +129,6 @@ namespace Sandbox.Preloader
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            //QuerySystem.RemoveResolver(QueryIds.LoadingProgress);
         }
         #endregion
         
@@ -219,7 +217,7 @@ namespace Sandbox.Preloader
         {
             yield return null;
 
-            // +AS:180404 TODO
+            // TODO: +AS:180404
             //  - Fix canvas sorting with SystemCanvas (Add SystemCanvas Support)
             //  - Disabled temporarily
             //*

@@ -14,6 +14,7 @@ using Common.Query;
 
 using Framework;
 using Common.Utils;
+using Sandbox.ButtonSandbox;
 
 namespace Retroman
 {
@@ -106,11 +107,11 @@ namespace Retroman
         }
         void SetupButtons()
         {
-            AddButtonHandler(EButton.GoToTitle, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GoToTitle, delegate (ButtonClickedSignal signal)
             {
                 GoToTitlebutton();
             });
-            AddButtonHandler(EButton.ResetGame, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.ResetGame, delegate (ButtonClickedSignal signal)
             {
                 InteractiveCanvas.interactable = false;
                 SoundControls.Instance._buttonClick.Play();
@@ -119,7 +120,7 @@ namespace Retroman
                 PauseResetButton.SetActive(false);
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
             });
-            AddButtonHandler(EButton.GoToShop, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
             {
                 InteractiveCanvas.interactable = false;
                 SoundControls.Instance._buttonClick.Play();

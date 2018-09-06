@@ -143,16 +143,14 @@ namespace Framework
 
         public void Remove(Scene scene)
         {
-            SceneEntry entry = null;
+            Assertion.AssertNotNull(scene, D.LOG + "SceneReference::Remove Invalid Scene! Scene:{0}\n", scene);
+            Assertion.Assert(scene.SceneType != EScene.Invalid, D.LOG + "SceneReference::Remove Invalid SceneType! SceneType:{0}\n", scene.SceneType);
+            Assertion.Assert(scene.SceneType != EScene.Max, D.LOG + "SceneReference::Remove Invalid SceneType! SceneType:{0}\n", scene.SceneType);
+
             string sceneName = scene.SceneType.ToString();
-            foreach (SceneEntry e in Scenes)
-            {
-                if (e.Scene.Equals(sceneName))
-                {
-                    entry = e;
-                    break;
-                }
-            }
+            SceneEntry entry = Scenes.Find(s => s.Scene.Equals(sceneName));
+
+            Assertion.AssertNotNull(entry, D.LOG + "SceneReference::Remove Invalid scene entry! Scene:{0}\n", sceneName);
 
             Scenes.Remove(entry);
             Debug.LogFormat(D.F + "SceneReference::Remove Scene:{0} Removed from CachedScenes! Count:{1} RootObject:{2}\n", scene.SceneType, Scenes.Count, scene.gameObject.name);
@@ -160,16 +158,13 @@ namespace Framework
 
         public void Remove(SceneObject scene)
         {
-            SceneEntry entry = null;
+            Assertion.AssertNotNull(scene, D.LOG + "SceneReference::Remove Invalid Scene! Scene:{0}\n", scene);
+            Assertion.AssertNotEmpty(scene.Name, D.LOG + "SceneReference::Remove Invalid SceneName! SceneName:{0}\n", scene.Name);
+            
             string sceneName = scene.Name;
-            foreach (SceneEntry e in Scenes)
-            {
-                if (e.Scene.Equals(sceneName))
-                {
-                    entry = e;
-                    break;
-                }
-            }
+            SceneEntry entry = Scenes.Find(s => s.Scene.Equals(sceneName));
+
+            Assertion.AssertNotNull(entry, D.LOG + "SceneReference::Remove Invalid scene entry! Scene:{0}\n", sceneName);
 
             Scenes.Remove(entry);
             Debug.LogFormat(D.F + "SceneReference::Remove Scene:{0} Removed from CachedScenes! Count:{1} RootObject:{2}\n", scene.Name, Scenes.Count, scene.gameObject.name);

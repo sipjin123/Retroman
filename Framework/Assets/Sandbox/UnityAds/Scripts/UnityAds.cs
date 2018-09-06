@@ -216,6 +216,11 @@ namespace Sandbox.UnityAds
 #endif
         }
 
+        public IEnumerator InitializeServiceSequentially()
+        {
+            throw new NotImplementedException();
+        }
+
         /*
 		private void HandleResult(ShowResult result) {
 			Debug.LogFormat("UnityAds::HandleResult Result:{0}\n", result);
