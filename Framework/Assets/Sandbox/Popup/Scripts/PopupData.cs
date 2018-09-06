@@ -12,5 +12,10 @@ namespace Sandbox.Popup
     {
         public object Data;
         public T GetData<T>() { return (T)Data; }
+        
+        public PopupData(object data)
+        {
+            Data = data;
+        }
     }
 }

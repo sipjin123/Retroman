@@ -54,8 +54,10 @@ namespace Retroman
                         }
                         break;
                     case TypeOfTrigger.SPIKE:
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOver());
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
                         SoundControls.Instance._sfxSpikes.Play();
+
+                        Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
                         break;
                     case TypeOfTrigger.LEFT:
                         Factory.Get<DataManagerService>().MessageBroker.Publish(new UpdatePlayerAction { PlayerAction = PlayerControls.PlayerAction.TURNLEFT });
@@ -72,7 +74,7 @@ namespace Retroman
                         //Factory.Get<DataManagerService>().PlayerControls._splash.SetActive(true);
                         //Factory.Get<DataManagerService>().PlayerControls._splash.transform.position = Factory.Get<DataManagerService>().PlayerControls._deathAnim.transform.GetChild(0).transform.position;
                         //Factory.Get<DataManagerService>().GameControls.GameOverIT();
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOver());
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
                         break;
                     case TypeOfTrigger.COUNTER:
                         Factory.Get<DataManagerService>().MessageBroker.Publish(new SpawnAPlatform());

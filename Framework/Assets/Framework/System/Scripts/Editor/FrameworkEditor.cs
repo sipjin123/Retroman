@@ -135,7 +135,18 @@ namespace Framework
             var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
             clearMethod.Invoke(null, null);
         }
-        
+
+        // cmd + shift + x
+        [MenuItem(FRAMEWORK_ROOT + FRAMEWORK_TOOLS + "Clear Persistent Files", false)]
+        public static void ClearPersistent()
+        {
+            if (Directory.Exists(Application.persistentDataPath))
+            {
+                //Directory.Delete(Application.persistentDataPath, true);
+                //File.Delete(Application.persistentDataPath);
+                FileUtil.DeleteFileOrDirectory(Application.persistentDataPath);
+            }
+        }
     }
 
 }

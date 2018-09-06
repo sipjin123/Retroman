@@ -18,7 +18,7 @@ PlayerSettings:
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
   m_ShowUnitySplashScreen: 1
-  m_ShowUnitySplashLogo: 0
+  m_ShowUnitySplashLogo: 1
   m_SplashScreenOverlayOpacity: 1
   m_SplashScreenAnimation: 1
   m_SplashScreenLogoStyle: 1
@@ -52,7 +52,6 @@ PlayerSettings:
   m_StackTraceTypes: 000000000000000000000000000000000000000001000000
   iosShowActivityIndicatorOnLoading: -1
   androidShowActivityIndicatorOnLoading: -1
-  tizenShowActivityIndicatorOnLoading: -1
   iosAppInBackgroundBehavior: 0
   displayResolutionDialog: 1
   iosAllowHTTPDownload: 1
@@ -111,6 +110,8 @@ PlayerSettings:
   videoMemoryForVertexBuffers: 0
   psp2PowerMode: 0
   psp2AcquireBGM: 1
+  vulkanEnableSetSRGBWrite: 0
+  vulkanUseSWCommandBuffers: 0
   m_SupportedAspectRatios:
     4:3: 1
     5:4: 1
@@ -138,10 +139,10 @@ PlayerSettings:
     hololens:
       depthFormat: 1
       depthBufferSharingEnabled: 0
-    enable360StereoCapture: 0
     oculus:
       sharedDepthBuffer: 0
       dashSupport: 0
+    enable360StereoCapture: 0
   protectGraphicsMemory: 0
   useHDRDisplay: 0
   m_ColorGamuts: 00000000
@@ -239,14 +240,16 @@ PlayerSettings:
   appleEnableAutomaticSigning: 0
   iOSRequireARKit: 0
   appleEnableProMotion: 0
+  vulkanEditorSupport: 0
   clonedFromGUID: 8ee82061f4695c74ea79e16ba76caebe
   templatePackageId: 
   templateDefaultScene: 
   AndroidTargetArchitectures: 5
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: /Users/aries.sulit/GamesAndApps/Projects/RetroMan_Android/Files/com.synergy88digital.retroman.keystore
-  AndroidKeyaliasName: com.synergy88digital.retroman
+  AndroidKeystoreName: 
+  AndroidKeyaliasName: 
+  AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 1
   AndroidIsGame: 1
   AndroidEnableTango: 0
@@ -262,7 +265,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      m_Icon: {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -330,43 +333,43 @@ PlayerSettings:
       m_Kind: 0
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 432
       m_Height: 432
       m_Kind: 2
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 324
       m_Height: 324
       m_Kind: 2
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 216
       m_Height: 216
       m_Kind: 2
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 162
       m_Height: 162
       m_Kind: 2
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 108
       m_Height: 108
       m_Kind: 2
       m_SubKind: 
     - m_Textures:
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
-      - {fileID: 2800000, guid: 04d26df6a3954e941b2bfa3b0e006f59, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
+      - {fileID: 2800000, guid: 7e0c9527943911c419835a5bd2b867f7, type: 3}
       m_Width: 81
       m_Height: 81
       m_Kind: 2
@@ -446,6 +449,7 @@ PlayerSettings:
     m_EncodingQuality: 1
   - m_BuildTarget: PS4
     m_EncodingQuality: 1
+  m_BuildTargetGroupLightmapSettings: []
   playModeTestRunnerEnabled: 0
   runPlayModeTestAsEditModeTest: 0
   actionOnDotNetUnhandledException: 1
@@ -569,6 +573,8 @@ PlayerSettings:
   switchDataLossConfirmation: 0
   switchSupportedNpadStyles: 3
   switchNativeFsCacheSize: 32
+  switchIsHoldTypeHorizontal: 0
+  switchSupportedNpadCount: 8
   switchSocketConfigEnabled: 0
   switchTcpInitialSendBufferSize: 32
   switchTcpInitialReceiveBufferSize: 64
@@ -713,7 +719,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: CROSS_PLATFORM_INPUT;ODIN_INSPECTOR
     4: CROSS_PLATFORM_INPUT;MOBILE_INPUT
-    7: CROSS_PLATFORM_INPUT;MOBILE_INPUT;ODIN_INSPECTOR
+    7: CROSS_PLATFORM_INPUT;MOBILE_INPUT;ODIN_INSPECTOR;UNITY_CCU;USING_UNIRX
     14: MOBILE_INPUT
     17: MOBILE_INPUT
   platformArchitecture:
@@ -744,7 +750,6 @@ PlayerSettings:
   metroApplicationDescription: ThirdPersonControlOrbitCam
   wsaImages: {}
   metroTileShortName: 
-  metroCommandLineArgsFile: 
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -759,14 +764,6 @@ PlayerSettings:
   metroFTAFileTypes: []
   metroProtocolName: 
   metroCompilationOverrides: 1
-  tizenProductDescription: 
-  tizenProductURL: 
-  tizenSigningProfileName: 
-  tizenGPSPermissions: 0
-  tizenMicrophonePermissions: 0
-  tizenDeploymentTarget: 
-  tizenDeploymentTargetType: -252843268
-  tizenMinOSVersion: 1
   n3dsUseExtSaveData: 0
   n3dsCompressStaticMem: 1
   n3dsExtSaveDataNumber: 0x12345
@@ -787,6 +784,7 @@ PlayerSettings:
   XboxOneGameOsOverridePath: 
   XboxOnePackagingOverridePath: 
   XboxOneAppManifestOverridePath: 
+  XboxOneVersion: 1.0.0.0
   XboxOnePackageEncryption: 0
   XboxOnePackageUpdateGranularity: 2
   XboxOneDescription: 

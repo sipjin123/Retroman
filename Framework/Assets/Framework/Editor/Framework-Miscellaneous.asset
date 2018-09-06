@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Framework-Miscellaneous
+  m_EditorClassIdentifier: 
+  PackageName: Framework-Miscellaneous
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Framework\Editor
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 08b46c6bd63d26f4d81370b33f4f7eeb, type: 3}
+  - {fileID: 102900000, guid: 7d1ee49d752385f489d2b8bb48014cb4, type: 3}
+  - {fileID: 102900000, guid: f2da04f322c889a4ca97d4639577e729, type: 3}
+  - {fileID: 11500000, guid: 40240a34a3c3b844d9d230de6d381112, type: 3}
+  - {fileID: 11500000, guid: ecef791850a6f644fb11bc8c0002da6e, type: 3}
+  ToExport:
+  - Assets/Framework/Packager/Editor.meta
+  - Assets/Framework/Packager/Editor/Packager.cs
+  - Assets/Framework/Packager/Editor/Packager.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs.meta
+  - Assets/Framework/Miscellaneous/DicePool.meta
+  - Assets/Framework/Miscellaneous/Spherical.meta
+  - Assets/Framework/Miscellaneous/DicePool/DicePool.cs
+  - Assets/Framework/Miscellaneous/DicePool/DicePool.cs.meta
+  - Assets/Framework/Miscellaneous/Spherical/Spherical.cs
+  - Assets/Framework/Miscellaneous/Spherical/Spherical.cs.meta
+  - Assets/Framework/Core/FMath.cs
+  - Assets/Framework/ExtensionMethods/MathExtensions.cs
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

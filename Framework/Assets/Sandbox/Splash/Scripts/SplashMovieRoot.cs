@@ -44,21 +44,25 @@ namespace Framework
 
         protected override IEnumerator Wait(Deferred def)
         {
+            YieldInstruction endFrame = new WaitForEndOfFrame();
+
 #if ENABLE_SPLASH_VIDEO
             while (!Done)
             {
-                yield return new WaitForEndOfFrame();
+                yield return endFrame;
             }
 #endif
 
             // resolve
-            yield return null;
+            yield return endFrame;
             def.Resolve();
         }
         #endregion
 
         private IEnumerator PlaySplash()
         {
+            YieldInstruction endFrame = new WaitForEndOfFrame();
+
 #if ENABLE_SPLASH_VIDEO
             Player.Play();
             
@@ -66,14 +70,14 @@ namespace Framework
             
             while (Player.isPlaying)
             {
-                yield return new WaitForEndOfFrame();
+                yield return endFrame;
             }
 #endif
 
             Player.enabled = false;
             Done = true;
 
-            yield return null;
+            yield return endFrame;
             this.Publish(new OnSplashDoneSignal());
         }
     }

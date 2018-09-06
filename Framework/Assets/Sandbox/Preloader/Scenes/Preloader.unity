@@ -224,15 +224,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1006bb9e80749e34484655522dcfde94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
   SelectedScene: Preloader
   _IsPersistent: 1
   Installers: []
@@ -257,7 +248,7 @@ MonoBehaviour:
   _Camera: {fileID: 1372105160}
   _CanvasList:
   - PlaneDistance: 25
-    RenderMode: 0
+    RenderMode: 1
     SceneDepth: 8
     Canvas: {fileID: 2080428669}
 --- !u!1 &947356598
@@ -520,7 +511,7 @@ Canvas:
   m_GameObject: {fileID: 2080428665}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 1372105160}
   m_PlaneDistance: 25
   m_PixelPerfect: 0
@@ -530,7 +521,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 10
+  m_SortingOrder: 8
   m_TargetDisplay: 0
 --- !u!225 &2080428670
 CanvasGroup:

@@ -7,6 +7,8 @@ using Common.Utils;
 using UniRx;
 using Common.Query;
 
+using Sandbox.ButtonSandbox;
+
 namespace Retroman {
 	
 	public class SettingsRoot : Scene
@@ -15,6 +17,9 @@ namespace Retroman {
 		public GameObject _toggleBGM, _toggleSFX;
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
+
+        public CanvasGroup InteractiveCanvas;
+        bool _DisableBackButton;
 
         protected override void Awake()
         {
@@ -30,25 +35,33 @@ namespace Retroman {
 			_toggleSFX.SetActive( _SFXswitch );
 			_toggleBGM.SetActive( _BGMswitch );
 
-            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
-            {
-                if (_.BackButtonType == BackButtonType.SceneIsTitle)
-                {
-                    if (QuerySystem.Query<bool>(QueryIds.IF_SETTINGS_ACTIVE) == true)
-                    {
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
-                    }
-                }
-            });
 
              base.Awake();
+            SetupSignals();
+            SetupButtons();
+		}
 
-            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+        void SetupButtons()
+        {
+            this.AddButtonHandler(ButtonType.Back, (ButtonClickedSignal signal) =>
             {
                 BackButtonClick();
             });
-		}
+        }
+        void SetupSignals()
+        {
+            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
+            {
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button");
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button" + _.BackButtonType);
+                if (_.BackButtonType == BackButtonType.SceneIsSettings)
+                {
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
+
+                    BackButtonClick();
+                }
+            });
+        }
 
         public void CreditsOnClick()
         {
@@ -97,9 +110,16 @@ namespace Retroman {
 		}
         public void BackButtonClick()
         {
-            SoundControls.Instance._buttonClick.Play();
+            if (_DisableBackButton)
+            {
+                Debug.LogError(D.ERROR + " SPAM IS BLOCKED BY SETTINGS");
+                return;
+            }
+            _DisableBackButton = true;
+            InteractiveCanvas.interactable = false;
 
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleSetting { IfActive = false });
+            SoundControls.Instance._buttonClick.Play();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
         }
 	}
 

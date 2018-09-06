@@ -39,8 +39,8 @@ namespace Framework
     public class SystemCanvas : MonoBehaviour
     {
         [SerializeField]
-        private bool UseSystemCamera = false;
-
+        private bool UseSystemCamera;
+        
         [SerializeField]
         private Camera _Camera;
         public Camera Camera
@@ -61,12 +61,9 @@ namespace Framework
             get { return CanvasList.Count; }
         }
 
-        protected virtual void Awake()
+        public bool IsUsingSystemCamera()
         {
-        }
-
-        protected virtual void Start()
-        {
+            return UseSystemCamera;
         }
         
         [Button(25)]
@@ -83,7 +80,7 @@ namespace Framework
                 setup.Canvas.sortingOrder = setup.SceneDepth.ToInt();
                 setup.Canvas.worldCamera = Camera;
 
-                Debug.LogFormat(D.WARNING + " B D:{0} N:{1}\n", setup.PlaneDistance, setup.Canvas.name);
+                Debug.LogFormat(D.F + "SystemCanvas::SetupSceneCanvas D:{0} N:{1}\n", setup.PlaneDistance, setup.Canvas.name);
             });
         }
 

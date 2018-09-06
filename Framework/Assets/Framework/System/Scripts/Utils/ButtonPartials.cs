@@ -13,18 +13,24 @@ using Sirenix.OdinInspector;
 using Common;
 using Common.Signal;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Events;
+#endif
+
 namespace Framework
 {
     // alias
     using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
-    
+    using TriggerEvent = EventTrigger.TriggerEvent;
+
     /// <summary>
     /// This component should be attached to a button.
     /// This publishes signals for when the button is clicked, hovered, unhovered, pressed, and released.
     /// This can be extended by buttons that need to pass data when clicked (ex. ItemButton).
     /// </summary>
-	public partial class Button : MonoBehaviour
+    public partial class Button : MonoBehaviour
         //IPointerClickHandler, 
         //IPointerEnterHandler, 
         //IPointerExitHandler,
@@ -53,9 +59,16 @@ namespace Framework
         private UnityAction<BaseEventData> OnPressedAction;
         private UnityAction<BaseEventData> OnReleasedAction;
 
+        public ValueDropdownList<string> GetButtons()
+        {
+            Buttonlist = Buttonlist ?? GenerateButtonList();
+            return Buttonlist;
+        }
+        
         [Button(25)]
         public void SetupButtonEvents()
         {
+#if UNITY_EDITOR
             EventTrigger trigger = GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
 
             Action<EventTriggerType, UnityAction<BaseEventData>> AddEvent = (EventTriggerType type, UnityAction<BaseEventData> action) =>
@@ -66,7 +79,7 @@ namespace Framework
                 entry.callback.AddListener(action);
                 trigger.triggers.Add(entry);
             };
-
+            
             OnClickedAction += _ => OnClickedButton();
             OnHoveredAction += _ => OnHoveredButton();
             OnUnhoveredAction += _ => OnUnhoveredButton();
@@ -78,11 +91,13 @@ namespace Framework
             AddEvent(EventTriggerType.PointerExit, OnUnhoveredAction);
             AddEvent(EventTriggerType.PointerDown, OnPressedAction);
             AddEvent(EventTriggerType.PointerUp, OnReleasedAction);
+#endif
         }
 
         [Button(25)]
         public void CleanupButtonEvents()
         {
+#if UNITY_EDITOR
             OnClickedAction -= _ => OnClickedButton();
             OnHoveredAction -= _ => OnHoveredButton();
             OnUnhoveredAction -= _ => OnUnhoveredButton();
@@ -90,18 +105,8 @@ namespace Framework
             OnReleasedAction -= _ => OnReleasedButton();
 
             //EventTrigger trigger = GetComponent<EventTrigger>() ?? gameObject.AddComponent<EventTrigger>();
-        }
-        
-        public ValueDropdownList<string> Buttons()
-        {
-            Buttonlist = Buttonlist ?? GenerateButtonList();
-            return Buttonlist;
+#endif
         }
 
-        private void UpdateButtonTypeString()
-        {
-            CachedButton = SelectedButton;
-            ButtonType = SelectedButton.ToEnum<EButton>();
-        }
     }
 }

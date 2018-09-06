@@ -69,11 +69,15 @@ namespace Retroman
 
         [SerializeField]
         private CameraControls _CameraControls;
-        public PlatformLord _PlatformLord;
 
         int WaterMaskLayerIndex = 0;
         int GroundMaskLayerIndex = 0;
         int FallStopperMaskLayerIndex = 0;
+
+
+        public Transform VFXJumpSpawn;
+        public GameObject RunningVFX;
+        public GhostAnimator gA;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -162,6 +166,7 @@ namespace Retroman
                     _jumpDelaySwitch = true;
                     StartCoroutine(JumpDelayENUM());
                     _rigidbody.AddForce(transform.up * 15000);
+                   Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
                     isJumping = true;
 
                     SoundControls.Instance._sfxJump.Play();
@@ -219,12 +224,13 @@ namespace Retroman
                     
                 if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {
-
+                  
                     _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
                 }
 
                 if (isJumping)
                 {
+                  
                     if (Rayhit.collider.gameObject.layer == FallStopperMaskLayerIndex)
                     {
                         _shadowObject.SetActive(false);
@@ -233,6 +239,21 @@ namespace Retroman
                     {
                         _shadowObject.SetActive(true);
                     }
+
+                    //RunningVFX.SetActive(false);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 0;
+                 
+                }
+                else
+                {
+
+                    //RunningVFX.SetActive(true);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 10;
+                  
                 }
 
             }
@@ -244,10 +265,20 @@ namespace Retroman
         #endregion
         //==========================================================================================================================================
         #region FUNCTIONS
+
+        private enum CurrDirection
+        {
+            Left,
+            Right
+        }
+        
+        CurrDirection cD = CurrDirection.Right;
+            
         void PlayerTurnFunction()
         {
             if (_playerAction == PlayerAction.TURNLEFT)
             {
+                cD = CurrDirection.Right;
                 player_rotation -= rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -261,6 +292,7 @@ namespace Retroman
             }
             else if (_playerAction == PlayerAction.TURNRIGHT)
             {
+                cD = CurrDirection.Left;
                 player_rotation += rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -348,6 +380,8 @@ namespace Retroman
                     if (isJumping)
                     {
                         _rigidbody.velocity = new Vector3(0, 0, 0);
+                         Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
+
                     }
                     isJumping = false;
                 }
@@ -364,8 +398,15 @@ namespace Retroman
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<SetupPlayerSplash>().Subscribe(_ =>
             {
+                Debug.LogError("WATER DEATH PART 2");
+               //   
                 _splash.SetActive(_.IfActive);
                 _splash.transform.position =  _deathAnim.transform.GetChild(0).transform.position;
+                if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
+               
             }).AddTo(this);
 
 
@@ -407,9 +448,14 @@ namespace Retroman
             Factory.Get<DataManagerService>().MessageBroker.Receive<EnableRagdoll>().Subscribe(_ =>
             {
                 _deathAnim.SetActive(true);
-
+               if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
+               
             }).AddTo(this);
             
+
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<PauseGame>().Subscribe(_ =>
             {
