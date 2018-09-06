@@ -10,13 +10,23 @@ namespace Framework.Common.Editor
     /// </summary>
     public class ScenesInBuildWindow : EditorWindow
     {
+        private static ScenesInBuildWindow window = null;
+
         #region Static Methods
 
         [MenuItem("Window/Scenes in Build %`", false, 1998)]
         private static void Initialize()
         {
-            ScenesInBuildWindow scenesInBuildWindow = GetWindow<ScenesInBuildWindow>(false, "Scenes in Build", true);
-            scenesInBuildWindow.Repaint();
+            if (window != null)
+            {
+                window.Close();
+                window = null;
+            }
+            else
+            {
+                window = GetWindow<ScenesInBuildWindow>(false, "Scenes in Build", true);
+                window.Repaint();
+            }
         }
 
         #endregion Static Methods
@@ -52,8 +62,8 @@ namespace Framework.Common.Editor
 
                     string sceneName = Path.GetFileNameWithoutExtension(scene.path);
                     string buttonText = ((scene.enabled) ? ("☑ " + _EnabledIndex) : ("☒ #")) + ": " + sceneName;
-
-                    if (GUILayout.Button(buttonText, new GUIStyle(GUI.skin.GetStyle("Button")) { alignment = TextAnchor.MiddleLeft }))
+                    
+                    if (GUILayout.Button("Open: " + buttonText, new GUIStyle(GUI.skin.GetStyle("Button")) { alignment = TextAnchor.MiddleLeft }))
                     {
                         if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                             EditorSceneManager.OpenScene(scene.path);
