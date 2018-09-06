@@ -78,6 +78,7 @@ namespace Sandbox.Popup
             Assertion.AssertNotNull(Popups);
 
             //All Generic Button Handlers are moved to System Root
+            /*
             AddButtonHandler(ButtonType.Popup001, delegate (ButtonClickedSignal signal)
             {
                 Show(PopupType.Popup001);
@@ -92,6 +93,7 @@ namespace Sandbox.Popup
             {
                 Show(PopupType.Popup003);
             });
+            //*/
 
             AddButtonHandler(ButtonType.Close, delegate (ButtonClickedSignal signal)
             {

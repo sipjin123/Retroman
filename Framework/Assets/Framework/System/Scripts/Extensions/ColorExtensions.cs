@@ -26,6 +26,7 @@
         public static readonly string FB = Color.black.LogHeader("[FB]");
         public static readonly string POPUP = Color.green.LogHeader("[Popup]");
         public static readonly string FGC = Color.cyan.LogHeader("[FGC]");
+        public static readonly string B = Color.green.LogHeader("[BURL]");
 
         public static string L(string header)
         {

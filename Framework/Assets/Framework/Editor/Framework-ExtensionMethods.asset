@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Framework-ExtensionMethods
+  m_EditorClassIdentifier: 
+  PackageName: Framework-ExtensionMethods
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Framework\Editor
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 08b46c6bd63d26f4d81370b33f4f7eeb, type: 3}
+  - {fileID: 102900000, guid: 7d1ee49d752385f489d2b8bb48014cb4, type: 3}
+  - {fileID: 102900000, guid: 6c1de95da7d10724492001d6e50c1122, type: 3}
+  - {fileID: 102900000, guid: ad39c51775d6fff42867f6029eb211ef, type: 3}
+  ToExport:
+  - Assets/Framework/Packager/Editor.meta
+  - Assets/Framework/Packager/Editor/Packager.cs
+  - Assets/Framework/Packager/Editor/Packager.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs.meta
+  - Assets/Framework/Core/FMath.cs
+  - Assets/Framework/Core/FMath.cs.meta
+  - Assets/Framework/Core/FRandom.cs
+  - Assets/Framework/Core/FRandom.cs.meta
+  - Assets/Framework/ExtensionMethods/BooleanExtensions.cs
+  - Assets/Framework/ExtensionMethods/BooleanExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/CollectionExtensions.cs
+  - Assets/Framework/ExtensionMethods/CollectionExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/EnumFlagsExtensions.cs
+  - Assets/Framework/ExtensionMethods/EnumFlagsExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/Int32Extensions.cs
+  - Assets/Framework/ExtensionMethods/Int32Extensions.cs.meta
+  - Assets/Framework/ExtensionMethods/MathExtensions.cs
+  - Assets/Framework/ExtensionMethods/MathExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/StringExtensions.cs
+  - Assets/Framework/ExtensionMethods/StringExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/UColorExtensions.cs
+  - Assets/Framework/ExtensionMethods/UColorExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/UComponentExtensions.cs
+  - Assets/Framework/ExtensionMethods/UComponentExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/ULayerMaskExtensions.cs
+  - Assets/Framework/ExtensionMethods/ULayerMaskExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/URenderer.cs
+  - Assets/Framework/ExtensionMethods/URenderer.cs.meta
+  - Assets/Framework/ExtensionMethods/URigidbody2DExtensions.cs
+  - Assets/Framework/ExtensionMethods/URigidbody2DExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/URigidbodyExtensions.cs
+  - Assets/Framework/ExtensionMethods/URigidbodyExtensions.cs.meta
+  - Assets/Framework/ExtensionMethods/UTransformExtensions.cs
+  - Assets/Framework/ExtensionMethods/UTransformExtensions.cs.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

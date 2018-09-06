@@ -1,4 +1,8 @@
-﻿using UniRx;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+
+using UniRx;
 
 using Framework;
 
@@ -30,6 +34,11 @@ namespace Sandbox.Services
         /// Called to initialized the service when ServicesRoot is enabled.
         /// </summary>
         void InitializeService();
+
+        /// <summary>
+        /// Called to initialized the service when ServicesRoot is enabled.
+        /// </summary>
+        IEnumerator InitializeServiceSequentially();
 
         /// <summary>
         /// Called to terminate the service when ServicesRoot is disabled or destroyed.

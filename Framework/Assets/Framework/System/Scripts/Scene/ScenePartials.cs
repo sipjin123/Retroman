@@ -12,7 +12,7 @@ using UniRx;
 using Common;
 using Common.Query;
 using Common.Signal;
-using Sirenix.OdinInspector;
+
 namespace Framework
 {
     using System;
@@ -263,7 +263,7 @@ namespace Framework
 
             this.Publish(new OnLoadSceneSignal(scene));
         }
-
+        
         /// <summary>
         /// Loads the given scene additively.
         /// </summary>
@@ -453,7 +453,7 @@ namespace Framework
                         break;
                     }
 
-                    Debug.LogFormat(D.L("[FRAMEWORK]") + " Scene::UnloadAllScenes Unloading Scene:{0}\n", sceneName);
+                    Debug.LogFormat(D.F + " Scene::UnloadAllScenes Unloading Scene:{0}\n", sceneName);
 
                     operation = SceneManager.UnloadSceneAsync(sceneName);
                     unload = true;

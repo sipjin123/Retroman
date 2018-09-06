@@ -138,7 +138,7 @@ namespace Retroman
 
             this._RetroMessageBroker.Receive<ChangeScene>().Subscribe(_ =>
             {
-                Debug.LogError(D.B+" :: My current fsm is :: " + Fsm.GetCurrentStateName());
+                Debug.LogError(D.LOG + " :: My current fsm is :: " + Fsm.GetCurrentStateName());
                 switch (_.Scene)
                 {
                         case EScene.GameRoot:

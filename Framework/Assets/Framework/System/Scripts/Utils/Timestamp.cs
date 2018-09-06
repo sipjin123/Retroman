@@ -13,14 +13,12 @@ using Common.Signal;
 
 namespace Framework
 {
-
     [Serializable]
     public class Timestamp
     {
-        /*
-        private ObscuredString Key = "Timestamp";
+        private string Key = "Timestamp";
 
-        private ObscuredFloat RootTime;
+        private float RootTime;
 
         public Timestamp(string key)
         {
@@ -45,6 +43,6 @@ namespace Framework
         private float GetTime()
         {
             return Time.time * 1000;
-        }*/
+        }
     }
 }

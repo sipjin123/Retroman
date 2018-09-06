@@ -7,6 +7,8 @@ using Common.Utils;
 using UniRx;
 using Common.Query;
 
+using Sandbox.ButtonSandbox;
+
 namespace Retroman {
 	
 	public class SettingsRoot : Scene
@@ -41,7 +43,7 @@ namespace Retroman {
 
         void SetupButtons()
         {
-            this.AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            this.AddButtonHandler(ButtonType.Back, (ButtonClickedSignal signal) =>
             {
                 BackButtonClick();
             });
@@ -50,8 +52,8 @@ namespace Retroman {
         {
             Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
             {
-                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button");
-                Debug.LogError(D.B + " SettingsRoot :: Received Soft Back Button" + _.BackButtonType);
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button");
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button" + _.BackButtonType);
                 if (_.BackButtonType == BackButtonType.SceneIsSettings)
                 {
                     Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
