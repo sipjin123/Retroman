@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,16 +14,53 @@ using UColor = UnityEngine.Color;
 
 namespace Framework
 {
+    using Sandbox.Security;
+
     public static class StringExtension
     {
-        public static readonly string FRAMEWORK = "Framework";
         public static readonly string DOUBLE_QOUTE = @"""";
         public static readonly string QOUTE = @"\""";
-        public static readonly SimpleEncryption Encryption = new SimpleEncryption(FRAMEWORK.ToBytes(), FRAMEWORK);
+        public static readonly AESEncyrption Encryption = AESEncryptionFactory.CreateDefaultEncryption();
+        public static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo; 
 
-        public static byte[] ToBytes(this string str)
+        public static string ToTitleCase(this string str)
+        {
+            return TextInfo.ToTitleCase(str.ToLower());
+        }
+        
+        public static byte[] ToASCIIBytes(this string str)
         {
             return Encoding.ASCII.GetBytes(str);
+        }
+
+        public static byte[] ToUTF8Bytes(this string str)
+        {
+            return Encoding.UTF8.GetBytes(str);
+        }
+        
+        public static byte[] FromBase64(this string str)
+        {
+            return Convert.FromBase64String(str);
+        }
+
+        public static string Encrypt(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
+            return Encryption.Encrypt(str);
+        }
+
+        public static string Decrypt(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+
+            return Encryption.Decrypt(str);
         }
 
         public static int ToInt(this string str)
@@ -54,7 +92,7 @@ namespace Framework
 
         public static long ToLong(this string str)
         {
-            long result = -1;
+            long result = -1L;
 
             long.TryParse(str, out result);
 
@@ -70,12 +108,7 @@ namespace Framework
         {
             return QOUTE + str + QOUTE;
         }
-
-        public static string Encrypt(this string str)
-        {
-            return Encryption.Encrypt(str);
-        }
-
+        
         public static Texture2D ToTexture(this string filePath)
         {
             Texture2D tex = null;
@@ -130,7 +163,7 @@ namespace Framework
             return color;
         }
 
-        public static T FromJson<T>(this string str) where T : IJson
+        public static T ToJson<T>(this string str) where T : IJson
         {
             return JsonUtility.FromJson<T>(str);
         }

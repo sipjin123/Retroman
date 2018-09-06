@@ -291,6 +291,11 @@ namespace Framework.Common.Editor
             ReadDatFile();
         }
 
+        public void AddToTypes(string type)
+        {
+            SetTypes(Types.Concat(new string[] { type }).ToArray());
+        }
+
         public void SetTypes(string[] types)
         {
             Types.Clear();

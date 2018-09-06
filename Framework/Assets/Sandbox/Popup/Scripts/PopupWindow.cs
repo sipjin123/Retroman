@@ -27,15 +27,15 @@ using CColor = Framework.Color;
 
 namespace Sandbox.Popup
 {
-    public class PopupWindow : MonoBehaviour, IPopupWindow
+    public partial class PopupWindow : MonoBehaviour, IPopupWindow
     {
         /// <summary>
         /// Holder for subscriptions to be disposed when the service is terminated.
         /// </summary>
-        private CompositeDisposable TerminationDisposables = new CompositeDisposable();
+        protected CompositeDisposable TerminationDisposables = new CompositeDisposable();
 
         [SerializeField]
-        private PopupData _PopupData = null;
+        protected PopupData _PopupData = null;
         public PopupData PopupData
         {
             get { return _PopupData; }
@@ -44,28 +44,27 @@ namespace Sandbox.Popup
 
 
         [SerializeField]
-        private Canvas _Canvas;
+        protected Canvas _Canvas;
         public Canvas Canvas
         {
             get { return _Canvas; }
             private set { _Canvas = value; }
         }
-
+        
         [SerializeField]
-        private Popup _PopUp;
-        public Popup PopUp
+        [LabelText("PopupType")]
+        [ValueDropdown("GetPopups")]
+        protected string _PopUp;
+        public int PopUp
         {
-            get { return _PopUp; }
-            protected set { _PopUp = value; }
+            get { return _PopUp.ToPopupValue(); }
         }
 
         public string Name
         {
             get { return gameObject.name; }
         }
-
-        private string header = CColor.green.LogHeader("[POPUP]");
-
+        
         protected bool HasPopupData()
         {
             return PopupData != null;
@@ -75,7 +74,7 @@ namespace Sandbox.Popup
         {
             if (data != null)
             {
-                _PopupData = data;
+                PopupData = data;
             }
         }
 
@@ -83,12 +82,12 @@ namespace Sandbox.Popup
         protected virtual void Awake()
         {
             Canvas = gameObject.GetComponent<Canvas>();
-            gameObject.name = string.Format("Popup Canvas ({0})", this.PopUp.ToString());
+            gameObject.name = string.Format("Popup Canvas ({0})", _PopUp.ToString());
         }
 
         protected virtual void Start()
         {
-            Assertion.Assert(!PopUp.Equals(Popup.Invalid), string.Format(header + " PopupWindow::Awake Invalid Popup! Window:{0}", Name));
+            Assertion.Assert(!PopUp.Equals(PopupType.Invalid.Value), string.Format(D.POPUP + " PopupWindow::Awake Invalid Popup! Window:{0}", Name));
         }
 
         #region Popup Transition

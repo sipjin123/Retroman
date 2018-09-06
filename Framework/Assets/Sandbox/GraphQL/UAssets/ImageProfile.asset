@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a660ceab345f6474da2d39f9bd3bd092, type: 3}
+  m_Name: ImageProfile
+  m_EditorClassIdentifier: 
+  _objectReferences: []
+  _serializedStateKeys:
+  - Downloads
+  _serializedStateValues:
+  - '[{"ImageId":"c6a0ec10-1df8-11e8-9a22-7d072d18e9eb","Timestamp":"2018-04-03T03:16:19.891Z","LocalPath":"C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang
+    Panday/Downloaded/Textures/c6a0ec10-1df8-11e8-9a22-7d072d18e9eb.jpg"},{"ImageId":"c1895d20-1df8-11e8-9a22-7d072d18e9eb","Timestamp":"2018-04-18T01:44:21.793Z","LocalPath":"C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang
+    Panday\\Downloaded\\Textures\\c1895d20-1df8-11e8-9a22-7d072d18e9eb.mp4"},{"ImageId":"e282d780-283a-11e8-ba9d-f16634e33062","Timestamp":"2018-04-17T02:58:25.696Z","LocalPath":"C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang
+    Panday\\Downloaded\\Textures\\e282d780-283a-11e8-ba9d-f16634e33062.jpeg"},{"ImageId":"cb5c2a30-1df8-11e8-9a22-7d072d18e9eb","Timestamp":"2018-04-18T01:44:45.274Z","LocalPath":"C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang
+    Panday\\Downloaded\\Textures\\cb5c2a30-1df8-11e8-9a22-7d072d18e9eb.jpeg"}]'
+  DirectoryPath: C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang Panday\Downloaded\Profiles\
+  Profile: C:/Users/raphael.reventar/AppData/LocalLow/Synergy88/Ang Panday\Downloaded\Profiles\Profiles.txt
