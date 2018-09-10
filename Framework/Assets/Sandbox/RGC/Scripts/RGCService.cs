@@ -99,7 +99,7 @@ namespace Sandbox.RGC
             CurrentServiceState.Value = ServiceState.Initialized;
 
             // TEST
-            Fsm.SendEvent(ON_LOGIN_AS_GUEST);
+            //Fsm.SendEvent(ON_LOGIN_AS_GUEST);
         }
 
         public override IEnumerator InitializeServiceSequentially()
@@ -117,7 +117,7 @@ namespace Sandbox.RGC
             CurrentServiceState.Value = ServiceState.Initialized;
 
             // TEST
-            Fsm.SendEvent(ON_LOGIN_AS_GUEST);
+            //Fsm.SendEvent(ON_LOGIN_AS_GUEST);
         }
 
         private void PrepareFSM()
@@ -133,12 +133,12 @@ namespace Sandbox.RGC
             idle.AddTransition(ON_LOGIN_AS_GUEST, loginAsGuest);
             idle.AddTransition(ON_LOGIN_AS_FB, loginAsFb);
 
-            loginAsGuest.AddTransition(ACTION_DONE, idle);
+            loginAsGuest.AddTransition(ACTION_DONE, loginAsFb);
 
             loginAsFb.AddTransition(ACTION_DONE, idle);
 
             // actions
-            idle.AddAction(new FsmDelegateAction(idle, owner => Debug.LogFormat(D.LOG + "RGCService::Idle\n")));
+            idle.AddAction(new FsmDelegateAction(idle, owner => Debug.LogFormat(D.FGC + "RGCService::Idle\n")));
 
             loginAsGuest.AddAction(new GuestLoginAction(loginAsGuest, ACTION_DONE));
             loginAsGuest.AddAction(new ExitAction(loginAsGuest, owner => this.Publish(new TEST_OnFetchRatesSignal())));
@@ -247,57 +247,22 @@ namespace Sandbox.RGC
                 .Subscribe(_ => Application.OpenURL(FGC_APP_URL))
                 .AddTo(this);
 
-            /*
-            this.Receive<OnSocketSignal>()
-                .ObserveOnMainThread()
-                .Subscribe(_ =>
-                    {
-                        if (_.GetInfo<object>() == null)
-                            return;
-
-                        string result = _.GetInfo<object>().ToString();
-
-                        Debug.LogFormat(D.A + "WowPointsService::SetUpSignals::OnSocketSignal Evt:{0} SubEvt:{1} Result:{2}\n", _.Event.ToString(), _.SubEvent, result);
-
-                        if (_.Event == SocketSignal.ON_CONNECTED)
-                        {
-                            SocketIO.Subscribe();
-                        }
-                        if (_.Event == SocketSignal.ON_SUBSCRIBED)
-                        {
-
-                        }
-                        else if (_.Event == SocketSignal.ON_RECEIVED_MESSAGE)
-                        {
-                            if (result.Contains("minigame_start"))
-                            {
-                                ParseMiniGameStart(result);
-                            }
-                            else if (result.Contains("minigame_end"))
-                            {
-                                ParseMiniGameEnd(result);
-                            }
-                            else if (result.Contains("bonusgame_start"))
-                            {
-                                ParseBonusGameStart(result);
-                            }
-                            else if (result.Contains("wallet_deposit"))
-                            {
-                                ParseWalletDeposit(result);
-                            }
-                            else if (result.Contains("redeem"))
-                            {
-                                ParseRedeemReward(result);
-                            }
-                            else if (result.Contains("daily_reward"))
-                            {
-                                ParseDailyLogin(result);
-                            }
-                        }
-                    })
-                .AddTo(this);
-                //*/
-
+            AddButtonHandler(ButtonType.FGC, delegate (ButtonClickedSignal signal)
+            {
+                Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal LocalUserData:{0}\n", LocalUserData);
+                bool isConnectedToFGC = LocalUserData != null;
+                if (!isConnectedToFGC)
+                {
+                    Fsm.SendEvent(ON_LOGIN_AS_GUEST);
+                }
+                else
+                {
+                    // TODO: +AS:20180910 Open FGC app here
+                    Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal Open FGC App here!\n");
+                    this.Publish(new OnOpenFGCSignal());
+                }
+            });
+            
             AddButtonHandler(ButtonType.DownloadFGC, (ButtonClickedSignal signal) =>
             {
                 this.Publish(new OnCloseActivePopup());
@@ -314,6 +279,17 @@ namespace Sandbox.RGC
             {
                 this.Publish(new OnCloseActivePopup());
             });
+
+            AddButtonHandler(ButtonType.ConnectToFGC, delegate (ButtonClickedSignal signal)
+            {
+                this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConnectToFGC });
+            });
+
+            AddButtonHandler(ButtonType.GetSynerytix, delegate (ButtonClickedSignal signal)
+            {
+                this.Publish(new OnGetSynertix());
+            });
+
         }
 
         private void SetupResolvers()

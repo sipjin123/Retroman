@@ -22,13 +22,12 @@ namespace Sandbox.RGC
 
         private void Awake()
         {
-            //NativeApp = new NativeApp();
+            NativeApp = new NativeApp();
         }
 
         public bool IsInstalled(string package)
         {
-            //return NativeApp.IsInstalled(package);
-            return false;
+            return NativeApp.IsInstalled(package);
         }
     }
 }

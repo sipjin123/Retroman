@@ -22,10 +22,16 @@ namespace Sandbox.GraphQL
     public class PlayerIDContainer : IJson
     {
         public string id;
+        public string device_id;
+        public string facebook_id;
+        public string gamesparks_id;
     }
 
     public class PlayerIdRequest : UnitRequest
     {
+        [SerializeField]
+        private PlayerIDContainer PlayerInfo;
+
         public override void Initialze(GraphInfo info)
         {
             this.Receive<GraphQLRequestSuccessfulSignal>()
@@ -44,7 +50,8 @@ namespace Sandbox.GraphQL
             Builder builder = Builder.Query();
             Function function = builder.CreateFunction("player");
             function.AddString("token", token);
-            Return ret = builder.CreateReturn("id");
+            Return ret = builder.CreateReturn("id", "device_id", "facebook_id", "gamesparks_id");
+
             ProcessRequest(GraphInfo, builder.ToString(), ProcessPlayerID);
         }
 
@@ -56,7 +63,8 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_DATA, Data = result.Result.data.player });
+                PlayerInfo = result.Result.data.player;
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_DATA, Data = PlayerInfo });
             }
         }
 

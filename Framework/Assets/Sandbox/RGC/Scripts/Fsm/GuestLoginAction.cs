@@ -59,7 +59,7 @@ namespace Sandbox.RGC
 
         public override void OnEnter()
         {
-            Debug.LogFormat(D.LOG + "GuestLoginAction::OnEnter\n");
+            Debug.LogFormat(D.FGC + "GuestLoginAction::OnEnter\n");
 
             Fsm.SendEvent(ON_LOGIN);
         }
@@ -92,7 +92,7 @@ namespace Sandbox.RGC
 
         private void PrepareFsm()
         {
-            Debug.LogFormat(D.LOG + "GuestLoginAction::PrepareFsm\n");
+            Debug.LogFormat(D.FGC + "GuestLoginAction::PrepareFsm\n");
 
             Fsm = new Fsm("LoginFsm");
 
@@ -120,7 +120,7 @@ namespace Sandbox.RGC
             onLogin.AddAction(new FsmDelegateAction(onLogin,
                owner =>
                {
-                   Debug.LogFormat(D.LOG + "GuestLoginAction::{0}\n", owner.GetName());
+                   Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
 
                    bool hasNetwork = HasNetwork();
                    bool hasLocal = HasLocalId();
@@ -148,7 +148,7 @@ namespace Sandbox.RGC
             createOfflineLogin.AddAction(new FsmDelegateAction(createOfflineLogin,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "GuestLoginAction::{0}\n", owner.GetName());
+                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
 
                     Id = Platform.DeviceId;
 
@@ -160,7 +160,7 @@ namespace Sandbox.RGC
             offlineLogin.AddAction(new FsmDelegateAction(offlineLogin,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "GuestLoginAction::{0} Id:{1}\n", owner.GetName(), Id);
+                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0} Id:{1}\n", owner.GetName(), Id);
 
                     this.Publish(new OnOfflineLoginSignal() { Id = Id });
 
@@ -170,13 +170,13 @@ namespace Sandbox.RGC
             loginAsGuest.AddAction(new FsmDelegateAction(loginAsGuest,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "GuestLoginAction::{0}\n", owner.GetName());
+                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
 
                     this.Receive<GraphQLRequestSuccessfulSignal>()
                         .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                         .Subscribe(_ =>
                         {
-                            Debug.LogFormat(D.LOG + "GuestLoginAction::LoginAsGuest::Success Token:{0}\n", _.GetData<string>());
+                            Debug.LogFormat(D.FGC + "GuestLoginAction::LoginAsGuest::Success Token:{0}\n", _.GetData<string>());
 
                             this.Publish(new OnGuestLoginSignal() { Token = _.GetData<string>()});
 
@@ -188,7 +188,7 @@ namespace Sandbox.RGC
                         .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                         .Subscribe(_ =>
                         {
-                            Debug.LogFormat(D.LOG + "GuestLoginAction::LoginAsGuest::Fail\n");
+                            Debug.LogFormat(D.FGC + "GuestLoginAction::LoginAsGuest::Fail\n");
 
                             owner.SendEvent(ON_LOGIN_DONE);
                         })
@@ -202,7 +202,7 @@ namespace Sandbox.RGC
             loginDone.AddAction(new FsmDelegateAction(loginDone,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "GuestLoginAction::{0}\n", owner.GetName());
+                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
 
                     GetOwner().SendEvent(Evt);
                 }));

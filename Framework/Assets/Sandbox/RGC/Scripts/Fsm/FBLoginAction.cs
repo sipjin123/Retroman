@@ -36,7 +36,7 @@ namespace Sandbox.RGC
 
         public override void OnEnter()
         {
-            Debug.LogFormat(D.LOG + "FBLoginAction::OnEnter\n");
+            Debug.LogFormat(D.FGC + "FBLoginAction::OnEnter\n");
 
             Fsm.SendEvent(ON_LOGIN_FB);
         }
@@ -57,7 +57,7 @@ namespace Sandbox.RGC
 
         private void PrepareFsm()
         {
-            Debug.LogFormat(D.LOG + "FBLoginAction::PrepareFsm\n");
+            Debug.LogFormat(D.FGC + "FBLoginAction::PrepareFsm\n");
 
             Fsm = new Fsm("LoginFsm");
 
@@ -76,13 +76,13 @@ namespace Sandbox.RGC
             loginAsFb.AddAction(new FsmDelegateAction(loginAsFb,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "FBLoginAction::{0}\n", owner.GetName());
+                    Debug.LogFormat(D.FGC + "FBLoginAction::{0}\n", owner.GetName());
 
                     this.Receive<OnFacebookLoginSuccessSignal>()
                         .Subscribe(
                         _ =>
                         {
-                            Debug.LogFormat(D.LOG + "FBLoginAction::{0}::Success FbId:{1} FbToken:{2}\n", owner.GetName(), _.Id, _.Token);
+                            Debug.LogFormat(D.FGC + "FBLoginAction::{0}::Success FbId:{1} FbToken:{2}\n", owner.GetName(), _.Id, _.Token);
 
                             this.Publish(new OnFBLoginSignal() { Id = _.Id, Token = _.Token });
                             owner.SendEvent(ON_LOGIN_DONE);
@@ -92,7 +92,7 @@ namespace Sandbox.RGC
                     this.Receive<OnFacebookLoginFailedSignal>()
                         .Subscribe(_ =>
                         {
-                            Debug.LogFormat(D.LOG + "FBLoginAction::{0}::Fail\n", owner.GetName());
+                            Debug.LogFormat(D.FGC + "FBLoginAction::{0}::Fail\n", owner.GetName());
                             owner.SendEvent(this.ON_LOGIN_DONE);
                         })
                         .AddTo(Disposables);
@@ -105,7 +105,7 @@ namespace Sandbox.RGC
             loginDone.AddAction(new FsmDelegateAction(loginDone,
                 owner =>
                 {
-                    Debug.LogFormat(D.LOG + "FBLoginAction::{0}\n", owner.GetName());
+                    Debug.LogFormat(D.FGC + "FBLoginAction::{0}\n", owner.GetName());
 
                     owner.SendEvent(FINISH);
                     
