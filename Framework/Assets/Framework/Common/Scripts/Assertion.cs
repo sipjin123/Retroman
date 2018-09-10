@@ -36,16 +36,14 @@ public static class Assertion
     {
         if (!expression)
         {
-            Debug.LogError(D.ERROR + assertErrorMessage);
-
             // use logger only if not in editor
 #if !UNITY_EDITOR
 			try {
 #endif
-            throw new Exception(D.ERROR + assertErrorMessage);
+            throw new Exception(assertErrorMessage);
 #if !UNITY_EDITOR
 			} catch(Exception e) {
-				FLogger.GetInstance().LogError(D.ERROR + assertErrorMessage);
+				FLogger.GetInstance().LogError(assertErrorMessage);
 				FLogger.GetInstance().LogError(D.ERROR + e.StackTrace);
 				throw e;
 			}

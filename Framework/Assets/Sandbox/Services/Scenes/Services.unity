@@ -648,6 +648,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f793ec646e8abe744b3c9e5d9ac8569e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &448525843
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 448525844}
+  - component: {fileID: 448525845}
+  m_Layer: 0
+  m_Name: PlayerIdRequest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &448525844
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 448525843}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1384649404}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &448525845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 448525843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0a0327fa59b84e40b35d2b4048294fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  PlayerInfo:
+    id: 
+    device_id: 
+    facebook_id: 
+    gamesparks_id: 
 --- !u!1 &485330141
 GameObject:
   m_ObjectHideFlags: 0
@@ -1102,6 +1148,7 @@ Transform:
   - {fileID: 2035889543}
   - {fileID: 1737881887}
   - {fileID: 979461360}
+  - {fileID: 448525844}
   m_Father: {fileID: 1446861188}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1133,6 +1180,7 @@ MonoBehaviour:
   - {fileID: 2035889545}
   - {fileID: 1737881889}
   - {fileID: 979461362}
+  - {fileID: 448525845}
 --- !u!1 &1446861186
 GameObject:
   m_ObjectHideFlags: 0

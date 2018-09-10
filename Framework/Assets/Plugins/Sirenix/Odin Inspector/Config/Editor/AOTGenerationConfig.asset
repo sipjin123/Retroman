@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -11,9 +11,168 @@ MonoBehaviour:
   m_Script: {fileID: 1726182683, guid: a4865f1ab4504ed8a368670db22f409c, type: 3}
   m_Name: AOTGenerationConfig
   m_EditorClassIdentifier: 
-  excludeAssemblyDefinitionsWithEditorReference: 0
-  automateBeforeBuilds: 0
+  excludeAssemblyDefinitionsWithEditorReference: 1
+  automateBeforeBuilds: 1
   deleteDllAfterBuilds: 1
   automateForPlatforms: 0900000014000000
-  lastScan: 0
-  supportSerializedTypes: []
+  lastScan: 636721955317338094
+  supportSerializedTypes:
+  - TypeName: Sirenix.OdinInspector.Demos.A, Assembly-CSharp-firstpass
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Action, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Action`1[[Sandbox.GraphQL.GraphQLRequestFailedSignal, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Action`1[[Sandbox.GraphQL.GraphQLRequestSuccessfulSignal, Assembly-CSharp]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Action`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.Audio.BGM, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.Audio.BGMAudioMap, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Boolean[,], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.DateTime, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[Sandbox.Audio.BGM, Assembly-CSharp],[UnityEngine.AudioClip,
+      UnityEngine.AudioModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[Sirenix.OdinInspector.Demos.DictionaryExamples+SomeEnum,
+      Assembly-CSharp-firstpass],[Sirenix.OdinInspector.Demos.DictionaryExamples+MyCustomType,
+      Assembly-CSharp-firstpass]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[Sandbox.GraphQL.GraphQLRequestType,
+      Assembly-CSharp],[System.Action`1[[Sandbox.GraphQL.GraphQLRequestFailedSignal,
+      Assembly-CSharp]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[Sandbox.GraphQL.GraphQLRequestType,
+      Assembly-CSharp],[System.Action`1[[Sandbox.GraphQL.GraphQLRequestSuccessfulSignal,
+      Assembly-CSharp]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[UnityEngine.Material,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[System.Int32,
+      mscorlib]], mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.String,
+      mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.Dictionary`2[[VFXHandler+VFXList, Assembly-CSharp],[UnityEngine.GameObject,
+      UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sirenix.OdinInspector.Demos.DictionaryExamples+MyCustomType, Assembly-CSharp-firstpass
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sirenix.OdinInspector.Demos.DictionaryExamples+SomeEnum, Assembly-CSharp-firstpass
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[Sandbox.Audio.BGM,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[Sirenix.OdinInspector.Demos.DictionaryExamples+SomeEnum,
+      Assembly-CSharp-firstpass]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[Sandbox.GraphQL.GraphQLRequestType,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[Sandbox.Audio.SFX,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.EnumEqualityComparer`1[[VFXHandler+VFXList,
+      Assembly-CSharp]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Func`1[[System.Int32, mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: UnityEngine.GameObject[], UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
+      mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+      mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.GraphQL.GraphQLRequestFailedSignal, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.GraphQL.GraphQLRequestSuccessfulSignal, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.GraphQL.GraphQLRequestType, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sirenix.OdinInspector.InfoMessageType, Sirenix.OdinInspector.Attributes
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sirenix.OdinInspector.InfoMessageType[,], Sirenix.OdinInspector.Attributes
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Int32, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Int32[,], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.List`1[[Sirenix.OdinInspector.Demos.A, Assembly-CSharp-firstpass]],
+      mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Collections.Generic.List`1[[System.Int32, mscorlib]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.Audio.SFX, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: Sandbox.Audio.SFXAudioMap, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.String, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.String[,], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: UnityEngine.Texture2D[,], UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Type[], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: UnityEngine.Vector3, UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
+  - TypeName: System.Nullable`1[[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: VFXHandler+VFXList, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
