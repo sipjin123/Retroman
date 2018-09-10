@@ -761,32 +761,32 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   ShopItems:
-  - ItemNameId: Normal
+  - ItemNameId: RETROMAN
     ItemStoreId: 1
     ItemPrice: 500
     ItemImage: {fileID: 1416139606}
     IfInGameItem: 1
-  - ItemNameId: Cat
+  - ItemNameId: MR. NEKO
     ItemStoreId: 2
     ItemPrice: 500
     ItemImage: {fileID: 479630115}
     IfInGameItem: 1
-  - ItemNameId: Donkey
+  - ItemNameId: PRIMUS
     ItemStoreId: 3
     ItemPrice: 500
     ItemImage: {fileID: 1611251263}
     IfInGameItem: 1
-  - ItemNameId: Sonic
+  - ItemNameId: BLARE
     ItemStoreId: 4
     ItemPrice: 500
     ItemImage: {fileID: 135792071}
     IfInGameItem: 1
-  - ItemNameId: Unicorn
+  - ItemNameId: SHI-SHI
     ItemStoreId: 5
     ItemPrice: 500
     ItemImage: {fileID: 1727470735}
     IfInGameItem: 1
-  - ItemNameId: Yoshi
+  - ItemNameId: DUSTIN
     ItemStoreId: 6
     ItemPrice: 500
     ItemImage: {fileID: 1074943383}
