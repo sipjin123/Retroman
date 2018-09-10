@@ -28,11 +28,11 @@ public class GameControls : SerializedMonoBehaviour
 
 
     //UI WINDOWS
-    public Canvas InGameWindow;
-
+    public Canvas _InGameWindow;
+    public CanvasGroup _ResultsCanvas;
     public bool CanAccessBackButton()
     {
-        if (InGameWindow.enabled)
+        if (_InGameWindow.enabled)
             return true;
         return false;
     }
@@ -127,7 +127,7 @@ public class GameControls : SerializedMonoBehaviour
         _playerAnim.enabled = false;
 
         Factory.Get<DataManagerService>().MessageBroker.Publish(new PauseGame { IfPause = false });
-        InGameWindow.enabled = (true);
+        _InGameWindow.enabled = (true);
 
         UIScore.text = "0";
         UIScore2.text = "0";
@@ -164,6 +164,7 @@ public class GameControls : SerializedMonoBehaviour
     }
     public void ResetGame()
     {
+        //_ResultsCanvas.interactable = false;
         ResetButton.interactable = false;
         SoundControls.Instance._buttonClick.Play();
         Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = Framework.EScene.GameRoot });
@@ -185,7 +186,7 @@ public class GameControls : SerializedMonoBehaviour
     }
     public IEnumerator GameOverDelay()
     {
-        InGameWindow.enabled = (false);
+        _InGameWindow.enabled = (false);
 
         Factory.Get<DataManagerService>().MessageBroker.Publish(new DisablePlayableCharacter());
         Factory.Get<DataManagerService>().MessageBroker.Publish(new EnablePlayerShadows { IfActive = false });

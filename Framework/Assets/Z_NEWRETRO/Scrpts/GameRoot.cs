@@ -28,6 +28,7 @@ namespace Retroman
         public GameObject PauseResetButton;
         public Canvas ResultsCanvas;
         public GameControls _GameControls;
+        
         //--------
         public Image CharImage;
         void ShowResults()
