@@ -62,4 +62,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/Popup/Scenes/Popup003.unity
     guid: ef8cf595dc8273d45b4314cb97227131
+  - enabled: 1
+    path: Assets/Sandbox/RGC/Scenes/ConnectToFGC.unity
+    guid: ebd8643f9efae6a4582f0946be1f3bb9
+  - enabled: 1
+    path: Assets/Sandbox/RGC/Scenes/ConvertOffline.unity
+    guid: de462e1b8e6a911428fd26c829f0282d
+  - enabled: 1
+    path: Assets/Sandbox/RGC/Scenes/ConvertOnline.unity
+    guid: 7d7f2b0ced142f042a8466e95de6d8c0
+  - enabled: 1
+    path: Assets/Sandbox/RGC/Scenes/DownloadFGC.unity
+    guid: 1ed6f780643d5684ea7819dd4a09c6fb
   m_configObjects: {}

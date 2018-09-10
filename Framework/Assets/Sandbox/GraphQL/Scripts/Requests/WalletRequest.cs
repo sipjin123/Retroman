@@ -135,6 +135,13 @@ namespace Sandbox.GraphQL
                 .Subscribe(_ => TestGetConversionRate())
                 .AddTo(this);
 
+            // TEST
+            this.Receive<GraphQLRequestSuccessfulSignal>()
+                .Where(_ => _.Type == GraphQLRequestType.LOGIN)
+                .Subscribe(_ => TestGetConversionRate())
+                .AddTo(this);
+
+
             RegisterResolvers();
         }
 
@@ -169,7 +176,8 @@ namespace Sandbox.GraphQL
         private void GetFGCWallet(string token)
         {
             Builder builder = Builder.Query();
-            builder.CreateFunction("fgc_wallet")
+            builder
+                .CreateFunction("fgc_wallet")
                 .AddString("token", token);
             builder.CreateReturn("amount", "updated_at");
 

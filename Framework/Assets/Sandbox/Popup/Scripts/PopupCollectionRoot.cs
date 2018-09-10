@@ -76,25 +76,7 @@ namespace Sandbox.Popup
 
             Assertion.AssertNotNull(Blocker);
             Assertion.AssertNotNull(Popups);
-
-            //All Generic Button Handlers are moved to System Root
-            /*
-            AddButtonHandler(ButtonType.Popup001, delegate (ButtonClickedSignal signal)
-            {
-                Show(PopupType.Popup001);
-            });
-
-            AddButtonHandler(ButtonType.Popup002, delegate (ButtonClickedSignal signal)
-            {
-                Show(PopupType.Popup002);
-            });
-
-            AddButtonHandler(ButtonType.Popup003, delegate (ButtonClickedSignal signal)
-            {
-                Show(PopupType.Popup003);
-            });
-            //*/
-
+            
             AddButtonHandler(ButtonType.Close, delegate (ButtonClickedSignal signal)
             {
                 //Add Chronos 
@@ -196,6 +178,8 @@ namespace Sandbox.Popup
         {
             string popupScene = popUp.Type;
 
+            Debug.LogFormat(D.POPUP + "PopupCollectionRoot::Load loading {0}\n", popupScene);
+
             //Debug.LogErrorFormat("++++Popup loaded! P:{0} Def:{1} Time:{2}\n", popUp, deferred, Time.time);
 
             yield return null;
@@ -207,11 +191,17 @@ namespace Sandbox.Popup
 
             Transform root = transform;
             UScene loadedScene = SceneManager.GetSceneByName(popupScene);
-            List<GameObject> rawObjects = new List<GameObject>(loadedScene.GetRootGameObjects());
+            List<GameObject> rawObjects = new List<GameObject>();
+            loadedScene.GetRootGameObjects(rawObjects);
             List<PopupWindow> objects = rawObjects.ToArray<PopupWindow>();
 
+            if (objects.Count != 1)
+            {
+                rawObjects.ForEach(o => Debug.LogFormat(D.ERROR + "GameObject:{0} PopupWindow:{1}\n", o.name, o.GetComponent<PopupWindow>()));
+            }
+
             // make sure the scenes only has 1 root object
-            Assertion.Assert(objects.Count == 1);
+            Assertion.Assert(objects.Count == 1, D.ERROR + "PopupCollectionRoot::Load Popup:{0} should only have 1 PopupWindow. RawCount:{1} PopupCount:{2}\n", popupScene, rawObjects.Count, objects.Count);
 
             // fix object parenting setup
             GameObject obj = objects.FirstOrDefault().gameObject;
