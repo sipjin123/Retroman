@@ -285,8 +285,9 @@ namespace Sandbox.RGC
                 this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConnectToFGC });
             });
 
-            AddButtonHandler(ButtonType.GetSynerytix, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GetSynertix, delegate (ButtonClickedSignal signal)
             {
+                Debug.LogError("sYNERTIX GET");
                 this.Publish(new OnGetSynertix());
             });
 

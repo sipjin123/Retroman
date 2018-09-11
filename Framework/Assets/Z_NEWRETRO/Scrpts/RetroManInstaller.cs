@@ -266,6 +266,7 @@ namespace Retroman
                 Promise.All(Preloader.FadeInLoadingScreenPromise())
                     .Then(_ => Scene.LoadScenePromise<AudioRoot>(EScene.Audio))
                     .Then(_ => Scene.LoadScenePromise<ServicesRoot>(EScene.Services))
+                    .Then(_ => Scene.LoadScenePromise<PopupCollectionRoot>(EScene.PopupCollection))
                     .Then(_=> Factory.Get<DataManagerService>().InjectBroker(this._RetroMessageBroker))
                     .Then(_ => SoundControls.Instance.SetupMessageBroker(this._RetroMessageBroker))
                     .Then(_ => Scene.LoadScenePromise<CoinsRoot>(EScene.CoinsRoot))
