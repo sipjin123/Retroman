@@ -66,9 +66,5 @@ namespace Common.Query {
 			return systemInstance.HasResolver(queryId);
 		}
 
-        internal static void RegisterResolver(object iF_SETTINGS_ACTIVE, Action<IQueryRequest, IMutableQueryResult> p)
-        {
-            throw new NotImplementedException();
-        }
-    }
+	}
 }

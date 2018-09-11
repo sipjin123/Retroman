@@ -15,6 +15,8 @@ using Common.Query;
 using Framework;
 using Synergy88;
 using Common.Utils;
+using Sandbox.ButtonSandbox;
+
 namespace Retroman
 {
     public class ShopRoot : Scene
@@ -130,14 +132,14 @@ namespace Retroman
 
         void SetupButtons()
         {
-            AddButtonHandler(EButton.GoToTitle, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GoToTitle, delegate (ButtonClickedSignal signal)
             {
                 Debug.LogError("Title Button");
                 SoundControls.Instance._buttonClick.Play();
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
             });
 
-            AddButtonHandler(EButton.StartGame, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.StartGame, delegate (ButtonClickedSignal signal)
             {
                 PlayButton.interactable = false;
                 SoundControls.Instance._buttonClick.Play();
@@ -145,10 +147,8 @@ namespace Retroman
                 Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
             });
 
-            AddButtonHandler(EButton.Back, (ButtonClickedSignal signal) =>
+            AddButtonHandler(ButtonType.Back, (ButtonClickedSignal signal) =>
             {
-
-
                 GoBack();
             });
         }
@@ -162,7 +162,7 @@ namespace Retroman
             _DisableBackButton = true;
             InteractiveCanvas.interactable = false;
 
-            Debug.LogError(D.B + " Going Back ");
+            Debug.LogError(D.LOG + " Going Back ");
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
             SoundControls.Instance._buttonClick.Play();
             Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });

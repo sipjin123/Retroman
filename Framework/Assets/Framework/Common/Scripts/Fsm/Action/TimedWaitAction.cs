@@ -29,7 +29,8 @@ namespace Common.Fsm.Action {
 		 */
 		public void Init(float waitTime) {
 			this.waitTime = waitTime;
-		}
+            this.timer.Reset();
+        }
 		
 		public override void OnEnter() {
 			if(waitTime <= 0) {

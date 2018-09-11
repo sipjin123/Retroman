@@ -220,7 +220,7 @@ namespace Retroman
                 // _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
 
 
-              //  Debug.LogError((Rayhit.collider.gameObject.layer) +" -- "+ GroundMaskLayerIndex);
+                Debug.LogError((Rayhit.collider.gameObject.layer) +" -- "+ GroundMaskLayerIndex+" -- Hitting :: "+ LayerMask.LayerToName(Rayhit.collider.gameObject.layer) );
                     
                 if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {

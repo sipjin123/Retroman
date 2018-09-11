@@ -41,9 +41,14 @@ public class PlatformMinion : MonoBehaviour {
 
     [SerializeField]
 	BoxCollider _boxCollider;
+    private void OnTriggerEnter(Collider other)
+    {
+        string objname = other.name;
+        if (objname != "A" && objname != "GroundDetector") 
+        Debug.LogError("Minion[" + gameObject.name + "] hit :: "+other.name);
+    }
 
-    
-	void Awake()
+    void Awake()
 	{
         int randomizedVAlue = Random.Range(0, 4);
         if (randomizedVAlue == 1)

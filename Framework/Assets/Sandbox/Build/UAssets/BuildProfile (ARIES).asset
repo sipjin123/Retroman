@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -17,5 +17,3 @@ MonoBehaviour:
   KeyStore: E:/Aries/Projects/FrameworkUnity/Files/synergy88framework.keystore
   Alias: com.synergy88digital.framework
   Password: 88Synergy88
-  SceneAsset: {fileID: 0}
-  AssetbundleScenes: []

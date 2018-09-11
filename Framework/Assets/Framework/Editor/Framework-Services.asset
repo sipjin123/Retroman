@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Framework-Services
+  m_EditorClassIdentifier: 
+  PackageName: Framework-Services
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Framework\Editor
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 08b46c6bd63d26f4d81370b33f4f7eeb, type: 3}
+  - {fileID: 102900000, guid: 7d1ee49d752385f489d2b8bb48014cb4, type: 3}
+  - {fileID: 102900000, guid: 8316b3611f0ac6847915230cad0baa72, type: 3}
+  ToExport:
+  - Assets/Framework/Packager/Editor.meta
+  - Assets/Framework/Packager/Editor/Packager.cs
+  - Assets/Framework/Packager/Editor/Packager.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Attributes/OptionalDependencyAttribute.cs.meta
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs
+  - Assets/Framework/Utils/ConditionalCompilation/Editor/ConditionalCompilationUtility.cs.meta
+  - Assets/Framework/Services/Base.meta
+  - Assets/Framework/Services/Editor.meta
+  - Assets/Framework/Services/PubSubService.meta
+  - Assets/Framework/Services/RequestService.meta
+  - Assets/Framework/Services/Base/EServiceState.cs
+  - Assets/Framework/Services/Base/EServiceState.cs.meta
+  - Assets/Framework/Services/Base/GenericRequest.cs
+  - Assets/Framework/Services/Base/GenericRequest.cs.meta
+  - Assets/Framework/Services/Base/GenericResponse.cs
+  - Assets/Framework/Services/Base/GenericResponse.cs.meta
+  - Assets/Framework/Services/Base/IRequest.cs
+  - Assets/Framework/Services/Base/IRequest.cs.meta
+  - Assets/Framework/Services/Base/IResponse.cs
+  - Assets/Framework/Services/Base/IResponse.cs.meta
+  - Assets/Framework/Services/Base/IService.cs
+  - Assets/Framework/Services/Base/IService.cs.meta
+  - Assets/Framework/Services/Base/IServiceModule.cs
+  - Assets/Framework/Services/Base/IServiceModule.cs.meta
+  - Assets/Framework/Services/Editor/Dependencies.cs
+  - Assets/Framework/Services/Editor/Dependencies.cs.meta
+  - Assets/Framework/Services/PubSubService/GenericResponseBroadcaster.cs
+  - Assets/Framework/Services/PubSubService/GenericResponseBroadcaster.cs.meta
+  - Assets/Framework/Services/PubSubService/GenericResponsePublisher.cs
+  - Assets/Framework/Services/PubSubService/GenericResponsePublisher.cs.meta
+  - Assets/Framework/Services/PubSubService/IPubSubService.cs
+  - Assets/Framework/Services/PubSubService/IPubSubService.cs.meta
+  - Assets/Framework/Services/PubSubService/IResponseBroadcaster.cs
+  - Assets/Framework/Services/PubSubService/IResponseBroadcaster.cs.meta
+  - Assets/Framework/Services/PubSubService/IResponsePublisher.cs
+  - Assets/Framework/Services/PubSubService/IResponsePublisher.cs.meta
+  - Assets/Framework/Services/PubSubService/MonoPubSubServiceBase.cs
+  - Assets/Framework/Services/PubSubService/MonoPubSubServiceBase.cs.meta
+  - Assets/Framework/Services/RequestService/IRequestService.cs
+  - Assets/Framework/Services/RequestService/IRequestService.cs.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

@@ -1,4 +1,5 @@
 ﻿using Framework.Common.Editor;
+using System;
 using UnityEditor;
 
 namespace Framework
@@ -8,7 +9,7 @@ namespace Framework
         #region Static Methods
 
         [MenuItem("Framework/System/Scene Types")]
-        private static void GetWindow()
+        private static SceneTypeEditor GetWindow()
         {
             var window = GetWindow<SceneTypeEditor>(
                 utility: true,
@@ -18,6 +19,25 @@ namespace Framework
             window.Initialize();
 
             window.Show();
+
+            return window;
+        }
+
+        /// <summary>
+        /// Opens the editor window and adds to EScene.
+        /// </summary>
+        /// <param name="menuCommand"></param>
+        [MenuItem("CONTEXT/Scene/Add to Enum")]
+        public static void AddToEnum(MenuCommand menuCommand)
+        {
+            var root = "Root";
+            var type = menuCommand.context.GetType().Name;
+
+            if (type.EndsWith(root, StringComparison.InvariantCultureIgnoreCase))
+                type = type.Remove(type.Length - root.Length, root.Length);
+
+            var window = GetWindow();
+            window.AddToTypes(type);
         }
 
         #endregion Static Methods
@@ -44,11 +64,7 @@ namespace Framework
                 "PopupCollection",
                 "Background",
                 "Cleaner",
-                "Max",
-                "Home",
-                "Title",
-                "Shop",
-                "Result"
+                "Max"
             };
 
         #endregion Properties

@@ -40,19 +40,7 @@ namespace Sandbox.Build
 
         [SerializeField, ShowInInspector]
         public string Password;
-
-#if UNITY_EDITOR
-        public SceneAsset SceneAsset;
-#endif
-
-        [SerializeField, ShowInInspector]
-        public List<string> AssetbundleScenes = new List<string>()
-        {
-            "Synergy88/Game/Scenes/ParesoMami",
-            "Wowowillie/BigyanNgJacket/Scenes/BigyanNgJacket",
-            "Sandbox/SpinTheWheelSandbox/Scenes/SpintheWheel",
-        };
-
+        
 #if UNITY_EDITOR
         [Button(25)]
         public void BrowseKeystore()
@@ -79,30 +67,8 @@ namespace Sandbox.Build
         public void SetupAndroid()
         {
             Setup();
-
-            ModifyBuildSettings(AssetbundleScenes, true);
         }
         
-        private void ModifyBuildSettings(List<string> bundles, bool isEnabled)
-        {
-            List<EditorBuildSettingsScene> scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
-            scenes.ForEach(s =>
-            {
-                //Debug.LogErrorFormat();
-            });
-            //bundles.ForEach(b => scenes.Find(s => s.path.Contains(b)).enabled = false);
-            EditorBuildSettings.scenes = scenes.ToArray();
-        }
-
-        /*
-        [Button(25)]
-        public void BuildAndroid()
-        {
-            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTarget.Android);
-            BuildPipeline.BuildPlayer(GetScenePaths(), path, BuildTarget.Android, options);
-        }
-        //*/
-
         [MenuItem("Framework/Create/DownloadProfile", false, 1011)]
         public static void CreateDownloadProfile()
         {

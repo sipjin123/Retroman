@@ -35,11 +35,20 @@ namespace Common.Time {
 			instanceMap[name] = newTimeReference;
 			return newTimeReference;
 		}
-		
-		/**
+
+        /**
+		 * Removes a TimeReference instance for the specified name.
+		 */
+        public void Remove(string name)
+        {
+            Assertion.Assert(instanceMap.ContainsKey(name));
+            instanceMap.Remove(name);
+        }
+
+        /**
 		 * Retrieves the TimeReference instance for this specified name.
 		 */
-		public TimeReference Get(string name) {
+        public TimeReference Get(string name) {
 			if(string.IsNullOrEmpty(name)) {
 				return TimeReference.GetDefaultInstance();
 			}

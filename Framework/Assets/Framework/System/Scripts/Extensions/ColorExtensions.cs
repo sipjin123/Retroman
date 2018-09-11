@@ -19,11 +19,13 @@
         public static readonly string ERROR = Color.red.LogHeader("[ERROR]");
         public static readonly string CHECK = Color.white.LogHeader("[CHECK]");
         public static readonly string F = Color.green.LogHeader("[Framework]");
-        public static readonly string A = Color.blue.LogHeader("[ARIES]");
-        public static readonly string B = Color.blue.LogHeader("[BURLIN]");
         public static readonly string SOCKETS = Color.white.LogHeader("[SOCKETS]");
         public static readonly string LOBBY = Color.green.LogHeader("[LOBBY]");
         public static readonly string GAME = Color.blue.LogHeader("[GAME]");
+        public static readonly string FB = Color.black.LogHeader("[FB]");
+        public static readonly string POPUP = Color.green.LogHeader("[Popup]");
+        public static readonly string FGC = Color.cyan.LogHeader("[FGC]");
+        public static readonly string B = Color.black.LogHeader("[BURL]");
 
         public static string L(string header)
         {

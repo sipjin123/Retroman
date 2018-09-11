@@ -15,9 +15,6 @@ using Sirenix.Serialization;
 using UniRx;
 using UniRx.Triggers;
 
-using Sirenix.OdinInspector;
-using Sirenix.Serialization;
-
 using Common;
 using Common.Fsm;
 using Common.Query;

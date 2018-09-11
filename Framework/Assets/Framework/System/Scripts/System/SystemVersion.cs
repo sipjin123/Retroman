@@ -15,6 +15,8 @@ using Common.Query;
 
 namespace Framework
 {
+    using TMPro;
+
     public class SystemVersion : MonoBehaviour
     {
         [SerializeField]
@@ -24,7 +26,7 @@ namespace Framework
         private string ReleaseVersion;
 
         [SerializeField]
-        private Text LabelVersion;
+        private TextMeshProUGUI LabelVersion;
 
         private void Awake()
         {
@@ -63,11 +65,6 @@ namespace Framework
             //#else
             LabelVersion.gameObject.SetActive(false);
             //#endif
-        }
-        public void Show()
-        {
-            LabelVersion.gameObject.SetActive(true);
-
         }
 
         public void UpdateLabel()
