@@ -63,7 +63,9 @@ public class PlatformMinion : MonoBehaviour {
 	}
 
 	public void UpdateThisPlatform()
-	{
+    {
+        _boxCollider.enabled = false;
+        _boxCollider.enabled = true;
 		DisableAll();
 		switch(_typeOfPlatform)
 		{
@@ -117,30 +119,36 @@ public class PlatformMinion : MonoBehaviour {
 		{
 			case HeightOfPlatform.LOW:
 				_lowerPlatform.SetActive(true);
-				transform.position = new Vector3( transform.position.x, -1.5f, transform.position.z);
-				break;
+                transform.position = new Vector3( transform.position.x, -1.5f, transform.position.z);
+                //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+                break;
 			case HeightOfPlatform.NORMAL:
 				_higherPlatform.SetActive(true);
-				transform.position = new Vector3( transform.position.x, 0, transform.position.z);
-				break;
+                transform.position = new Vector3( transform.position.x, 0, transform.position.z);
+                //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+                break;
 			case HeightOfPlatform.HIGH:
 				_higherPlatform.SetActive(true);
-				transform.position = new Vector3( transform.position.x, 1.5f, transform.position.z);
-				break;
+                transform.position = new Vector3( transform.position.x, 1.5f, transform.position.z);
+                //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+                break;
 			case HeightOfPlatform.VERYHIGH:
 				_lowerPlatform.SetActive(true);
-				transform.position = new Vector3( transform.position.x, 3, transform.position.z);
-				break;
+                transform.position = new Vector3( transform.position.x, 3, transform.position.z);
+                //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+                break;
 		}
 
 		if(_typeOfPlatform == TypeofPlatform.UPGROUND || _typeOfPlatform == TypeofPlatform.UPSPIKE)
 		{
-			transform.position = new Vector3( transform.position.x, transform.position.y +1.5f, transform.position.z);
-		}
+            transform.position = new Vector3( transform.position.x, transform.position.y +1.5f, transform.position.z);
+            //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+        }
 		else if(_typeOfPlatform == TypeofPlatform.LOWGROUND || _typeOfPlatform == TypeofPlatform.LOWHOLE)
 		{
-			transform.position = new Vector3( transform.position.x, transform.position.y -1.5f, transform.position.z);
-		}
+            transform.position = new Vector3( transform.position.x, transform.position.y -1.5f, transform.position.z);
+            //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
+        }
 
 		_previousTypeOfPlatform = _typeOfPlatform;
 

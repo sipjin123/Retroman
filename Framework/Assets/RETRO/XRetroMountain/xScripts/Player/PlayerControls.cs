@@ -165,7 +165,7 @@ namespace Retroman
                 {
                     _jumpDelaySwitch = true;
                     StartCoroutine(JumpDelayENUM());
-                    _rigidbody.AddForce(transform.up * 15000);
+                    _rigidbody.AddForce(transform.up * (15000/25));//15000);
                    Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
                     isJumping = true;
 
@@ -181,11 +181,11 @@ namespace Retroman
 
                     if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0)))
                     {
-                        _rigidbody.AddForce(transform.up * 650);
+                        _rigidbody.AddForce(transform.up * (650/25));// 650);
                     }
                 }
             }
-            _rigidbody.AddForce(-transform.up * 1000);
+            _rigidbody.AddForce(-transform.up * (1000/25)); //1000);
 
             PlayerTurnFunction();
           //  RaycastFunction();
@@ -205,23 +205,13 @@ namespace Retroman
         #region RAYCAST
         void RaycastFunction()
         {
-            //Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 5);
-            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 5, out Rayhit))// ,GroundWaterMask))
+            Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 10,Color.blue);
+
+            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out Rayhit))// ,GroundWaterMask))
             {
-                //Debug.LogError("WAT am i hitting :: " + Rayhit.collider.gameObject.name);
-                //Debug.LogError(Rayhit.collider.gameObject.tag+" "+Rayhit.collider.gameObject.name);
-                //Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 1, Color.red);
-
-                //_shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
-
-                //Debug.LogError("Rayhit is :: (" + Rayhit.collider.gameObject.name + ") Tag is : )" + Rayhit.collider.tag + ") Layer : " + LayerMask.LayerToName(Rayhit.collider.gameObject.layer)+" LayerPure: ("+Rayhit.collider.gameObject.layer+")");
+                //Debug.LogError(Rayhit.collider.gameObject.name+ " : " +LayerMask.LayerToName(Rayhit.collider.gameObject.layer));
 
 
-                // _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
-
-
-              //  Debug.LogError((Rayhit.collider.gameObject.layer) +" -- "+ GroundMaskLayerIndex);
-                    
                 if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {
                   
@@ -238,6 +228,10 @@ namespace Retroman
                     else if (Rayhit.collider.gameObject.layer == GroundMaskLayerIndex)
                     {
                         _shadowObject.SetActive(true);
+                    }
+                    else
+                    {
+                        _shadowObject.SetActive(false);
                     }
 
                     //RunningVFX.SetActive(false);
@@ -259,7 +253,8 @@ namespace Retroman
             }
             else
             {
-              //  _shadowObject.SetActive(false);
+                Debug.LogError("No hit");
+                _shadowObject.SetActive(false);
             }
         }
         #endregion
@@ -342,39 +337,14 @@ namespace Retroman
         }
 
         void OnTriggerEnter(Collider hit)
-        {
-            //Debug.LogError("~~~~~~~~~~~~~~~~ PLAYER :: Trigger Hit is :: " + hit.gameObject.name + " Tag is : " + hit.tag + " Layer : " + LayerMask.LayerToName(hit.gameObject.layer));
-            //TURNING
-            /*if (hit.gameObject.name == "Left"
-                || hit.gameObject.name == "Right"
-                || hit.gameObject.name == "MidLeft"
-                || hit.gameObject.name == "MidRight")
-            {
-                lerpToThisObject = hit.gameObject;
-                if (hit.gameObject.name == "Left")
-                    _playerAction = PlayerAction.TURNLEFT;
-                if (hit.gameObject.name == "Right")
-                    _playerAction = PlayerAction.TURNRIGHT;
-                if (hit.gameObject.name == "MidRight")
-                {
-                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 0 });
-                }
-                if (hit.gameObject.name == "MidLeft")
-                {
-                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 180 });
-                }
-                hit.GetComponent<MeshRenderer>().material.color = Color.black;
-                hit.GetComponent<BoxCollider>().enabled = (false);
-            }
-            //FALLING
-            else */if (hit.gameObject.name == "FallStopper")
+        {if (hit.gameObject.name == "FallStopper")
             {
                 _playerAction = PlayerAction.FALL;
             }
             //JUMPING
             if (!_jumpDelaySwitch)
             {
-                if (LayerMask.LayerToName( hit.gameObject.layer) == "GroundOnly")
+                if(hit.GetComponent<PlatformMinion>() != null)//if (LayerMask.LayerToName( hit.gameObject.layer) == "GroundOnly")
                 {
                     isGrounded = true;
                     if (isJumping)
