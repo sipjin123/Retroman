@@ -22128,8 +22128,8 @@ MonoBehaviour:
   _pauseButton: {fileID: 995508164}
   _resumeButton: {fileID: 957075742}
   ResetButton: {fileID: 1565255034}
-  _InGameWindow: {fileID: 0}
-  _ResultsCanvas: {fileID: 0}
+  _InGameWindow: {fileID: 1258604185}
+  _ResultsCanvas: {fileID: 249442992}
   _camAnim: {fileID: 714277357}
   _playerAnim: {fileID: 751124703}
   _isPaused: 0
