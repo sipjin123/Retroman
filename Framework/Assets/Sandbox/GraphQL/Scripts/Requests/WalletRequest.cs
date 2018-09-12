@@ -23,6 +23,16 @@ using Sandbox.RGC;
 
 namespace Sandbox.GraphQL
 {
+    public struct SendToFGCWalletSignal : IRequestSignal
+    {
+        public int Value;
+    }
+
+    public struct FetchConversionSignal : IRequestSignal
+    {
+
+    }
+
     public struct OnGetFGCWalletSignal : IRequestSignal
     {
         /// <summary>
@@ -70,6 +80,11 @@ namespace Sandbox.GraphQL
         public string update_at;
         public int amount;
     }
+    [Serializable]
+    public class GenericWallet : IJson
+    {
+        public int amount;
+    }
 
     [Serializable]
     public class WalletConversion : IJson
@@ -106,6 +121,8 @@ namespace Sandbox.GraphQL
         private FGCWallet Wallet;
 
         [SerializeField]
+        private GenericWallet GenericWallet;
+        [SerializeField]
         private List<WalletConversion> ConversionRates;
         
         private void OnDestroy()
@@ -118,6 +135,22 @@ namespace Sandbox.GraphQL
         public override void Initialze(GraphInfo info)
         {
             base.Initialze(info);
+
+
+            this.Receive<SendToFGCWalletSignal>()
+                .Subscribe(_ =>
+                {
+                    Debug.LogError(D.B + "Sending Points to Server : " + _.Value);
+                    UpdateCurrency<ScoreCurrency>(_.Value);
+                }).AddTo(this);
+
+            this.Receive<FetchConversionSignal>().Subscribe(_ =>
+            {
+
+                Debug.LogError(D.B + "Requesting Conversion Data");
+                FetchGameWallet();
+                TestGetConversionRate();
+            }).AddTo(this);
 
             this.Receive<OnGetFGCWalletSignal>()
                 .Subscribe(_ => GetFGCWallet(_.Token))
@@ -173,6 +206,19 @@ namespace Sandbox.GraphQL
         }
 
         #region Requests
+        [Button]
+        private void FetchGameWallet()
+        {
+            string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
+            Builder builder = Builder.Query();
+            builder
+                .CreateFunction("wallet")
+                .AddString("token", token)
+                .AddString("slug", "score");
+            builder.CreateReturn("amount");
+
+            ProcessRequest(GraphInfo, builder.ToString(), GetWalletResult);
+        }
         private void GetFGCWallet(string token)
         {
             Builder builder = Builder.Query();
@@ -243,6 +289,19 @@ namespace Sandbox.GraphQL
         #endregion
 
         #region Parsers
+
+        private void GetWalletResult(GraphResult result)
+        {
+            if (result.Status == Status.ERROR)
+            {
+                this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.GET_WALLET });
+            }
+            else
+            {
+                GenericWallet = result.Result.data.generic_wallet;
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_WALLET, Data = Wallet });
+            }
+        }
         private void GetFGCWalletResult(GraphResult result)
         {
             if (result.Status == Status.ERROR)
@@ -301,7 +360,7 @@ namespace Sandbox.GraphQL
             string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
 
             this.Publish(new OnGetFGCWalletSignal() { Token = token });
-            
+            /*
             this.Publish(new OnGetConversionRateSignal()
             {
                 Token = token,
@@ -313,7 +372,7 @@ namespace Sandbox.GraphQL
                 Token = token,
                 Slug = RGCConst.CURRENCY_2_SLUG,
             });
-
+            */
             this.Publish(new OnGetConversionRateSignal()
             {
                 Token = token,
@@ -325,7 +384,7 @@ namespace Sandbox.GraphQL
         public void TestConvertCurrent()
         {
             string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
-
+            /*
             this.Publish(new OnConvertCurrencySignal()
             {
                 Token = token,
@@ -338,7 +397,7 @@ namespace Sandbox.GraphQL
                 Token = token,
                 Slug = RGCConst.CURRENCY_2_SLUG,
                 Amount = 100,
-            });
+            });*/
 
             this.Publish(new OnConvertCurrencySignal()
             {
@@ -356,6 +415,16 @@ namespace Sandbox.GraphQL
             }
         }
 
+        [Serializable]
+        public class ScoreCurrency : Currency
+        {
+            public int score;
+
+            public ScoreCurrency(int val) : base(val)
+            {
+                score = val;
+            }
+        }
         [Serializable]
         public class Currency1 : Currency
         {
@@ -399,16 +468,19 @@ namespace Sandbox.GraphQL
         [Button(ButtonSizes.Medium)]
         public void TestUpdateCurrency()
         {
-            UpdateCurrency<Currency1>(100);
+            /*UpdateCurrency<Currency1>(100);
             UpdateCurrency<Currency2>(100);
-            UpdateCurrency<PointCurrency>(100);
+            UpdateCurrency<PointCurrency>(100); */
+            
+            UpdateCurrency<ScoreCurrency>(100);
         }
 
         private void UpdateCurrency<T>(int currency)
             where T : Currency
         {
             CurrencyUpdate<T> cCur = new CurrencyUpdate<T>() { currencies = (T)Activator.CreateInstance(typeof(T), currency) };
-            TestUpdateCurrency(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), "test_event", cCur);
+            //TestUpdateCurrency(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), "test_event", cCur);
+            TestUpdateCurrency(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), "game_end", cCur);
         }
 
         #endregion
