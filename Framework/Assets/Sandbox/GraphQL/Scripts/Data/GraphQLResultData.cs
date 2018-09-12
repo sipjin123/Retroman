@@ -47,6 +47,7 @@ namespace Sandbox.GraphQL
         PLAYER_UPDATE,
 
         GET_FGC_WALLET,
+        GET_WALLET,
         GET_CURRENCY_CONVERSION_RATE,
         CONVERT_CURRENCY,
     }
@@ -76,6 +77,7 @@ namespace Sandbox.GraphQL
         public List<LeaderboardStanding> leaderboard_players; //around_leaderboard
         public JoinEventResultData event_join; //join_event
         public FGCWallet fgc_wallet;
+        public GenericWallet generic_wallet;
         public WalletConversion wallet; //wallet
         public WalletConvert wallet_convert; //wallet_convert
     }
