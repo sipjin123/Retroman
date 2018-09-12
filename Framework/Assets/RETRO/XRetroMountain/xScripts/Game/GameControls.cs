@@ -5,6 +5,9 @@ using Common.Utils;
 using Retroman;
 using UniRx;
 using Sirenix.OdinInspector;
+using Sandbox.Popup;
+using Framework;
+
 public class GameControls : SerializedMonoBehaviour
 {
     #region VARIABLES
@@ -29,7 +32,6 @@ public class GameControls : SerializedMonoBehaviour
 
     //UI WINDOWS
     public Canvas _InGameWindow;
-    public CanvasGroup _ResultsCanvas;
     public bool CanAccessBackButton()
     {
         if (_InGameWindow.enabled)
@@ -164,7 +166,6 @@ public class GameControls : SerializedMonoBehaviour
     }
     public void ResetGame()
     {
-        //_ResultsCanvas.interactable = false;
         ResetButton.interactable = false;
         SoundControls.Instance._buttonClick.Play();
         Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = Framework.EScene.GameRoot });
@@ -208,6 +209,8 @@ public class GameControls : SerializedMonoBehaviour
         //SET DELAY
         yield return new WaitForSeconds(2);
         Time.timeScale = 0;
+
+        Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Show(PopupType.ResultsPopup);
 
         Factory.Get<DataManagerService>().MessageBroker.Publish(new EndGame());
         Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
