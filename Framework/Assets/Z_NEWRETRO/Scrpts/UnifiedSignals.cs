@@ -132,7 +132,10 @@ namespace Retroman
     {
         public BackButtonType BackButtonType;
     }
+    public class TriggerCanvasInteraction
+    {
 
+    }
 }
 public enum BackButtonType
 {

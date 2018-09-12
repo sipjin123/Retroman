@@ -16,6 +16,7 @@ using Framework;
 using Synergy88;
 using Common.Utils;
 using Sandbox.ButtonSandbox;
+using Sandbox.Popup;
 
 namespace Retroman
 {
@@ -54,41 +55,40 @@ namespace Retroman
         public CanvasGroup InteractiveCanvas;
 
 
-
-
-        public GameObject _confirmationWindow;
-
-        [SerializeField]
-        private GameObject _InsufficientFunds;
+        
 
         [SerializeField]
         private GameObject template;
         
         
         public Transform _ShopListParent;
-        public ShopItemData SelectedItem;
+        public ShopItemData _SelectedItem;
+        public ShopItemData SelectedItem { get { return _SelectedItem; } }
         public List<ShopItem> _GeneratedItems;
         public UnityEngine.UI.Button PlayButton;
 
 
+        PopupCollectionRoot popCol;
 
         void SetupListeners()
         {
             Debug.LogError("Listeners Yes");
 
+            popCol = Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection);
+            
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
             {
                 if(_.BackButtonType == BackButtonType.SceneIsShop)
                 {
-                    if (_InsufficientFunds.activeSelf)
+                    if(popCol.IsLoaded(PopupType.InsufficientGoldPopup))//if (_InsufficientFunds.activeSelf)
                     {
-                        _InsufficientFunds.SetActive(false);
+                        popCol.Hide();//_InsufficientFunds.SetActive(false);
                     }
-                    else if(_confirmationWindow.active)
+                    else if(popCol.IsLoaded(PopupType.PurchaseConfirmationPopup))//(_confirmationWindow.active)
                     {
-                        _confirmationWindow.SetActive(false);
-
+                        //_confirmationWindow.SetActive(false);
+                        popCol.Hide();
                     }
                     else
                     {
@@ -105,12 +105,13 @@ namespace Retroman
             }).AddTo(this);
             Factory.Get<DataManagerService>().MessageBroker.Receive<InsufficientCoins>().Subscribe(_ =>
             {
-                _InsufficientFunds.SetActive(true);
+                popCol.Show(PopupType.InsufficientGoldPopup);
+                //_InsufficientFunds.SetActive(true);
             }).AddTo(this);
             
             Factory.Get<DataManagerService>().MessageBroker.Receive<SelectItem>().Subscribe(_ =>
             {
-                SelectedItem = _.ShopItem;
+                _SelectedItem = _.ShopItem;
 
                 ActivateConrimationWindow();
 
@@ -215,30 +216,8 @@ namespace Retroman
         public void ActivateConrimationWindow()
         {
             SoundControls.Instance._buttonClick.Play();
-            _confirmationWindow.SetActive(true);
-        }
-        public void DisableConrimationWindow()
-        {
-            SoundControls.Instance._buttonClick.Play();
-            _confirmationWindow.SetActive(false);
-        }
-        public void ConfirmationYes()
-        {
-            DisableConrimationWindow();
-
-
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = -(SelectedItem.ItemPrice) });
-
-            Factory.Get<DataManagerService>().SaveThisItem(SelectedItem.ItemNameId);
-            Factory.Get<DataManagerService>().UpdateCurrentCharacter(SelectedItem.ItemStoreId);
-
-            RefreshGeneratedItems();
-            SoundControls.Instance._buttonClick.Play();
-        }
-        public void CloseInsufficientPanel()
-        {
-            SoundControls.Instance._buttonClick.Play();
-            _InsufficientFunds.SetActive(false);
+            popCol.Show(PopupType.PurchaseConfirmationPopup);
+            //_confirmationWindow.SetActive(true);
         }
 
 

@@ -74,4 +74,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/RGC/Scenes/DownloadFGC.unity
     guid: 1ed6f780643d5684ea7819dd4a09c6fb
+  - enabled: 1
+    path: Assets/Sandbox/Popup/Scenes/ResultsPopup.unity
+    guid: 1499639a75162514d9df32c59520e429
+  - enabled: 1
+    path: Assets/Sandbox/Popup/Scenes/PurchaseConfirmationPopup.unity
+    guid: 68007abd8d405ff42a544d3218ee5485
+  - enabled: 1
+    path: Assets/Sandbox/Popup/Scenes/InsufficientGoldPopup.unity
+    guid: 8179af94bac451e47940e9db0e532f3b
   m_configObjects: {}
