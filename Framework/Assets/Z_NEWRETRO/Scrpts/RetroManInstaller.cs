@@ -104,6 +104,7 @@ namespace Retroman
             {
                 skipProcess = true;
                 Fsm.SendEvent(ON_GAME);
+                Debug.Log("asdfassdfadfsafsafsadfsadfdsaf");
             }).AddTo(this);
 
 
