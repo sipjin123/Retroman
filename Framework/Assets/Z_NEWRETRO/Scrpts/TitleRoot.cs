@@ -85,8 +85,8 @@ namespace Retroman
                     }
                 }
             }).AddTo(this);
-
-            _MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ => { MainCanvas.enabled = false; }).AddTo(this);
+            //Removed for title animation outro - hec
+           // _MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ => { MainCanvas.enabled = false; }).AddTo(this);
         }
 
         void ButtonSetup()
