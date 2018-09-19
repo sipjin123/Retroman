@@ -207,17 +207,13 @@ public class GameControls : SerializedMonoBehaviour
         SoundControls.Instance._sfxDie.Play();
 
         //SET DELAY
-        //Moved to the bottom to allow results animation - Hec
-//        yield return new WaitForSeconds(2);
-//        Time.timeScale = 0;
+        yield return new WaitForSeconds(2);
+        Time.timeScale = 0;
 
         Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Show(PopupType.ResultsPopup);
 
         Factory.Get<DataManagerService>().MessageBroker.Publish(new EndGame());
         Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
-
-         yield return new WaitForSeconds(1);
-        Time.timeScale = 0;
 
     }
     #endregion
