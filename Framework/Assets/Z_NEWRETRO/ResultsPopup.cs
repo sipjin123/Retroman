@@ -11,45 +11,53 @@ using Sirenix.OdinInspector;
 using Sandbox.GraphQL;
 using Sandbox.RGC;
 
-public class ResultsPopup : MonoBehaviour {
-
-
-    public CanvasGroup InteractiveCanvas;
-
-    public Text HiScore1, HiScore2, CScore1, CScore2;
-    public Image CharImage;
-    GameRoot newGameRoot;
-    private void Awake()
+namespace RetroMountain
+{
+    public class ResultsPopup : MonoBehaviour
     {
-        newGameRoot = Scene.GetScene<GameRoot>(EScene.GameRoot);
+        public CanvasGroup InteractiveCanvas;
 
-        Factory.Get<DataManagerService>().MessageBroker.Receive<EndGame>().Subscribe(_ =>
+        public Text HiScore1, HiScore2, CScore1, CScore2;
+
+        public Image CharImage;
+
+        private DataManagerService DataService;
+        private MessageBroker DataServiceBroker;
+
+        private void Awake()
+        {
+            DataService = Factory.Get<DataManagerService>();
+            DataServiceBroker = DataService.MessageBroker;
+
+            DataServiceBroker.Receive<EndGame>()
+                .Subscribe(_ => ShowResults())
+                .AddTo(this);
+
+            DataServiceBroker.Receive<TriggerCanvasInteraction>()
+                .Subscribe(_ => InteractiveCanvas.interactable = false)
+                .AddTo(this);
+        }
+
+        private void OnEnable()
         {
             ShowResults();
-        }).AddTo(this);
-        Factory.Get<DataManagerService>().MessageBroker.Receive<TriggerCanvasInteraction>().Subscribe(_ =>
+        }
+
+        private void ShowResults()
         {
-            InteractiveCanvas.interactable = false;
-        }).AddTo(this);
+            float score = DataService.GetScore();
+            float highScore = DataService.GetHighScore();
+
+            CScore1.text = "" + score;
+            CScore2.text = "" + score;
+            HiScore1.text = "Best Score " + highScore;
+            HiScore2.text = "Best Score " + highScore;
+
+            this.Publish(new OnSendToFGCWalletSignal() { Value = (int)score, Event = RGCConst.GAME_END });
+            this.Publish(new OnFetchCurrenciesSignal());
+
+            int currChar = DataService.CurrentCharacterSelected - 1;
+            CharImage.sprite = DataService.ShopItems[currChar].ItemImage.sprite;
+        }
     }
-    private void OnEnable()
-    {
-        ShowResults();
-    }
-    void ShowResults()
-    {
-
-        CScore1.text = "" + Factory.Get<DataManagerService>().GetScore();
-        CScore2.text = "" + Factory.Get<DataManagerService>().GetScore();
-        HiScore1.text = "Best Score " + Factory.Get<DataManagerService>().GetHighScore();
-        HiScore2.text = "Best Score " + Factory.Get<DataManagerService>().GetHighScore();
-
-        SystemRoot sysroot = Scene.GetScene<SystemRoot>(EScene.System);
-        sysroot.Publish(new OnSendToFGCWalletSignal { Value = (int)Factory.Get<DataManagerService>().GetScore(), Event = RGCConst.GAME_END });
-        sysroot.Publish(new OnFetchCurrenciesSignal());
-
-        int currChar = Factory.Get<DataManagerService>().CurrentCharacterSelected - 1;
-        CharImage.sprite = Factory.Get<DataManagerService>().ShopItems[currChar].ItemImage.sprite;
-    }
-
 }

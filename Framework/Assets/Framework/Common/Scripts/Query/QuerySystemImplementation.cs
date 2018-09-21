@@ -68,7 +68,7 @@ namespace Common.Query {
 		 */
 		public T Query<T>(string queryId) {
 		    // system should not contains the specified resolver yet
-            Assertion.Assert(this.ResolverMap.ContainsKey(queryId), D.ERROR + "System should not contains the specified resolver yet. QueryId:{0}\n", queryId);
+            Assertion.Assert(this.ResolverMap.ContainsKey(queryId), D.ERROR + "System should contains the specified resolver. QueryId:{0}\n", queryId);
 
             try {
 				CurrentResult.Clear();
