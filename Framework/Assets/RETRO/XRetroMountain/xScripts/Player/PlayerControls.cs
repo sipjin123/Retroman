@@ -253,7 +253,7 @@ namespace Retroman
             }
             else
             {
-                Debug.LogError("No hit");
+                //Debug.LogError("No hit");
                 _shadowObject.SetActive(false);
             }
         }
