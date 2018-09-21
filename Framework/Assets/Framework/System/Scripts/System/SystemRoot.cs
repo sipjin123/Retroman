@@ -22,11 +22,7 @@ namespace Framework
 {
     using Sandbox.ButtonSandbox;
     using Sandbox.Services;
-
-    // alias
-    using UColor = UnityEngine.Color;
-    using CColor = Framework.Color;
-
+    
     public class SystemRoot : Scene
     {
         [SerializeField]
@@ -65,6 +61,31 @@ namespace Framework
             base.Awake();
             
             Install();
+
+            AddButtonHandler(ButtonType.Close, delegate(ButtonClickedSignal signal)
+            {
+
+            });
+
+            AddButtonHandler(ButtonType.Close, delegate (ButtonHoveredSignal signal)
+            {
+
+            });
+
+            AddButtonHandler(ButtonType.Close, delegate (ButtonUnhoveredSignal signal)
+            {
+
+            });
+
+            AddButtonHandler(ButtonType.Close, delegate (ButtonPressedSignal signal)
+            {
+
+            });
+
+            AddButtonHandler(ButtonType.Close, delegate (ButtonReleasedSignal signal)
+            {
+
+            });
         }
 
         protected override void OnDestroy()

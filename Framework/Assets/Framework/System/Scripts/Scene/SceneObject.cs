@@ -24,7 +24,6 @@ namespace Framework
     using Sandbox.ButtonSandbox;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     public partial class SceneObject : SerializedMonoBehaviour

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Framework
+  m_EditorClassIdentifier: 
+  PackageName: Framework
+  PackageVersion: 3.2.2
+  PackageDescription: 'Unity Framework
+
+'
+  OutputDirectory: Assets\Framework
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 4c8120ac4e0bf4fbc9bae313a1be1001, type: 3}
+  - {fileID: 102900000, guid: 3027093d5b3c84f168411d6ca23b729d, type: 3}
+  - {fileID: 102900000, guid: 6c1de95da7d10724492001d6e50c1122, type: 3}
+  - {fileID: 102900000, guid: 4b38fb71622247a4a97819d3b9a3c5af, type: 3}
+  - {fileID: 102900000, guid: fabbb208731d4ce48927da1db7da4ee7, type: 3}
+  - {fileID: 102900000, guid: ad39c51775d6fff42867f6029eb211ef, type: 3}
+  - {fileID: 102900000, guid: f2da04f322c889a4ca97d4639577e729, type: 3}
+  - {fileID: 102900000, guid: 08b46c6bd63d26f4d81370b33f4f7eeb, type: 3}
+  - {fileID: 102900000, guid: 8316b3611f0ac6847915230cad0baa72, type: 3}
+  - {fileID: 102900000, guid: 5c217750b53d1496fa5a072b627bc179, type: 3}
+  - {fileID: 102900000, guid: 7edeb558c01e4c74a933d251264e7e21, type: 3}
+  - {fileID: 102900000, guid: 295e72f98bcd7ef46bab9cde5cf4a4b7, type: 3}
+  - {fileID: 102900000, guid: 0a88ce0bc9d75c84c8e34ceb7b36882b, type: 3}
+  - {fileID: 102900000, guid: df94bf445dd0d954b8cffe12e3da65bc, type: 3}
+  - {fileID: 102900000, guid: 02245aef5a8e69444aa0a07ffe1eb11b, type: 3}
+  - {fileID: 102900000, guid: 40189c35092f58843ac1a0b96b80b216, type: 3}
+  - {fileID: 102900000, guid: 86c70a463d90e6b4085222f60ef8b291, type: 3}
+  - {fileID: 102900000, guid: 2c81c962cb5beab4b9f0cfdd95d2f3e2, type: 3}
+  - {fileID: 102900000, guid: 691ecd43cec5ecf4487a736cf9a756fc, type: 3}
+  - {fileID: 102900000, guid: d90ec4bd6edf4e44585970db8d019dca, type: 3}
+  - {fileID: 102900000, guid: 0abe451673a7dc44299b22fa60ee6f1c, type: 3}
+  - {fileID: 102900000, guid: 45a265526033f064899a2d2ddc4bf84f, type: 3}
+  - {fileID: 102900000, guid: 753bf4b75d8d0d8428ee83389be4d550, type: 3}
+  - {fileID: 102900000, guid: 64a9fbf845490f142a2ba1a34b470024, type: 3}
+  ToExport: []
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

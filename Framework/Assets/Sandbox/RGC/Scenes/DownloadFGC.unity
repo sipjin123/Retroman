@@ -306,7 +306,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &27865115
 GameObject:
@@ -629,12 +629,12 @@ RectTransform:
   m_Children:
   - {fileID: 1547280333}
   m_Father: {fileID: 987283049}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 676.28253, y: -960.00006}
-  m_SizeDelta: {x: 1352.5651, y: 1920.0001}
+  m_AnchoredPosition: {x: 1441.5142, y: -960.00006}
+  m_SizeDelta: {x: 2883.0283, y: 1920.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &450542639
 GameObject:
@@ -650,6 +650,7 @@ GameObject:
   - component: {fileID: 450542643}
   - component: {fileID: 450542642}
   - component: {fileID: 450542641}
+  - component: {fileID: 450542646}
   m_Layer: 5
   m_Name: Camera (2D Preview)
   m_TagString: MainCamera
@@ -669,7 +670,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1814757505}
-  m_Father: {fileID: 987283049}
+  m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &450542641
@@ -683,7 +684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f08246b9841a43478782f122d88f057, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WillDestroy: 0
+  WillDestroy: 1
 --- !u!81 &450542642
 AudioListener:
   m_ObjectHideFlags: 0
@@ -749,6 +750,24 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &450542646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 450542639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83aec55243f906c47a7b9bf3c7827058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseSystemCamera: 0
+  _Camera: {fileID: 450542645}
+  _CanvasList:
+  - PlaneDistance: 20
+    RenderMode: 1
+    SceneDepth: 7
+    Canvas: {fileID: 987283046}
 --- !u!1 &467388410
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,7 +947,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 7
   m_TargetDisplay: 0
 --- !u!114 &987283047
 MonoBehaviour:
@@ -985,10 +1004,9 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 450542640}
   - {fileID: 125263994}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1240,7 +1258,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1524585544
 GameObject:

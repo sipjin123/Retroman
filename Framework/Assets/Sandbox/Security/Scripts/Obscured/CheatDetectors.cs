@@ -8,9 +8,6 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
-using UniRx;
-using UniRx.Triggers;
-
 using Common;
 using Common.Utils;
 

@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Audio
+  m_EditorClassIdentifier: 
+  PackageName: Audio
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Sandbox\Audio
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 295e72f98bcd7ef46bab9cde5cf4a4b7, type: 3}
+  ToExport:
+  - Assets/Sandbox/Audio/Assets.meta
+  - Assets/Sandbox/Audio/Audio.asset
+  - Assets/Sandbox/Audio/Audio.asset.meta
+  - Assets/Sandbox/Audio/README.md
+  - Assets/Sandbox/Audio/README.md.meta
+  - Assets/Sandbox/Audio/Scenes.meta
+  - Assets/Sandbox/Audio/Scripts.meta
+  - Assets/Sandbox/Audio/UAssets.meta
+  - Assets/Sandbox/Audio/Assets/Audio.meta
+  - Assets/Sandbox/Audio/Assets/Prefabs.meta
+  - Assets/Sandbox/Audio/Assets/Audio/click.wav
+  - Assets/Sandbox/Audio/Assets/Audio/click.wav.meta
+  - Assets/Sandbox/Audio/Assets/Audio/hover.ogg
+  - Assets/Sandbox/Audio/Assets/Audio/hover.ogg.meta
+  - Assets/Sandbox/Audio/Assets/Prefabs/Audio_Source (Double).prefab
+  - Assets/Sandbox/Audio/Assets/Prefabs/Audio_Source (Double).prefab.meta
+  - Assets/Sandbox/Audio/Assets/Prefabs/Audio_Source (Single).prefab
+  - Assets/Sandbox/Audio/Assets/Prefabs/Audio_Source (Single).prefab.meta
+  - Assets/Sandbox/Audio/Scenes/Audio.unity
+  - Assets/Sandbox/Audio/Scenes/Audio.unity.meta
+  - Assets/Sandbox/Audio/Scenes/AudioContainer001.unity
+  - Assets/Sandbox/Audio/Scenes/AudioContainer001.unity.meta
+  - Assets/Sandbox/Audio/Scenes/AudioContainer002.unity
+  - Assets/Sandbox/Audio/Scenes/AudioContainer002.unity.meta
+  - Assets/Sandbox/Audio/Scenes/AudioContainer003.unity
+  - Assets/Sandbox/Audio/Scenes/AudioContainer003.unity.meta
+  - Assets/Sandbox/Audio/Scenes/AudioSandbox.unity
+  - Assets/Sandbox/Audio/Scenes/AudioSandbox.unity.meta
+  - Assets/Sandbox/Audio/Scripts/AudioContainer.cs
+  - Assets/Sandbox/Audio/Scripts/AudioContainer.cs.meta
+  - Assets/Sandbox/Audio/Scripts/AudioInstaller.cs
+  - Assets/Sandbox/Audio/Scripts/AudioInstaller.cs.meta
+  - Assets/Sandbox/Audio/Scripts/AudioPlayer.cs
+  - Assets/Sandbox/Audio/Scripts/AudioPlayer.cs.meta
+  - Assets/Sandbox/Audio/Scripts/AudioRoot.cs
+  - Assets/Sandbox/Audio/Scripts/AudioRoot.cs.meta
+  - Assets/Sandbox/Audio/Scripts/AudioSandbox.cs
+  - Assets/Sandbox/Audio/Scripts/AudioSandbox.cs.meta
+  - Assets/Sandbox/Audio/Scripts/BGM.cs
+  - Assets/Sandbox/Audio/Scripts/BGM.cs.meta
+  - Assets/Sandbox/Audio/Scripts/BGMAudioMap.cs
+  - Assets/Sandbox/Audio/Scripts/BGMAudioMap.cs.meta
+  - Assets/Sandbox/Audio/Scripts/DoubleAudioSource.cs
+  - Assets/Sandbox/Audio/Scripts/DoubleAudioSource.cs.meta
+  - Assets/Sandbox/Audio/Scripts/SFX.cs
+  - Assets/Sandbox/Audio/Scripts/SFX.cs.meta
+  - Assets/Sandbox/Audio/Scripts/SFXAudioMap.cs
+  - Assets/Sandbox/Audio/Scripts/SFXAudioMap.cs.meta
+  - Assets/Sandbox/Audio/Scripts/Utils.meta
+  - Assets/Sandbox/Audio/Scripts/Utils/BGMUtil.cs
+  - Assets/Sandbox/Audio/Scripts/Utils/BGMUtil.cs.meta
+  - Assets/Sandbox/Audio/Scripts/Utils/SFXUtil.cs
+  - Assets/Sandbox/Audio/Scripts/Utils/SFXUtil.cs.meta
+  - Assets/Sandbox/Audio/UAssets/UnmuteAllAudio.asset
+  - Assets/Sandbox/Audio/UAssets/UnmuteAllAudio.asset.meta
+  - Assets/Sandbox/Audio/UAssets/UnmuteBGM.asset
+  - Assets/Sandbox/Audio/UAssets/UnmuteBGM.asset.meta
+  - Assets/Sandbox/Audio/UAssets/UnmuteSFX.asset
+  - Assets/Sandbox/Audio/UAssets/UnmuteSFX.asset.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

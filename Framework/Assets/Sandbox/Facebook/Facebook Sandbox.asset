@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Facebook Sandbox
+  m_EditorClassIdentifier: 
+  PackageName: Facebook Szndbox
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Sandbox\Facebook
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: f3e0d28059914e74a84822a3dedb46a1, type: 3}
+  - {fileID: 102900000, guid: 49831c654ee7fec488cc992cec71a21b, type: 3}
+  - {fileID: 102900000, guid: ce6f38ffda5fe594a91dbc1d174179f9, type: 3}
+  ToExport: []
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

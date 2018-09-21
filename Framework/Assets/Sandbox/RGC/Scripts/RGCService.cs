@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 
 using UniRx;
 using UniRx.Triggers;
@@ -24,6 +25,7 @@ namespace Sandbox.RGC
 
     using Sandbox.Audio;
     using Sandbox.ButtonSandbox;
+    using Sandbox.Facebook;
     using Sandbox.GraphQL;
     using Sandbox.Network;
     using Sandbox.Popup;
@@ -55,6 +57,11 @@ namespace Sandbox.RGC
         public string Token;
     }
 
+    public struct OnToggleFGCPopup
+    {
+        public bool Show;
+    }
+
     /// <summary>
     /// A signal that open's the FGC App
     /// </summary>
@@ -62,6 +69,7 @@ namespace Sandbox.RGC
 
     public class RGCService : BaseService
     {
+        public static readonly string SHOW_CONNECT_POPUP = "ShowConnectPopup";
         public static readonly string IS_INSTALLED = "IsInstalled";
         public static readonly string LOCAL_ID = "LocalId";
 
@@ -79,10 +87,13 @@ namespace Sandbox.RGC
         private AppInstallChecker NativeApp;
         
         private LocalData LocalUser;
+
+        [SerializeField]
         private LocalUserData LocalUserData;
 
         // events
         private readonly string ON_LOGIN_AS_GUEST = "OnLoginAsGuest";
+        private readonly string ON_LOGIN_AS_GUEST_AND_FB = "OnLoginAsGuestAndFB";
         private readonly string ON_LOGIN_AS_FB = "OnLoginAsFb";
         private readonly string ACTION_DONE = "ActionDone";
 
@@ -97,9 +108,9 @@ namespace Sandbox.RGC
             IsFGCInstalled = NativeApp.IsInstalled(FGC_BUNDLE);
 
             CurrentServiceState.Value = ServiceState.Initialized;
-
-            // TEST
-            //Fsm.SendEvent(ON_LOGIN_AS_GUEST);
+            
+            // Auto login
+            Fsm.SendEvent(ON_LOGIN_AS_GUEST);
         }
 
         public override IEnumerator InitializeServiceSequentially()
@@ -115,9 +126,8 @@ namespace Sandbox.RGC
             yield return null;
 
             CurrentServiceState.Value = ServiceState.Initialized;
-
-            // TEST
-            //Fsm.SendEvent(ON_LOGIN_AS_GUEST);
+            
+            Fsm.SendEvent(ON_LOGIN_AS_GUEST);
         }
 
         private void PrepareFSM()
@@ -127,27 +137,64 @@ namespace Sandbox.RGC
             // states
             FsmState idle = Fsm.AddState("Idle");
             FsmState loginAsGuest = Fsm.AddState("LoginAsGuest");
+            FsmState loginAsGuestAndFB = Fsm.AddState("LoginAsGuestAndFB");
             FsmState loginAsFb = Fsm.AddState("LoginAsFb");
 
             // transitions
             idle.AddTransition(ON_LOGIN_AS_GUEST, loginAsGuest);
+            idle.AddTransition(ON_LOGIN_AS_GUEST_AND_FB, loginAsGuestAndFB);
             idle.AddTransition(ON_LOGIN_AS_FB, loginAsFb);
 
-            loginAsGuest.AddTransition(ACTION_DONE, loginAsFb);
+            loginAsGuest.AddTransition(ACTION_DONE, idle);
+
+            loginAsGuestAndFB.AddTransition(ON_LOGIN_AS_FB, loginAsFb);
 
             loginAsFb.AddTransition(ACTION_DONE, idle);
 
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.FGC + "RGCService::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
+
             // actions
-            idle.AddAction(new FsmDelegateAction(idle, owner => Debug.LogFormat(D.FGC + "RGCService::Idle\n")));
+            idle.AddAction(new EnterAction(idle,
+                owner =>
+                {
+                    if (PREFS.GetBool(SHOW_CONNECT_POPUP, true))
+                    {
+                        this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConnectToFGC });
+                    }
+                }));
 
             loginAsGuest.AddAction(new GuestLoginAction(loginAsGuest, ACTION_DONE));
-            loginAsGuest.AddAction(new ExitAction(loginAsGuest, owner => this.Publish(new TEST_OnFetchRatesSignal())));
+            loginAsGuest.AddAction(new ExitAction(loginAsGuest, 
+                owner =>
+                {
+                    bool hasToken = LocalUserData.HasToken();
+                    bool hasNetwork = QuerySystem.Query<bool>(NETService.HasInternet);
+                    if (hasToken && hasNetwork)
+                    {
+                        this.Publish(new OnFetchCurrenciesSignal());
+                    }
+                    else
+                    {
+                        // Error on logging in Facebook
+                    }
+                }));
+
+            loginAsGuestAndFB.AddAction(new GuestLoginAction(loginAsGuestAndFB, ON_LOGIN_AS_FB));
+            loginAsGuestAndFB.AddAction(new ExitAction(loginAsGuestAndFB, owner => this.Publish(new OnFetchCurrenciesSignal())));
 
             loginAsFb.AddAction(new FBLoginAction(loginAsFb, ACTION_DONE));
             loginAsFb.AddAction(new ExitAction(loginAsFb,
             owner =>
             {
-                if (!IsFGCInstalled)
+                bool hasFBLogin = QuerySystem.Query<bool>(FBID.HasLoggedInUser);
+                if (!hasFBLogin)
+                {
+                    Debug.LogFormat(D.ERROR + "RGCService::loginAsFb::ExitAction Error logging in Fb.\n");
+                }
+                else if (!IsFGCInstalled)
                 {
                     this.Publish(new OnShowPopupSignal() { Popup = PopupType.DownloadFGC });
                 }
@@ -170,20 +217,22 @@ namespace Sandbox.RGC
         private void SetupReceivers()
         {
             this.Receive<OnConnectToFGCApp>()
-                .Subscribe(_ => Fsm.SendEvent(ON_LOGIN_AS_FB))
+                .Subscribe(_ => OnClickedFGCButton())
                 .AddTo(this);
 
             this.Receive<OnGetSynertix>()
                 .Subscribe(
                 _ =>
                 {
+                    GameResultInfo data = GameResultFactory.CreateDefault();
+
                     if (QuerySystem.Query<bool>(NETService.HasInternet))
                     {
-                        this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOnline, PopupData = new PopupData(RGCConst.POINT_ID) });
+                        this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOnline, PopupData = new PopupData(data) });
                     }
                     else
                     {
-                        this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOffline, PopupData = new PopupData(RGCConst.POINT_ID) });
+                        this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOffline, PopupData = new PopupData(data) });
                     }
                 })
                 .AddTo(this);
@@ -207,7 +256,8 @@ namespace Sandbox.RGC
                 .Subscribe(
                 _ =>
                 {
-                    Assertion.AssertNotNull(_.Id);
+                    Assertion.AssertNotEmpty(_.Id);
+
                     LocalUser = new LocalData(_.Id, "localdata", "userdata");
                     LocalUserData = LocalUser.LoadFromDisk<LocalUserData>();
 
@@ -216,10 +266,12 @@ namespace Sandbox.RGC
                 .AddTo(this);
 
             this.Receive<OnGuestLoginSignal>()
-                .Subscribe(
-                _ =>
+                .Subscribe(_ =>
                 {
+                    Assertion.AssertNotEmpty(_.Token);
+                    
                     LocalUserData.Token = _.Token;
+                    LocalUser = new LocalData(LocalUserData.Id, "localdata", "userdata");
                     LocalUser.ReplaceToDisk(LocalUserData);
                 })
                 .AddTo(this);
@@ -244,23 +296,37 @@ namespace Sandbox.RGC
                 .AddTo(this);
 
             this.Receive<OnOpenFGCSignal>()
-                .Subscribe(_ => Application.OpenURL(FGC_APP_URL))
+                .Subscribe(_ =>
+                {
+                    bool hasFGCApp = IsFGCInstalled;
+                    bool hasNetwork = QuerySystem.Query<bool>(NETService.HasInternet);
+                    if ((hasNetwork && hasFGCApp) || (!hasNetwork && hasFGCApp))
+                    {
+                        // TODO: +AS:09132018 Open the FGC App here
+                        Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal TODO! Open FGC App here!\n");
+                        Application.OpenURL(FGC_APP_URL);
+                    }
+                    else if (hasNetwork && !hasFGCApp)
+                    {
+                        // TODO: +AS:09132018 Show the FGC store link here!
+                        Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal TODO! Show the FGC store link here!\n");
+                    }
+                    else
+                    {
+                        // TODO: +AS:09132018 Show no internet connection popup here!
+                        Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal TODO! Show no internet connection popup here!\n");
+                    }
+                })
+                .AddTo(this);
+
+            this.Receive<OnToggleFGCPopup>()
+                .Subscribe(_ => PREFS.SetBool(SHOW_CONNECT_POPUP, _.Show))
                 .AddTo(this);
 
             AddButtonHandler(ButtonType.FGC, delegate (ButtonClickedSignal signal)
             {
                 Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal LocalUserData:{0}\n", LocalUserData);
-                bool isConnectedToFGC = LocalUserData != null;
-                if (!isConnectedToFGC)
-                {
-                    Fsm.SendEvent(ON_LOGIN_AS_GUEST);
-                }
-                else
-                {
-                    // TODO: +AS:20180910 Open FGC app here
-                    Debug.LogFormat(D.FGC + "RGCService::OnOpenFGCSignal Open FGC App here!\n");
-                    this.Publish(new OnOpenFGCSignal());
-                }
+                OnClickedFGCButton();
             });
             
             AddButtonHandler(ButtonType.DownloadFGC, (ButtonClickedSignal signal) =>
@@ -285,14 +351,74 @@ namespace Sandbox.RGC
                 this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConnectToFGC });
             });
 
-            AddButtonHandler(ButtonType.GetSynertix, delegate (ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.GetSynerytix, delegate (ButtonClickedSignal signal)
             {
-                Debug.LogError("sYNERTIX GET");
                 this.Publish(new OnGetSynertix());
             });
 
         }
 
+        /*/
+        Login Scenarios
+            > Started Offline
+                1.
+                    > Login as Offline
+                    - Clicked FGC Button
+                        If has FGC app
+                            > Open FGC
+                        else
+                            > Shows no Internet Connection popup
+                2.
+                    > Same scenario in 1.
+                    > Enabled internat connection
+                    - Clicked FGC Button
+                        > Login as guest and fb
+                            If has FGC app
+                                > Open FGC
+                            else
+                                > Shows download FGC popup
+            > Started Online
+                1.
+                    > Auto login as guest
+                    - Clicked FGC Button
+                        > Fb login
+                            if FAIL
+                                > Handle stuff here (not yet defined in flow)
+                                > More or less, do 'Started Offline action if has no internet'
+                            else
+                                If has FGC app
+                                    > Open FGC
+                                else
+                                    > Shows download FGC popup
+        //*/
+        private void OnClickedFGCButton()
+        {
+            do
+            {
+                bool hasNetwork = QuerySystem.Query<bool>(NETService.HasInternet);
+
+                // is started offline? do guest login then facebook
+                bool isOffline = !LocalUserData.HasToken();
+                if (isOffline && hasNetwork)
+                {
+                    Fsm.SendEvent(this.ON_LOGIN_AS_GUEST_AND_FB);
+                    break;
+                }
+
+                // if online and has loggedin as guest? do fb login
+                bool isGuest = !LocalUserData.HasFBToken() || !QuerySystem.Query<bool>(FBID.HasLoggedInUser);
+                if (isGuest && hasNetwork)
+                {
+                    Fsm.SendEvent(ON_LOGIN_AS_FB);
+                    break;
+                }
+                
+                // Connected to GMC with FB
+                this.Publish(new OnOpenFGCSignal());
+                break;
+            } while (true);
+        }
+        
         private void SetupResolvers()
         {
             QuerySystem.RegisterResolver(IS_INSTALLED, RegisterFGCFlag);

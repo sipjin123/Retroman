@@ -94,7 +94,7 @@ public static class Assertion
     {
         if (!pointer)
         {
-            Assert(false, DEFAULT_MESSAGE);
+            Assert(false, pointer.name + DEFAULT_MESSAGE);
         }
     }
 

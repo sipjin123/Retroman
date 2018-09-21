@@ -13,8 +13,6 @@ using Framework;
 
 namespace Sandbox.Services
 {
-    using FColor = Framework.Color;
-
     public partial class BaseService : SerializedMonoBehaviour, IService
     {
         protected virtual void Awake()
@@ -79,13 +77,13 @@ namespace Sandbox.Services
         }
         
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void InitService()
         {
             InitializeService();
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void EndService()
         {
             TerminateService();

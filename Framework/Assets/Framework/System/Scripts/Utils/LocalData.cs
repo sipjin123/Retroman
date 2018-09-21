@@ -75,7 +75,10 @@ namespace Framework
 
         public void CreateDirectory(string folder)
         {
-            Directory.CreateDirectory(folder);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
         }
 
         public string GetPath()

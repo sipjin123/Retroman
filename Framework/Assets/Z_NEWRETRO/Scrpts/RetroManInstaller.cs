@@ -264,7 +264,7 @@ namespace Retroman
             {
                 // state 2
                 Promise.All(Preloader.FadeInLoadingScreenPromise())
-                    .Then(_ => Scene.LoadScenePromise<AudioRoot>(EScene.Audio))
+                    .Then(_ => Scene.LoadScenePromise<AudioRoot>("Audio"))
                     .Then(_ => Scene.LoadScenePromise<ServicesRoot>(EScene.Services))
                     .Then(_ => Scene.LoadScenePromise<PopupCollectionRoot>(EScene.PopupCollection))
                     .Then(_=> Factory.Get<DataManagerService>().InjectBroker(this._RetroMessageBroker))

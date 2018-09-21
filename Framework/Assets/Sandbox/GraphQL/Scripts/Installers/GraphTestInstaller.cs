@@ -32,8 +32,8 @@ namespace Sandbox.GraphQL
             base.Install();
 
             Promise.All(Scene.EndFramePromise())
+                .Then(_ => Scene.LoadScenePromise<AudioRoot>("Audio"))
                 .Then(_ => Scene.LoadSceneAdditivePromise<PopupCollectionRoot>(EScene.PopupCollection))
-                .Then(_ => Scene.LoadSceneAdditivePromise<AudioRoot>(EScene.Audio))
                 .Then(_ => Scene.LoadSceneAdditivePromise<ServicesRoot>(EScene.Services));
         }
     }
