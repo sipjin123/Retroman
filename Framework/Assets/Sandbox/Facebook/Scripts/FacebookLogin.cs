@@ -8,7 +8,7 @@ using UnityEngine;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
-#if FACEBOOK_ENABLED
+#if ENABLE_FACEBOOK
 using Facebook;
 using Facebook.Unity;
 #endif
@@ -17,11 +17,11 @@ using UniRx;
 using UniRx.Triggers;
 
 using Common.Fsm;
+using Common.Fsm.Action;
 using Common.Query;
 using Common.Signal;
-using Common.Utils;
-using Common.Fsm.Action;
 using Common.Time;
+using Common.Utils;
 
 using Framework;
 
@@ -29,7 +29,9 @@ namespace Sandbox.Facebook
 {
     using Sandbox.Downloader;
     using Sandbox.Services;
-    
+
+    using Sirenix.Utilities;
+
     public struct OnFacebookLoginSignal { }
 
     public struct OnFacebookLogoutSignal { }
@@ -64,6 +66,7 @@ namespace Sandbox.Facebook
     [Serializable]
     public class FacebookPlayerData
     {
+        public string Token;
         public string Id;
         public string FullName;
         public string FirstName;
@@ -75,8 +78,6 @@ namespace Sandbox.Facebook
         public string Gender;
 
         public Sprite FBPhoto;
-
-        public string Token;
     }
 
     [Serializable]
@@ -116,6 +117,7 @@ namespace Sandbox.Facebook
         public const string HasLoggedInUser = "HasLoggedInUser";
         public const string UserEmail = "UserEmail";
         public const string UserFacebookId = "UserFacebookId";
+        public const string UserFacebookToken = "UserFacebookToken";
         public const string UserFirstName = "UserFirstName";
         public const string UserLastName = "UserLastName";
         public const string UserFullName = "UserFullName";
@@ -154,6 +156,10 @@ namespace Sandbox.Facebook
         private static readonly string FACEBOOK_USER_BIRTHDAY = "facebookUserBirthday";
 
         [SerializeField]
+        [Range(5f, 20f)]
+        private float TimeoutDuration;
+        
+        [SerializeField]
         private FacebookPlayerData FBdata;
         
         [SerializeField]
@@ -165,11 +171,13 @@ namespace Sandbox.Facebook
             "user_birthday"
         };
         
-        #region IService implementation
+#region IService implementation
 
         public override void InitializeService()
         {
-#if !FACEBOOK_ENABLED
+            Debug.LogFormat(D.FB + "FacebookLogin::InitializeService\n");
+
+#if !ENABLE_FACEBOOK
             base.InitializeService();
 
             this.Receive<OnFacebookLoginSignal>()
@@ -177,7 +185,7 @@ namespace Sandbox.Facebook
                 .AddTo(this);
 #endif
 
-#if FACEBOOK_ENABLED
+#if ENABLE_FACEBOOK
             Func<string, string> GetStoredData = (string key) =>
             {
                 string value = PlayerPrefs.GetString(key, string.Empty);
@@ -206,6 +214,10 @@ namespace Sandbox.Facebook
                 result.Set(FBdata.Id);
             });
 
+            QuerySystem.RegisterResolver(FBID.UserFacebookToken, (IQueryRequest request, IMutableQueryResult result) => {
+                result.Set(FBdata.Token);
+            });
+
             QuerySystem.RegisterResolver(FBID.UserFirstName, (IQueryRequest request, IMutableQueryResult result) => {
                 result.Set(FBdata.FirstName);
             });
@@ -213,8 +225,7 @@ namespace Sandbox.Facebook
             QuerySystem.RegisterResolver(FBID.UserLastName, (IQueryRequest request, IMutableQueryResult result) => {
                 result.Set(FBdata.LastName);
             });
-
-
+            
             QuerySystem.RegisterResolver(FBID.UserFullName, (IQueryRequest request, IMutableQueryResult result) => {
                 result.Set(FBdata.FullName);
             });
@@ -242,6 +253,8 @@ namespace Sandbox.Facebook
             this.Receive<OnFacebookLogoutSignal>()
                 .Subscribe(_ => Fsm.SendEvent(LOGOUT_REQUESTED))
                 .AddTo(this);
+
+            Fsm.SendEvent(INIT_FB);
 #endif
         }
 
@@ -249,7 +262,7 @@ namespace Sandbox.Facebook
         {
             yield return null;
 
-#if !FACEBOOK_ENABLED
+#if !ENABLE_FACEBOOK
             base.InitializeService();
 
             this.Receive<OnFacebookLoginSignal>()
@@ -269,6 +282,7 @@ namespace Sandbox.Facebook
             QuerySystem.RemoveResolver(FBID.HasLoggedInUser);
             QuerySystem.RemoveResolver(FBID.UserEmail);
             QuerySystem.RemoveResolver(FBID.UserFacebookId);
+            QuerySystem.RemoveResolver(FBID.UserFacebookToken);
             QuerySystem.RemoveResolver(FBID.UserFirstName);
             QuerySystem.RemoveResolver(FBID.UserFullName);
             QuerySystem.RemoveResolver(FBID.UserProfilePhoto);
@@ -297,7 +311,9 @@ namespace Sandbox.Facebook
 
         private void PrepareFsm()
         {
-#if FACEBOOK_ENABLED
+            Debug.LogFormat(D.FB + "FacebookLogin::PrepareFsm\n");
+
+#if ENABLE_FACEBOOK
             Fsm = new Fsm("FacebookLogin");
 
             // states
@@ -310,11 +326,12 @@ namespace Sandbox.Facebook
             FsmState requestFailed = Fsm.AddState("requestFailed");
             FsmState logout = Fsm.AddState("Logout");
 
-            idle.AddAction(new FsmDelegateAction(idle, delegate (FsmState owner)
-            {
-                owner.SendEvent(INIT_FB);
-            }));
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.FB + "FacebookLogin::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
             
+            // Actions
             init.AddAction(new FsmDelegateAction(init,
                 owner =>
                 {
@@ -327,9 +344,8 @@ namespace Sandbox.Facebook
                         FB.Init(OnInitComplete, OnHideUnity);
                     }
                 },
-                owner => 
+                owner =>
                 {
-                    // Wait for FB to be initialized
                     if (FB.IsInitialized)
                     {
                         owner.SendEvent(FINISHED);
@@ -345,8 +361,10 @@ namespace Sandbox.Facebook
 
             TimeReferencePool.GetInstance().Add("Timer");
 
-            TimedWaitAction tiimeOut = new TimedWaitAction(login, "Timer", LOGIN_FAILED);
-            tiimeOut.Init(15f);
+            //TimedWaitAction tiimeOut = new TimedWaitAction(login, "Timer", LOGIN_FAILED);
+            //tiimeOut.Init(TimeoutDuration);
+            //login.AddAction(tiimeOut);
+            //login.AddAction(new ExitAction(login, owner => tiimeOut.Init(TimeoutDuration)));
 
             login.AddAction(new FsmDelegateAction(login,
                 owner => 
@@ -358,13 +376,10 @@ namespace Sandbox.Facebook
                     }
                     else
                     {
-                        tiimeOut.Init(15f);
                         DoFbLogin();
                     }
                 }));
-
-            login.AddAction(tiimeOut);
-
+            
             requestPlayerData.AddAction(new FsmDelegateAction(requestPlayerData, 
                 owner =>
                 {
@@ -373,7 +388,7 @@ namespace Sandbox.Facebook
 
             loginSuccessful.AddAction(new FsmDelegateAction(loginSuccessful,
                 owner =>
-                { 
+                {
                     FBdata.Token = AccessToken.CurrentAccessToken.TokenString;
 
                     this.Publish(new OnFacebookLoginSuccessSignal() { Id = FBdata.Id, Token = FBdata.Token });
@@ -435,7 +450,20 @@ namespace Sandbox.Facebook
         }
 
 #endregion
-#if FACEBOOK_ENABLED
+
+#if ENABLE_FACEBOOK
+        [Button(ButtonSizes.Medium)]
+        public void TestInitFB()
+        {
+            Fsm.SendEvent(INIT_FB);
+        }
+
+        [Button(ButtonSizes.Medium)]
+        public void TestFBLogin()
+        {
+            Fsm.SendEvent(LOGIN_REQUESTED);
+        }
+
         private void OnFacebookShare(string url)
         {
             Assertion.Assert(FB.IsInitialized);
@@ -464,6 +492,7 @@ namespace Sandbox.Facebook
             });
 
             // Clear cached values
+            FBdata.Token = string.Empty;
             FBdata.Id = string.Empty;
             FBdata.FullName = string.Empty;
             FBdata.FirstName = string.Empty;
@@ -497,7 +526,7 @@ namespace Sandbox.Facebook
             }
             else if (!string.IsNullOrEmpty(result.RawResult))
             {
-                Debug.LogFormat("FacebookLogin::HandleLoginResult Login Success: {0}\n", result.RawResult);
+                Debug.LogFormat(D.FB + "FacebookLogin::HandleLoginResult Login Success: {0}\n", result.RawResult);
                 Fsm.SendEvent(LOGIN_SUCCESS);
             }
             else
@@ -569,8 +598,9 @@ namespace Sandbox.Facebook
             FBdata.Birthday = profile.birthday;
             FBdata.ProfilePhoto = profile.picture.data.url;
             FBdata.Id = profile.id;
-
+            
             PlayerPrefs.SetString(FACEBOOK_ID_KEY, FBdata.Id);
+            PlayerPrefs.SetString(FACEBOOK_TOKEN_KEY, FBdata.Token);
             PlayerPrefs.SetString(FACEBOOK_FULL_NAME, FBdata.FullName);
             PlayerPrefs.SetString(FACEBOOK_FIRST_NAME, FBdata.FirstName);
             PlayerPrefs.SetString(FACEBOOK_MIDDLE_NAME, FBdata.MiddleName);
@@ -597,10 +627,8 @@ namespace Sandbox.Facebook
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         private void ShareCallback(IShareResult result)

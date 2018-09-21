@@ -11,6 +11,8 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 
+using TMPro;
+
 using uPromise;
 
 using UniRx;
@@ -24,75 +26,81 @@ using Common.Utils;
 
 using Framework;
 
+using Sandbox.Facebook;
 using Sandbox.GraphQL;
 using Sandbox.Popup;
 
 namespace Sandbox.RGC
 {
-    // alias
-    using TMPro;
-
-    using CColor = Framework.Color;
+    using Button = UnityEngine.UI.Button;
 
     public class ConvertOnlinePopup : PopupWindow, IPopupWindow
     {
         [SerializeField]
-        private TMP_InputField Conversion;
+        private TMP_InputField Accumulated;
+        
+        [SerializeField]
+        private TMP_InputField Converted;
 
         [SerializeField]
-        private TMP_InputField Coins;
+        private Button ConvertButton;
+        private Button SeePrizesButton;
 
-        [SerializeField]
-        private TMP_InputField CalcConveersion;
+        private FGCCurrency Wallet;
 
-        private WalletConversion Wallet;
+        private string CurrencyId;
+        private int ConvertCap;
+        private int ConvertValue;
 
         protected override void Start()
         {
             base.Start();
 
-            Assertion.AssertNotNull(Conversion, D.ERROR + "ConvertOnlinePopup::Awake Conversion text should never be null!\n");
-            Assertion.AssertNotNull(Coins, D.ERROR + "ConvertOnlinePopup::Awake Coins text should never be null!\n");
-            Assertion.AssertNotNull(CalcConveersion, D.ERROR + "ConvertOnlinePopup::Awake CalcConveersion text should never be null!\n");
+            Assertion.AssertNotNull(Accumulated, D.ERROR + "ConvertOnlinePopup::Awake Accumulated text should never be null!\n");
+            Assertion.AssertNotNull(Converted, D.ERROR + "ConvertOnlinePopup::Awake Converted text should never be null!\n");
+            Assertion.AssertNotNull(ConvertButton, D.ERROR + "ConvertOnlinePopup::Awake ConvertButton text should never be null!\n");
+            Assertion.AssertNotNull(SeePrizesButton, D.ERROR + "ConvertOnlinePopup::Awake SeePrizesButton text should never be null!\n");
             Assertion.AssertNotNull(HasPopupData(), D.ERROR + "ConvertOnlinePopup::Awake PopupData should never be null!\n");
-            
+
+            // TODO: +AS:09212018 Adjust result calculation
+            GameResultInfo result = PopupData.GetData<GameResultInfo>();
+            CurrencyId = result.CurrencyId;
+            ConvertCap = result.GameScore % Wallet.currency.exchange_rate;
+            ConvertValue = ConvertCap * Wallet.currency.exchange_rate;
+
             IQueryRequest request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
-            request.AddParameter(WalletRequest.CURRENCY_PARAM, PopupData.GetData<string>());
-            Wallet = QuerySystem.Complete<WalletConversion>();
+            request.AddParameter(WalletRequest.CURRENCY_PARAM, CurrencyId);
+            Wallet = QuerySystem.Complete<FGCCurrency>();
+            
+            Accumulated.text = string.Format("{0}", ConvertCap);
+            Converted.text = string.Format("{0}", ConvertValue);
 
-            Conversion.text = string.Format("{0}", Convert(Wallet.amount, Wallet.currency.exchange_rate));
-
-            RegisterSignals();
-        }
-
-        private int Convert(int amount, int rate)
-        {
-            return Math.Max(0, amount * rate);
+            bool hasFBLogin = QuerySystem.Query<bool>(FBID.HasLoggedInUser);
+            if (hasFBLogin)
+            {
+                ConvertButton.gameObject.SetActive(true);
+                SeePrizesButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                ConvertButton.gameObject.SetActive(false);
+                SeePrizesButton.gameObject.SetActive(true);
+            }    
         }
         
-        private void RegisterSignals()
-        {
-            Coins
-                .ObserveEveryValueChanged(t => t.text)
-                .Subscribe(_ =>
-                {
-                    int coins = Mathf.Max(0, Mathf.Min(Wallet.amount, _.ToInt()));
-                    Coins.text = string.Format("{0}", coins);
-                    CalcConveersion.text = string.Format("{0}", Mathf.Max(0, coins * Wallet.currency.exchange_rate));
-                })
-                .AddTo(this);
-        }
-
         public void ConvertPoints()
         {
-            int jolens = Coins.text.ToInt();
-
             this.Publish(new OnConvertCurrencySignal()
             {
                 Token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN),
-                Slug = RGCConst.POINT_SLUG,
-                Amount = jolens,
+                Slug = CurrencyId,
+                Amount = ConvertCap,
             });
+        }
+
+        public void SeePrizes()
+        {
+
         }
     }
 }

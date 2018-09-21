@@ -28,11 +28,8 @@ using Sandbox.Popup;
 
 namespace Sandbox.RGC
 {
-    // alias
     using TMPro;
-
-    using CColor = Framework.Color;
-
+    
     public class ConvertOfflinePopup : PopupWindow, IPopupWindow
     {
         [SerializeField]
@@ -45,11 +42,13 @@ namespace Sandbox.RGC
             Assertion.AssertNotNull(Conversion, D.ERROR + "ConvertOfflinePopup::Awake Conversion text should never be null!\n");
             Assertion.AssertNotNull(HasPopupData(), D.ERROR + "ConvertOfflinePopup::Awake PopupData should never be null!\n");
 
-            IQueryRequest request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
-            request.AddParameter(WalletRequest.CURRENCY_PARAM, PopupData.GetData<string>());
-            WalletConversion conversion = QuerySystem.Complete<WalletConversion>();
+            GameResultInfo result = PopupData.GetData<GameResultInfo>();
 
-            Conversion.text = string.Format("{0}", Math.Max(0, conversion.amount * conversion.currency.exchange_rate));
+            IQueryRequest request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
+            request.AddParameter(WalletRequest.CURRENCY_PARAM, result.CurrencyId);
+            FGCCurrency currency = QuerySystem.Complete<FGCCurrency>();
+
+            Conversion.text = string.Format("{0}", Math.Max(0, currency.amount * currency.currency.exchange_rate));
         }
     }
 }

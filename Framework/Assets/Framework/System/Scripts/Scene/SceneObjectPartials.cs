@@ -20,7 +20,6 @@ namespace Framework
     using System.Linq;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     #region Scene extension (Load, Unload, and Wait)

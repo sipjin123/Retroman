@@ -18,7 +18,6 @@ using Common.Signal;
 namespace Framework
 {
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
     using Sirenix.OdinInspector;
 

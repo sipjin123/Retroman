@@ -1,0 +1,203 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: GraphQL
+  m_EditorClassIdentifier: 
+  PackageName: GraphQL Sandbox
+  PackageVersion: 1.0.0
+  PackageDescription: Sandbox for GraphQL requests
+  OutputDirectory: Assets\Sandbox\GraphQL
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 2c81c962cb5beab4b9f0cfdd95d2f3e2, type: 3}
+  ToExport:
+  - Assets/Sandbox/GraphQL/Assets.meta
+  - Assets/Sandbox/GraphQL/Fonts.meta
+  - Assets/Sandbox/GraphQL/GraphQL.asset
+  - Assets/Sandbox/GraphQL/GraphQL.asset.meta
+  - Assets/Sandbox/GraphQL/Prefab.meta
+  - Assets/Sandbox/GraphQL/README.md
+  - Assets/Sandbox/GraphQL/README.md.meta
+  - Assets/Sandbox/GraphQL/Scenes.meta
+  - Assets/Sandbox/GraphQL/Scripts.meta
+  - Assets/Sandbox/GraphQL/Textures.meta
+  - Assets/Sandbox/GraphQL/UAssets.meta
+  - Assets/Sandbox/GraphQL/Videos.meta
+  - Assets/Sandbox/GraphQL/Assets/RenderTextures.meta
+  - Assets/Sandbox/GraphQL/Assets/RenderTextures/Video.renderTexture
+  - Assets/Sandbox/GraphQL/Assets/RenderTextures/Video.renderTexture.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Black.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Black.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BlackItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BlackItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Bold.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Bold.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldCondensed.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldCondensed.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldCondensedItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldCondensedItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-BoldItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Condensed.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Condensed.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-CondensedItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-CondensedItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Italic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Italic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Light.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Light.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-LightItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-LightItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Medium.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Medium.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-MediumItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-MediumItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Regular.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Regular.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Thin.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-Thin.ttf.meta
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-ThinItalic.ttf
+  - Assets/Sandbox/GraphQL/Fonts/Roboto/Roboto-ThinItalic.ttf.meta
+  - Assets/Sandbox/GraphQL/Prefab/GraphDataFlow.prefab
+  - Assets/Sandbox/GraphQL/Prefab/GraphDataFlow.prefab.meta
+  - Assets/Sandbox/GraphQL/Prefab/GraphQLDataManager.prefab
+  - Assets/Sandbox/GraphQL/Prefab/GraphQLDataManager.prefab.meta
+  - Assets/Sandbox/GraphQL/Prefab/GraphQLService.prefab
+  - Assets/Sandbox/GraphQL/Prefab/GraphQLService.prefab.meta
+  - Assets/Sandbox/GraphQL/Prefab/GraphTestInstaller.prefab
+  - Assets/Sandbox/GraphQL/Prefab/GraphTestInstaller.prefab.meta
+  - Assets/Sandbox/GraphQL/Scenes/Ads.meta
+  - Assets/Sandbox/GraphQL/Scenes/Tests.meta
+  - Assets/Sandbox/GraphQL/Scenes/Ads/CustomAdPopupImage.unity
+  - Assets/Sandbox/GraphQL/Scenes/Ads/CustomAdPopupImage.unity.meta
+  - Assets/Sandbox/GraphQL/Scenes/Ads/CustomAdPopupVideo.unity
+  - Assets/Sandbox/GraphQL/Scenes/Ads/CustomAdPopupVideo.unity.meta
+  - Assets/Sandbox/GraphQL/Scenes/Ads/TestAds.unity
+  - Assets/Sandbox/GraphQL/Scenes/Ads/TestAds.unity.meta
+  - Assets/Sandbox/GraphQL/Scenes/Tests/TestBuilder.unity
+  - Assets/Sandbox/GraphQL/Scenes/Tests/TestBuilder.unity.meta
+  - Assets/Sandbox/GraphQL/Scripts/Builder.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data.meta
+  - Assets/Sandbox/GraphQL/Scripts/Editor.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphInfo.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphInfo.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphQL.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphQL.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLAdDownloader.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLAdDownloader.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDataFlow.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDataFlow.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDataManager.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDataManager.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDebugButton.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphQLDebugButton.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Installers.meta
+  - Assets/Sandbox/GraphQL/Scripts/Popups.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests.meta
+  - Assets/Sandbox/GraphQL/Scripts/Tests.meta
+  - Assets/Sandbox/GraphQL/Scripts/Builder/Builder.cs
+  - Assets/Sandbox/GraphQL/Scripts/Builder/Builder.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLAdData.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLAdData.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLOfflineData.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLOfflineData.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultData.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultData.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultDataHandler.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultDataHandler.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLSetupData.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLSetupData.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Editor/GraphQLEditor.cs
+  - Assets/Sandbox/GraphQL/Scripts/Editor/GraphQLEditor.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Installers/GraphTestInstaller.cs
+  - Assets/Sandbox/GraphQL/Scripts/Installers/GraphTestInstaller.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Popups/GraphQLAdsPopupImage.cs
+  - Assets/Sandbox/GraphQL/Scripts/Popups/GraphQLAdsPopupImage.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Popups/GraphQLAdsPopupVideo.cs
+  - Assets/Sandbox/GraphQL/Scripts/Popups/GraphQLAdsPopupVideo.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/AdsRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/AdsRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/ConfigurationRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/ConfigurationRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/EventsPlayerCount.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/EventsPlayerCount.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GameEventsJoinedRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GameEventsJoinedRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GameEventsRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GameEventsRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GetLeaderboardStanding.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GetLeaderboardStanding.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GetLeaderboardTop.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/GetLeaderboardTop.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/JoinEventRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/JoinEventRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/LobbyRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/LobbyRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/PlayerIdRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/PlayerIdRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/PlayerProfileRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/PlayerProfileRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/RegisterRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/RegisterRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/UnitRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/UnitRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/UpdatePlayerProfileRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/UpdatePlayerProfileRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/WalletRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/WalletRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Tests/TestBuilder.cs
+  - Assets/Sandbox/GraphQL/Scripts/Tests/TestBuilder.cs.meta
+  - Assets/Sandbox/GraphQL/Textures/Ads UI  Mockup 041718B.jpg
+  - Assets/Sandbox/GraphQL/Textures/Ads UI  Mockup 041718B.jpg.meta
+  - Assets/Sandbox/GraphQL/Textures/close.png
+  - Assets/Sandbox/GraphQL/Textures/close.png.meta
+  - Assets/Sandbox/GraphQL/Textures/disable container.png
+  - Assets/Sandbox/GraphQL/Textures/disable container.png.meta
+  - Assets/Sandbox/GraphQL/Textures/enable container.png
+  - Assets/Sandbox/GraphQL/Textures/enable container.png.meta
+  - Assets/Sandbox/GraphQL/Textures/music off.png
+  - Assets/Sandbox/GraphQL/Textures/music off.png.meta
+  - Assets/Sandbox/GraphQL/Textures/music on.png
+  - Assets/Sandbox/GraphQL/Textures/music on.png.meta
+  - Assets/Sandbox/GraphQL/Textures/Ring Asset Hex Guide.jpg
+  - Assets/Sandbox/GraphQL/Textures/Ring Asset Hex Guide.jpg.meta
+  - Assets/Sandbox/GraphQL/Textures/ring.png
+  - Assets/Sandbox/GraphQL/Textures/ring.png.meta
+  - Assets/Sandbox/GraphQL/Textures/skip.png
+  - Assets/Sandbox/GraphQL/Textures/skip.png.meta
+  - Assets/Sandbox/GraphQL/Textures/Video.png
+  - Assets/Sandbox/GraphQL/Textures/Video.png.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework).asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework).asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphQLData.asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphQLData.asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphQLSetupData.asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphQLSetupData.asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphSetupData.asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphSetupData.asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/ImageProfile.asset
+  - Assets/Sandbox/GraphQL/UAssets/ImageProfile.asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/SetupData.asset
+  - Assets/Sandbox/GraphQL/UAssets/SetupData.asset.meta
+  - Assets/Sandbox/GraphQL/Videos/Mockup.meta
+  - Assets/Sandbox/GraphQL/Videos/VideoAd.renderTexture
+  - Assets/Sandbox/GraphQL/Videos/VideoAd.renderTexture.meta
+  - Assets/Sandbox/GraphQL/Videos/Mockup/mock-up.png
+  - Assets/Sandbox/GraphQL/Videos/Mockup/mock-up.png.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

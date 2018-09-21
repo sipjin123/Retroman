@@ -26,7 +26,7 @@ namespace Framework
     using Sandbox.ButtonSandbox;
 
     using UScene = UnityEngine.SceneManagement.Scene;
-    
+
     public interface IScene
     {
         ISceneData SceneData { get; set; }
@@ -65,7 +65,7 @@ namespace Framework
             get { return _SceneType; }
             protected set { _SceneType = value; }
         }
-        
+
         /// <summary>
         /// Data container passed upon loading this scene.
         /// Note: 
@@ -145,7 +145,7 @@ namespace Framework
         //[ShowInInspector]
         [TabGroup("New Group", "Buttons")]
         protected Dictionary<int, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<int, Action<ButtonReleasedSignal>>();
-        
+
         [SerializeField]
         [TabGroup("Scene")]
         protected List<ConcreteInstaller> Installers = new List<ConcreteInstaller>();
@@ -161,13 +161,15 @@ namespace Framework
 
         protected virtual void Awake()
         {
+            Assertion.Assert(CachedScene.IsEnum<EScene>(), D.ERROR + "Scene::Awake Scene({0}) has invalid CachedScene:{1}.\n", gameObject.name, CachedScene);
+
             // Update Scene Type & Depth from Editor
             SelectedScene = CachedScene;
             SceneType = CachedScene.ToEnum<EScene>();
 
             // Update canvas settings
             SetupSceneCanvas();
-            
+
             // Cache the Root scene object
             //Factory.Get<SceneReference>().Add(this);
             this.Publish(new OnCacheSceneSignal(this));
@@ -256,7 +258,7 @@ namespace Framework
             }
             else
             {
-                Debug.LogWarningFormat(D.WARNING + " No SystemCanvas attached to SceneRoot. Scene:{0}\n", gameObject.name);
+                Debug.LogWarningFormat(D.WARNING + "Scene::SetupSceneCanvas No SystemCanvas attached to SceneRoot. Scene:{0}\n", gameObject.name);
             }
         }
 
@@ -267,6 +269,8 @@ namespace Framework
         /// <param name="action"></param>
         protected void AddButtonHandler(ButtonType button, Action<ButtonClickedSignal> action)
         {
+            Debug.LogFormat(D.F + "Scene::AddButtonHandler::ButtonClickedSignal Scene:{0} Button:{1}\n", gameObject.name, button.Type);
+
             ButtonClickedMap[button.Value] = (Action<ButtonClickedSignal>)action;
         }
 
@@ -275,7 +279,7 @@ namespace Framework
         /// </summary>
         /// <param name="button"></param>
         /// <param name="action"></param>
-        protected void AddButtonHandler(ButtonType button, Action<ButtonHoveredSignal> action) 
+        protected void AddButtonHandler(ButtonType button, Action<ButtonHoveredSignal> action)
         {
             ButtonHoveredMap[button.Value] = (Action<ButtonHoveredSignal>)action;
         }
@@ -318,7 +322,7 @@ namespace Framework
         {
             return SceneData != null;
         }
-        
+
         #region Signals
 
         private void OnClickedButton(ButtonClickedSignal signal)
@@ -398,7 +402,7 @@ namespace Framework
             {
                 return null;
             }
-            
+
             SceneEntry entry = Factory.Get<SceneReference>().Find(scene);
             return entry.RootObject.GetComponent<T>();
         }

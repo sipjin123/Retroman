@@ -20,11 +20,13 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    using Sandbox.Facebook;
     using Sandbox.Services;
-    
+    using Sirenix.Utilities;
+
     public struct OnGraphLoginSignal
     {
-
+        public bool IsGuest { get; set; }
     }
 
     public struct OnGraphQLDone
@@ -34,11 +36,13 @@ namespace Sandbox.GraphQL
 
     public class GraphQLDataFlow : BaseService
     {
+        [SerializeField]
         private Fsm Fsm;
         
         #region Fsm Events
         private readonly string CONTINUE = "Continue";
         private readonly string ON_LOGIN = "OnLogin";
+        private readonly string ON_LOGIN_FB = "OnLoginFb";
         private readonly string ON_CONFIGURE = "OnConfigure";
         private readonly string ON_REQUEST = "OnRequest";
         #endregion
@@ -46,6 +50,7 @@ namespace Sandbox.GraphQL
         #region Fsm States
         private readonly string IDLE = "Idle";
         private readonly string LOGIN = "Login";
+        private readonly string LOGIN_FB = "LoginFb";
         private readonly string CONFIGURE = "Configure";
         private readonly string REQUESTS = "Requests";
         private readonly string DONE = "Done";
@@ -99,14 +104,23 @@ namespace Sandbox.GraphQL
 
             FsmState idle = Fsm.AddState(IDLE);
             FsmState login = Fsm.AddState(LOGIN);
+            FsmState loginFb = Fsm.AddState(LOGIN_FB);
             FsmState configure = Fsm.AddState(CONFIGURE);
             FsmState requests = Fsm.AddState(REQUESTS);
             FsmState done = Fsm.AddState(DONE);
 
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.GRAPHQL + "GraphQLDataFlow::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
+
+            // Fsm transitions
             idle.AddTransition(ON_LOGIN, login);
+            idle.AddTransition(ON_LOGIN_FB, loginFb);
             idle.AddTransition(ON_REQUEST, requests);
 
             login.AddTransition(ON_CONFIGURE, configure);
+            loginFb.AddTransition(ON_CONFIGURE, configure);
             configure.AddTransition(CONTINUE, idle);
             requests.AddTransition(CONTINUE, done);
             done.AddTransition(CONTINUE, idle);
@@ -114,6 +128,11 @@ namespace Sandbox.GraphQL
             login.AddAction(new FsmDelegateAction(login, delegate (FsmState owner)
             {
                 this.Publish(new GraphQLLoginRequestSignal() { UniqueId = Platform.DeviceId });
+            }));
+
+            loginFb.AddAction(new FsmDelegateAction(loginFb, delegate (FsmState owner)
+            {
+                this.Publish(new GraphQLFBLoginRequestSignal() { UniqueId = Platform.DeviceId, FacebookToken = QuerySystem.Query<string>(FBID.UserFacebookToken) });
             }));
 
             configure.AddAction(new FsmDelegateAction(configure, delegate (FsmState owner)
@@ -188,8 +207,20 @@ namespace Sandbox.GraphQL
                 .AddTo(this);
 
             this.Receive<OnGraphLoginSignal>()
+                .Where(_ => _.IsGuest)
                 .Subscribe(_ => Fsm.SendEvent(ON_LOGIN))
                 .AddTo(this);
+
+            this.Receive<OnGraphLoginSignal>()
+                .Where(_ => !_.IsGuest)
+                .Subscribe(_ => Fsm.SendEvent(ON_LOGIN_FB))
+                .AddTo(this);
+
+            this.Receive<OnGraphLoginSignal>()
+                .Subscribe(_ => Debug.LogFormat(D.FGC + "GraphQLDataFlow::OnGraphLoginSignal IsGuest:{0}\n", _.IsGuest))
+                .AddTo(this);
+
+
         }
         #endregion
 

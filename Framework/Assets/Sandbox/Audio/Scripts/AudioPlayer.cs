@@ -13,7 +13,7 @@ using UniRx;
 using Common;
 using Common.Utils;
 
-using CColor = Framework.Color;
+using Framework;
 
 namespace Sandbox.Audio
 {
@@ -60,6 +60,18 @@ namespace Sandbox.Audio
     {
     }
 
+    public struct OnLoadSFXSignal
+    {
+        public SFX Key;
+        public AudioClip Clip;
+    }
+
+    public struct OnLoadBGMSignal
+    {
+        public BGM Key;
+        public AudioClip Clip;
+    }
+
     public struct OnLoadAudioSignal
     {
         public List<AudioContainer> Container;
@@ -76,15 +88,11 @@ namespace Sandbox.Audio
 
         [SerializeField]
         [TabGroup("Configs")]
-        private bool IsEnabled = false;
+        private BGM BGMPlaying;
 
         [SerializeField]
         [TabGroup("Configs")]
-        private BGM BGMPlaying = BGM.Invalid;
-
-        [SerializeField]
-        [TabGroup("Configs")]
-        private SFX SFXPlaying = SFX.Invalid;
+        private SFX SFXPlaying;
 
         [SerializeField]
         [PropertyRange(0f, 10f)]
@@ -171,52 +179,50 @@ namespace Sandbox.Audio
                 .AddTo(this);
 
             this.Receive<OnPlaySFXSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => PlaySFX(_.SFX, _.Volume))
                 .AddTo(this);
 
             this.Receive<OnPlayBGMSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => PlayBgm(_.BGM, _.Volume, _.Override))
                 .AddTo(this);
 
             this.Receive<OnResumSFXSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => ResumeSFX(_.IsResume))
                 .AddTo(this);
 
             this.Receive<OnResumBGMSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => ResumeBGM(_.IsResume))
                 .AddTo(this);
 
             this.Receive<OnResumAllAudioSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => ResumeAllAudio(_.IsResume))
                 .AddTo(this);
 
             this.Receive<OnStopSFXSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => StopSFX())
                 .AddTo(this);
 
             this.Receive<OnStopBGMSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => StopBGM())
                 .AddTo(this);
 
             this.Receive<OnStopAllAudioignal>()
-                .Where(_ => IsEnabled)
                .Subscribe(_ => StopAllAudio())
                .AddTo(this);
 
+            this.Receive<OnLoadSFXSignal>()
+                .Subscribe(_ => LoadSFX(_.Key, _.Clip))
+                .AddTo(this);
+
+            this.Receive<OnLoadBGMSignal>()
+                .Subscribe(_ => LoadBGM(_.Key, _.Clip))
+                .AddTo(this);
+
             this.Receive<OnLoadAudioSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => _.Container.ForEach(c => LoadAudioFromContainer(c)))
                 .AddTo(this);
 
             this.Receive<OnClearLoadedAudioSignal>()
-                .Where(_ => IsEnabled)
                 .Subscribe(_ => ClearAllAudio())
                 .AddTo(this);
         }
@@ -229,6 +235,28 @@ namespace Sandbox.Audio
         protected virtual void OnDisable()
         {
             Factory.Clean<AudioPlayer>();
+        }
+
+        private void LoadSFX(SFX key, AudioClip clip)
+        {
+            if (SFXAudioMap.ContainsKey(key))
+            {
+                SFXAudioMap[key].UnloadAudioData();
+                SFXAudioMap.Remove(key);
+            }
+
+            SFXAudioMap.Add(key, clip);
+        }
+
+        private void LoadBGM(BGM key, AudioClip clip)
+        {
+            if (BGMAudioMap.ContainsKey(key))
+            {
+                BGMAudioMap[key].UnloadAudioData();
+                BGMAudioMap.Remove(key);
+            }
+
+            BGMAudioMap.Add(key, clip);
         }
 
         /// <summary>

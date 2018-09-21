@@ -22,9 +22,6 @@ using Common.Utils;
 
 using Framework;
 
-// alias
-using CColor = Framework.Color;
-
 namespace Sandbox.Popup
 {
     public partial class PopupWindow : MonoBehaviour, IPopupWindow

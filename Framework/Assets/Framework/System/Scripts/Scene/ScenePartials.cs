@@ -12,6 +12,7 @@ using UniRx;
 using Common;
 using Common.Query;
 using Common.Signal;
+using Common.Utils;
 
 namespace Framework
 {
@@ -22,7 +23,6 @@ namespace Framework
     using System.Linq;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     #region Scene extension (Load, Unload, and Wait)
@@ -417,6 +417,13 @@ namespace Framework
 
         public IEnumerator UnloadAllScenes()
         {
+            List<SceneEntry> entries = Factory.Get<SceneReference>().FindScenes(false);
+            foreach (SceneEntry e in entries)
+            {
+                AsyncOperation operation = SceneManager.UnloadSceneAsync(e.Scene);
+                yield return operation;
+            }
+            
             int sceneCount = SceneManager.sceneCount;
             UScene[] scenes = new UScene[sceneCount];
 

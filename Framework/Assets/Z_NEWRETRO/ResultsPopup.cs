@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 using Sirenix.OdinInspector;
 using Sandbox.GraphQL;
+using Sandbox.RGC;
 
 public class ResultsPopup : MonoBehaviour {
 
@@ -44,8 +45,8 @@ public class ResultsPopup : MonoBehaviour {
         HiScore2.text = "Best Score " + Factory.Get<DataManagerService>().GetHighScore();
 
         SystemRoot sysroot = Scene.GetScene<SystemRoot>(EScene.System);
-        sysroot.Publish(new SendToFGCWalletSignal { Value = (int)Factory.Get<DataManagerService>().GetScore() });
-        sysroot.Publish(new FetchConversionSignal());
+        sysroot.Publish(new OnSendToFGCWalletSignal { Value = (int)Factory.Get<DataManagerService>().GetScore(), Event = RGCConst.GAME_END });
+        sysroot.Publish(new OnFetchCurrenciesSignal());
 
         int currChar = Factory.Get<DataManagerService>().CurrentCharacterSelected - 1;
         CharImage.sprite = Factory.Get<DataManagerService>().ShopItems[currChar].ItemImage.sprite;

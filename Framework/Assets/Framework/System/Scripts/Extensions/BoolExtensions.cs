@@ -16,5 +16,10 @@ namespace Framework
         {
             return val ? TRUE : FALSE;
         }
+
+        public static bool ToBool(this int val)
+        {
+            return val == 0 ? false : true;
+        }
     }
 }

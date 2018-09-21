@@ -24,7 +24,6 @@ namespace Sandbox.GraphQL
     using System.Linq;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     public class TestBuilder : SceneObject

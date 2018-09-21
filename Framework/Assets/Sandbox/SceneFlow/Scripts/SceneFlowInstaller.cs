@@ -188,7 +188,7 @@ namespace Sandbox.SceneFlow
             {
                 // state 2
                 Promise.All(Preloader.FadeInLoadingScreenPromise())
-                    .Then(_ => Scene.LoadScenePromise<AudioRoot>(EScene.Audio))
+                    .Then(_ => Scene.LoadScenePromise<AudioRoot>("Audio"))
                     .Then(_ => Scene.LoadScenePromise<ServicesRoot>(EScene.Services))
                     .Then(_ => Preloader.FadeOutLoadingScreenPromise())
                     //.Then(_ => Scene.LoadScenePromise<CleanerRoot>(EScene.Cleaner))
