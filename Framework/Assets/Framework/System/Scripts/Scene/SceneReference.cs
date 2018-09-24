@@ -23,7 +23,6 @@ namespace Framework
     using System.Linq;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     public struct OnCacheSceneSignal
@@ -69,7 +68,7 @@ namespace Framework
     public class SceneReference : MonoBehaviour
     {
         [SerializeField]
-        private List<SceneEntry> Scenes = new List<SceneEntry>();
+        private List<SceneEntry> Scenes;
 
         private void Awake()
         {
@@ -117,6 +116,29 @@ namespace Framework
             return Scenes.FindAll(s => s.Scene.Equals(scene)).FirstOrDefault();
         }
 
+        // TEMP: +AS:20180907 Remove this
+        public List<SceneEntry> FindScenes(bool isPersistent)
+        {
+            if (isPersistent)
+            {
+                return Scenes
+                    .FindAll(e =>
+                    {
+                        Scene s = e.RootObject.GetComponent<Scene>();
+                        return s != null && s.IsPersistent;
+                    })
+                    .ToList();
+            }
+
+            return Scenes
+                .FindAll(e =>
+                {
+                    Scene s = e.RootObject.GetComponent<Scene>();
+                    return s == null || !s.IsPersistent;
+                })
+                .ToList();
+        }
+        
         public void Add(Scene scene)
         {
             // Cache the Root scene object

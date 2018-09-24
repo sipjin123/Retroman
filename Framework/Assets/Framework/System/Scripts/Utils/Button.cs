@@ -13,12 +13,11 @@ using Sirenix.OdinInspector;
 using Common;
 using Common.Signal;
 
+using Sandbox.ButtonSandbox;
+
 namespace Framework
 {
     // alias
-    using Sandbox.ButtonSandbox;
-
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     /// <summary>

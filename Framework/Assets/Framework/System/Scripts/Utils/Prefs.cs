@@ -16,10 +16,17 @@ using Common.Utils;
 
 using Sandbox.GraphQL;
 
+using Framework.ExtensionMethods;
+
 namespace Framework
 {
     public static class PREFS
     {
+        public static bool GetBool(string key, bool defaultValue = false)
+        {
+            return PlayerPrefs.GetInt(key, defaultValue.ToInt32()).ToBool();
+        }
+
         public static float GetFloat(string key, [DefaultValue("-1.0F")] float defaultValue)
         {
             return PlayerPrefs.GetFloat(key, defaultValue);
@@ -55,6 +62,17 @@ namespace Framework
             return PlayerPrefs.HasKey(key);
         }
 
+        public static bool TryGet(string key, ref bool ret)
+        {
+            if (!HasKey(key))
+            {
+                return false;
+            }
+
+            ret = GetBool(key);
+            return true;
+        }
+
         public static bool TryGet(string key, ref float ret)
         {
             if (!HasKey(key))
@@ -86,6 +104,12 @@ namespace Framework
 
             ret = GetString(key);
             return !string.IsNullOrEmpty(ret);
+        }
+
+        public static void SetBool(string key, bool value)
+        {
+            //return PlayerPrefs.GetInt(key, defaultValue.ToInt32()).ToBool();
+            PlayerPrefs.SetInt(key, value.ToInt32());
         }
 
         public static void SetFloat(string key, float value)

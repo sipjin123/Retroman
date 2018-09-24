@@ -28,9 +28,6 @@ using Sandbox.Popup;
 
 namespace Sandbox.RGC
 {
-    // alias
-    using CColor = Framework.Color;
-
     public class ProfilePopup : PopupWindow, IPopupWindow
     {
         [SerializeField]

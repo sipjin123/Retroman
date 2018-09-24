@@ -92,9 +92,9 @@ namespace Sandbox.RGC
                 .AddTo(this);
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
-                .Where(_ => _.Type.Equals(GraphQLRequestType.GET_CURRENCY_CONVERSION_RATE))
-                .Where(_ => _.GetData<WalletConversion>().currency.id.Equals(RGCConst.POINT_ID))
-                .Subscribe(_ => ShowCurrencyDetails(_.GetData<WalletConversion>()))
+                .Where(_ => _.Type.Equals(GraphQLRequestType.GET_CURRENCY))
+                .Where(_ => _.GetData<FGCCurrency>().currency.id.Equals(RGCConst.POINT_ID))
+                .Subscribe(_ => ShowCurrencyDetails(_.GetData<FGCCurrency>()))
                 .AddTo(this);
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
@@ -109,7 +109,7 @@ namespace Sandbox.RGC
             {
                 request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
                 request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.POINT_ID);
-                ShowCurrencyDetails(QuerySystem.Complete<WalletConversion>());
+                ShowCurrencyDetails(QuerySystem.Complete<FGCCurrency>());
             }
         }
 
@@ -118,10 +118,10 @@ namespace Sandbox.RGC
             FGCWallet.text = string.Format("FGCWallet value (tickets): {0}", wallet.amount.ToString().RichTextColorize(Color.green));
         }
 
-        private void ShowCurrencyDetails(WalletConversion wallet)
+        private void ShowCurrencyDetails(FGCCurrency wallet)
         {
             CurrencyId.text = string.Format("Currency Id (jolens): {0}", wallet.currency.id.RichTextColorize(Color.green));
-            CurrencyName.text = string.Format("Currency Name (jolens): {0}", wallet.currency.name.RichTextColorize(Color.green));
+            CurrencyName.text = string.Format("Currency Name (jolens): {0}", wallet.currency.slug.RichTextColorize(Color.green));
             CurrencyValue.text = string.Format("Currency Value (jolens): {0}", wallet.amount.ToString().RichTextColorize(Color.green));
             CurrencyRate.text = string.Format("Currency Rate: {0}", wallet.currency.exchange_rate.ToString().RichTextColorize(Color.green));
         }
@@ -136,12 +136,21 @@ namespace Sandbox.RGC
 
         public void OnClickedOnline()
         {
-            this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOnline, PopupData = new PopupData(RGCConst.POINT_ID) });
+            GameResultInfo data = GameResultFactory.CreateDefault();
+
+            this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOnline, PopupData = new PopupData(data) });
         }
 
         public void OnClickedOffline()
         {
-            this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOffline, PopupData = new PopupData(RGCConst.POINT_ID) });
+            GameResultInfo data = GameResultFactory.CreateDefault();
+
+            this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOffline, PopupData = new PopupData(data) });
+        }
+
+        public void OnClickedSend()
+        {
+            this.Publish(new OnSendToFGCWalletSignal() { Value = 100, Event  = RGCConst.GAME_END });
         }
     }
 }

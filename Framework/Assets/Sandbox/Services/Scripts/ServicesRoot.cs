@@ -39,20 +39,13 @@ namespace Sandbox.Services
         [TabGroup("New Group", "Services")]
         private IService[] Services;
 
-        protected override void OnEnable()
+        protected override void Start()
         {
-            base.OnEnable();
+            base.Start();
 
             InitializeServices();
         }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-
-            TerminateServices();
-        }
-
+        
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -98,15 +91,15 @@ namespace Sandbox.Services
             // initialize each service
             foreach (IService service in Services)
             {
-                Debug.LogWarningFormat("{0} Initializing {1}...\n", Time.time, service.ServiceName);
+                Debug.LogFormat(D.SERVICE + "{0} Initializing {1}...\n", Time.time, service.ServiceName);
 
                 // subscribe to service being ready
                 service.CurrentServiceState
                     .Where(state => state > ServiceState.Uninitialized)
                     .Take(1)
-                    .Subscribe(state => 
+                    .Subscribe(state =>
                     {
-                        Debug.LogWarningFormat("{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
+                        Debug.LogFormat(D.SERVICE + "{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
                         CheckAllServicesReady();
                     })
                     .AddTo(this);
@@ -120,15 +113,15 @@ namespace Sandbox.Services
             // initialize each service
             foreach (IService service in Services)
             {
-                Debug.LogWarningFormat("{0} Initializing {1}...\n", Time.time, service.ServiceName);
+                Debug.LogFormat(D.SERVICE + "{0} Initializing {1}...\n", Time.time, service.ServiceName);
 
                 // subscribe to service being ready
                 service.CurrentServiceState
                     .Where(state => state > ServiceState.Uninitialized)
                     .Take(1)
-                    .Subscribe(state => 
+                    .Subscribe(state =>
                     {
-                        Debug.LogWarningFormat("{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
+                        Debug.LogFormat(D.SERVICE + "{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
                         CheckAllServicesReady();
                     })
                     .AddTo(this);
@@ -143,11 +136,11 @@ namespace Sandbox.Services
         /// </summary>
         private void CheckAllServicesReady()
         {
-            bool allServicesReady = 
+            bool allServicesReady =
                 Array.Find(Services, s => s.CurrentServiceState.Value == ServiceState.Uninitialized) == null && // check if no service is still at None state
                 Array.Find(Services, s => s.CurrentServiceState.Value == ServiceState.Error && s.IsServiceRequired) == null; // check if no required service has an error
 
-            Debug.LogWarningFormat("{0} CheckAllServicesReady: {1}\n", Time.time, allServicesReady);
+            Debug.LogFormat(D.SERVICE + "{0} CheckAllServicesReady: {1}\n", Time.time, allServicesReady);
 
             if (allServicesReady)
             {
@@ -169,7 +162,7 @@ namespace Sandbox.Services
             {
                 if (service == null)
                 {
-                    Debug.LogWarningFormat("ServicesRoot: Tried to terminate a null service reference\n");
+                    Debug.LogFormat(D.SERVICE + "ServicesRoot: Tried to terminate a null service reference\n");
                     continue;
                 }
 

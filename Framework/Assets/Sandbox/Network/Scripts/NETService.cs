@@ -19,7 +19,7 @@ using Sandbox.Services;
 
 namespace Sandbox.Network
 {
-    public struct OnUpdateInternetConnectionSignal { public bool HasNoInternet; }
+    public struct OnUpdateInternetConnectionSignal { public bool HasConnection; }
     
     public class NETService : BaseService
     {
@@ -74,12 +74,12 @@ namespace Sandbox.Network
                 www =>
                 {
                     HasConnection = true;
-                    this.Publish(new OnUpdateInternetConnectionSignal() { HasNoInternet = HasConnection });
+                    this.Publish(new OnUpdateInternetConnectionSignal() { HasConnection = HasConnection });
                 },
                 error =>
                 {
                     HasConnection = Application.internetReachability != NetworkReachability.NotReachable;
-                    this.Publish(new OnUpdateInternetConnectionSignal() { HasNoInternet = HasConnection });
+                    this.Publish(new OnUpdateInternetConnectionSignal() { HasConnection = HasConnection });
                 });
         }
 

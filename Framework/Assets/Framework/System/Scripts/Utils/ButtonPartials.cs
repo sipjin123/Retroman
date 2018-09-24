@@ -21,7 +21,6 @@ using UnityEditor.Events;
 namespace Framework
 {
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
     using TriggerEvent = EventTrigger.TriggerEvent;
 

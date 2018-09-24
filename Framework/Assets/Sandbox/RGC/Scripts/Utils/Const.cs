@@ -17,7 +17,11 @@ namespace Sandbox.RGC
         public static readonly string CURRENCY_2_ID = "3399b670-2d77-11e8-95b2-152f72218a8e";
 
         public static readonly string POINT_SLUG = "score";//"point";
-        public static readonly string POINT_NAME = "Score";//"Point";
-        public static readonly string POINT_ID = "9d2799e0-b62a-11e8-9b59-15b3738365e9";//"50d0eb80-41e7-11e8-95f5-9d0a89fec46f";
+        public static readonly string POINT_NAME = "Score";// "Point";
+        public static readonly string POINT_ID = "9d2799e0-b62a-11e8-9b59-15b3738365e9";
+
+        // Events
+        public static readonly string TEST_EVENT = "test_event";
+        public static readonly string GAME_END = "game_end";
     }
 }

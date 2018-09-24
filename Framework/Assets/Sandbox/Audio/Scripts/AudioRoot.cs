@@ -21,13 +21,13 @@ using Framework;
 
 namespace Sandbox.Audio
 {
-    using FScene = Framework.Scene;
+    // Alias
     using UScene = UnityEngine.SceneManagement.Scene;
 
     /// <summary>
     /// This handles playing of common sound effects like button hovers and clicks.
     /// </summary>
-    public class AudioRoot : FScene
+    public class AudioRoot : SceneObject
     {
         protected override void Start()
         {
@@ -71,6 +71,7 @@ namespace Sandbox.Audio
             def.Resolve();
         }
 
+        /*
         [Button(ButtonSizes.Medium)]
         public void PlaySFX01()
         {
@@ -154,5 +155,6 @@ namespace Sandbox.Audio
         {
             this.Publish(new OnClearLoadedAudioSignal());
         }
+        //*/
     }
 }

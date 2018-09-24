@@ -2,6 +2,8 @@
 
 using UnityEngine;
 
+using Sirenix.Utilities;
+
 using UniRx;
 using UniRx.Triggers;
 
@@ -41,6 +43,16 @@ namespace Sandbox.RGC
         public string Email;
 
         public int Mobile;
+
+        public bool HasToken()
+        {
+            return !string.IsNullOrEmpty(Token.Trim());
+        }
+
+        public bool HasFBToken()
+        {
+            return !string.IsNullOrEmpty(FBToken.Trim());
+        }
     }
 
     public class GuestLoginAction : FsmActionAdapter, IBroker
@@ -73,12 +85,7 @@ namespace Sandbox.RGC
         {
             return PREFS.TryGet(RGCService.LOCAL_ID, ref Id);
         }
-
-        private bool HasNetwork()
-        {
-            return QuerySystem.Query<bool>(NETService.HasInternet);
-        }
-
+        
         #region Fsm
         [SerializeField]
         private Fsm Fsm;
@@ -86,9 +93,11 @@ namespace Sandbox.RGC
         // events
         private readonly string ON_LOGIN = "ON_LOGIN";
         private readonly string ON_CREATE_AND_LOGIN_OFFLINE = "ON_CREATE_AND_LOGIN_OFFLINE";
+        private readonly string ON_CREATE_AND_LOGIN_AS_GUEST = "ON_CREATE_AND_LOGIN_AS_GUEST";
         private readonly string ON_LOGIN_OFFLINE = "ON_LOGIN_OFFLINE";
         private readonly string ON_LOGIN_QUEST = "ON_LOGIN_QUEST";
         private readonly string ON_LOGIN_DONE = "ON_LOGIN_DONE";
+        private readonly string FINISH = "FINISH";
 
         private void PrepareFsm()
         {
@@ -99,7 +108,8 @@ namespace Sandbox.RGC
             // stats
             FsmState idle = Fsm.AddState("Idle");
             FsmState onLogin = Fsm.AddState("OnLogin");
-            FsmState createOfflineLogin = Fsm.AddState("CreateOfflineLogin");
+            FsmState createOfflineLoginOffline = Fsm.AddState("CreateOfflineLoginOffline");
+            FsmState createOfflineLoginAsGuest = Fsm.AddState("CreateOfflineLoginAsGues");
             FsmState offlineLogin = Fsm.AddState("OfflineLogin");
             FsmState loginAsGuest = Fsm.AddState("LoginAsGuest");
             FsmState loginDone = Fsm.AddState("LoginDone");
@@ -107,37 +117,48 @@ namespace Sandbox.RGC
             // transitions
             idle.AddTransition(ON_LOGIN, onLogin);
 
-            onLogin.AddTransition(ON_CREATE_AND_LOGIN_OFFLINE, createOfflineLogin);
+            onLogin.AddTransition(ON_CREATE_AND_LOGIN_OFFLINE, createOfflineLoginOffline);
+            onLogin.AddTransition(ON_CREATE_AND_LOGIN_AS_GUEST, createOfflineLoginAsGuest);
             onLogin.AddTransition(ON_LOGIN_OFFLINE, offlineLogin);
             onLogin.AddTransition(ON_LOGIN_QUEST, loginAsGuest);
 
-            createOfflineLogin.AddTransition(ON_LOGIN_QUEST, loginAsGuest);
-            offlineLogin.AddTransition(ON_LOGIN_QUEST, loginAsGuest);
+            createOfflineLoginOffline.AddTransition(ON_LOGIN_OFFLINE, offlineLogin);
+            createOfflineLoginAsGuest.AddTransition(ON_LOGIN_QUEST, loginAsGuest);
 
+            offlineLogin.AddTransition(ON_LOGIN_DONE, loginDone);
             loginAsGuest.AddTransition(ON_LOGIN_DONE, loginDone);
+
+            loginDone.AddTransition(FINISH, idle);
+
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
 
             // actions
             onLogin.AddAction(new FsmDelegateAction(onLogin,
                owner =>
                {
-                   Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
-
-                   bool hasNetwork = HasNetwork();
+                   bool hasNetwork = QuerySystem.Query<bool>(NETService.HasInternet);
                    bool hasLocal = HasLocalId();
 
                    if (!hasNetwork && !hasLocal)
                    {
                        // TODO: +AS:20180828 create local id
-                       owner.SendEvent(ON_CREATE_AND_LOGIN_OFFLINE);
+                       Fsm.SendEvent(ON_CREATE_AND_LOGIN_OFFLINE);
                    }
                    else if (!hasNetwork && hasLocal)
                    {
                        // TODO: +AS:20180828 login local id
-                       owner.SendEvent(ON_LOGIN_OFFLINE);
+                       Fsm.SendEvent(ON_LOGIN_OFFLINE);
                    }
-                   else if (hasNetwork)
+                   else if (hasNetwork && !hasLocal)
                    {
-                       owner.SendEvent(ON_CREATE_AND_LOGIN_OFFLINE);
+                       Fsm.SendEvent(ON_CREATE_AND_LOGIN_AS_GUEST);
+                   }
+                   else if (hasNetwork && hasLocal)
+                   {
+                       Fsm.SendEvent(ON_LOGIN_QUEST);
                    }
                    else
                    {
@@ -145,33 +166,37 @@ namespace Sandbox.RGC
                    }
                }));
 
-            createOfflineLogin.AddAction(new FsmDelegateAction(createOfflineLogin,
+            createOfflineLoginOffline.AddAction(new FsmDelegateAction(createOfflineLoginOffline,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
-
                     Id = Platform.DeviceId;
 
                     this.Publish(new OnCreateOfflineUserSignal() { Id = Id });
-                    
-                    owner.SendEvent(ON_LOGIN_QUEST);
+
+                    Fsm.SendEvent(ON_LOGIN_OFFLINE);
+                }));
+
+            createOfflineLoginAsGuest.AddAction(new FsmDelegateAction(createOfflineLoginAsGuest,
+                owner =>
+                {
+                    Id = Platform.DeviceId;
+
+                    this.Publish(new OnCreateOfflineUserSignal() { Id = Id });
+
+                    Fsm.SendEvent(ON_LOGIN_QUEST);
                 }));
 
             offlineLogin.AddAction(new FsmDelegateAction(offlineLogin,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0} Id:{1}\n", owner.GetName(), Id);
-
                     this.Publish(new OnOfflineLoginSignal() { Id = Id });
 
-                    owner.SendEvent(ON_LOGIN_QUEST);
+                    Fsm.SendEvent(ON_LOGIN_DONE);
                 }));
 
             loginAsGuest.AddAction(new FsmDelegateAction(loginAsGuest,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
-
                     this.Receive<GraphQLRequestSuccessfulSignal>()
                         .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                         .Subscribe(_ =>
@@ -180,7 +205,7 @@ namespace Sandbox.RGC
 
                             this.Publish(new OnGuestLoginSignal() { Token = _.GetData<string>()});
 
-                            owner.SendEvent(ON_LOGIN_DONE);
+                            Fsm.SendEvent(ON_LOGIN_DONE);
                         })
                         .AddTo(Disposables);
 
@@ -190,11 +215,12 @@ namespace Sandbox.RGC
                         {
                             Debug.LogFormat(D.FGC + "GuestLoginAction::LoginAsGuest::Fail\n");
 
-                            owner.SendEvent(ON_LOGIN_DONE);
+                            Fsm.SendEvent(ON_LOGIN_DONE);
                         })
                         .AddTo(Disposables);
 
-                    this.Publish(new OnGraphLoginSignal());
+                    this.Publish(new OnOfflineLoginSignal() { Id = Id });
+                    this.Publish(new OnGraphLoginSignal() { IsGuest = true });
                 },
                 owner => {},
                 owner => Disposables.Clear()));
@@ -202,7 +228,7 @@ namespace Sandbox.RGC
             loginDone.AddAction(new FsmDelegateAction(loginDone,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "GuestLoginAction::{0}\n", owner.GetName());
+                    Fsm.SendEvent(FINISH);
 
                     GetOwner().SendEvent(Evt);
                 }));
@@ -213,4 +239,3 @@ namespace Sandbox.RGC
         #endregion
     }
 }
-

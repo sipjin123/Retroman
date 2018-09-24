@@ -25,6 +25,12 @@ namespace Sandbox.GraphQL
         public string UniqueId;
     }
 
+    public struct GraphQLFBLoginRequestSignal : IRequestSignal
+    {
+        public string UniqueId;
+        public string FacebookToken;
+    }
+
     public struct GraphQLUpdatePlayerRequestSignal : IRequestSignal
     {
         public List<StringEntry> Entries;
@@ -161,6 +167,10 @@ namespace Sandbox.GraphQL
                 .Subscribe(_ => Register(_.UniqueId))
                 .AddTo(this);
 
+            this.Receive<GraphQLFBLoginRequestSignal>()
+                .Subscribe(_ => RegisterFacebook(_.FacebookToken, _.UniqueId))
+                .AddTo(this);
+
             this.Receive<GraphQLUpdatePlayerRequestSignal>()
                 .Subscribe(_ => UpdateProfile(_.Entries))
                 .AddTo(this);
@@ -183,18 +193,18 @@ namespace Sandbox.GraphQL
         ///}
         /// </summary>
         /// <param name="unique_id"></param>
-        public void Register(string unique_id)
+        public void Register(string uniqueId)
         {
-            string guest = "guest";
-            string credentials = unique_id;
-            string deviceId = unique_id;
+            string type = "guest";
+            string credentials = uniqueId;
+            string deviceId = uniqueId;
             string gameSlug = GraphInfo.GameSlug;
             string build = GraphInfo.Build;
             string token = "token";
 
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("player_login");
-            func.Add("type", guest);
+            func.Add("type", type);
             func.AddString("credential", credentials);
             func.AddString("device_id", deviceId);
             func.AddString("game_slug", gameSlug);
@@ -205,18 +215,18 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), PlayerLogin);
         }
 
-        public void RegisterFacebook(string unique_id)
+        public void RegisterFacebook(string facebookToken, string uniqueId)
         {
-            string guest = "facebook";
-            string credentials = unique_id;
-            string deviceId = unique_id;
+            string type = "facebook";
+            string credentials = facebookToken;
+            string deviceId = uniqueId;
             string gameSlug = GraphInfo.GameSlug;
             string build = GraphInfo.Build;
             string token = "token";
 
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("player_login");
-            func.Add("type", guest);
+            func.Add("type", type);
             func.AddString("credential", credentials);
             func.AddString("device_id", deviceId);
             func.AddString("game_slug", gameSlug);
@@ -224,7 +234,7 @@ namespace Sandbox.GraphQL
             Return ret = builder.CreateReturn(token);
             string args = builder.ToString();
 
-            ProcessRequest(GraphInfo, builder.ToString(), PlayerLogin);
+            ProcessRequest(GraphInfo, builder.ToString(), PlayerLoginFB);
         }
 
 
@@ -306,9 +316,8 @@ namespace Sandbox.GraphQL
         /// }
         /// </summary>
         /// <param name="result"></param>
-        public void PlayerLogin(GraphResult result)
+        private void PlayerLogin(GraphResult result)
         {
-            //Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
             if (result.Status == Status.ERROR)
             {
                 this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.LOGIN });
@@ -320,7 +329,20 @@ namespace Sandbox.GraphQL
             }
         }
 
-        public void PlayerUpdate(GraphResult result)
+        private void PlayerLoginFB(GraphResult result)
+        {
+            if (result.Status == Status.ERROR)
+            {
+                this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.LOGIN });
+            }
+            else
+            {
+                Token = result.Result.data.player_login.token;
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOGIN, Data = Token });
+            }
+        }
+
+        private void PlayerUpdate(GraphResult result)
         {
             //Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
             if (result.Status == Status.ERROR)

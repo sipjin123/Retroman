@@ -14,9 +14,7 @@ using Framework;
 namespace Sandbox.Services
 {
     using Sandbox.ButtonSandbox;
-
-    using FColor = Framework.Color;
-
+    
     public partial class BaseService : SerializedMonoBehaviour, IService
     {
         /// <summary>
