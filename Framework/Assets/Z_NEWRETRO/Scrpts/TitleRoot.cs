@@ -27,7 +27,7 @@ namespace Retroman
         public Canvas _SpamBlockerCanvas;
 
         MessageBroker _MessageBroker;
-
+        public CanvasGroup _InteractiveCanvas;
         protected override void Awake()
         {
             base.Awake();
@@ -93,15 +93,17 @@ namespace Retroman
         {
             AddButtonHandler(ButtonType.StartGame, delegate (ButtonClickedSignal signal)
             {
+                _InteractiveCanvas.interactable = false;
                 GenericButtonPressed();
                 _MessageBroker.Publish(new LaunchGamePlay());
             });
             AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
             {
+                _InteractiveCanvas.interactable = false;
                 GenericButtonPressed();
                 _MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
             });
-            AddButtonHandler(ButtonType.TutorialButton, delegate (ButtonClickedSignal signal) 
+            AddButtonHandler(ButtonType.TutorialButton, delegate (ButtonClickedSignal signal)
             {
                 GenericButtonPressed();
                 _MessageBroker.Publish(new ToggleCoins { IfActive = false });
@@ -109,6 +111,7 @@ namespace Retroman
             });
             AddButtonHandler(ButtonType.SettingsButton, delegate (ButtonClickedSignal signal)
             {
+                _InteractiveCanvas.interactable = false;
                 GenericButtonPressed();
                 
                 _MessageBroker.Publish(new ChangeScene { Scene = EScene.SettingsRoot });
