@@ -73,7 +73,7 @@ public class GameControls : SerializedMonoBehaviour
         {
             if (Factory.Get<DataManagerService>().IFTestMode)
             {
-                return;
+                //return;
             }
             GameOverIT();
         }).AddTo(this);
