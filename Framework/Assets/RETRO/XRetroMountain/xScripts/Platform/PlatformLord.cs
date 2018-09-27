@@ -205,21 +205,24 @@ public class PlatformLord: MonoBehaviour {
 		SpawnAPlatform();
 		StartCoroutine(manualSpawnage());
 	}
-	#endregion
-	//==================================================================================================================================================
-	#region PRIMARY FUNCTION
+    #endregion
+    //==================================================================================================================================================
+    #region PRIMARY FUNCTION
 
-
-	public void SpawnAPlatform()
+    PlatformMinion previousPlatformMinion;
+    public void SpawnAPlatform()
 	{
+
 		//REPLENISH POOL PHASE
 		if(_platformPool.childCount < 1 )
 		{
 			PlatformMinion _pM = _platformSpawned.GetChild(0).GetComponent<PlatformMinion>();
-			_pM._typeOfPlatform = PlatformMinion.TypeofPlatform.UNKNOWN;
+			_pM.SetTypeOfPlatform( TypeofPlatform.UNKNOWN);
 			_pM.UpdateThisPlatform();
-			_pM.transform.parent = _platformPool; 
-		}
+			_pM.transform.parent = _platformPool;
+
+
+        }
 
 		//SPAWN PHASE
 		GameObject temp = _platformPool.GetChild(0).gameObject;
@@ -256,44 +259,44 @@ public class PlatformLord: MonoBehaviour {
 			switch(_platformAction)
 			{
 				case PlatformAction.SPAWNNORMAL:
-					_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
+					_platformMinion.SetTypeOfPlatform(  TypeofPlatform.NORMAL);
 					break;
 
 				case PlatformAction.SPAWNTRAP:
 					if(_trapType == TrapType.SPIKE)
-						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
+						_platformMinion.SetTypeOfPlatform(  TypeofPlatform.SPIKED);
 					else if(_trapType == TrapType.HOLE)
-						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.HOLED;
+						_platformMinion.SetTypeOfPlatform(  TypeofPlatform.HOLED);
 					else if(_trapType == TrapType.COINBOX)
-						_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.COINBOX;
+						_platformMinion.SetTypeOfPlatform(  TypeofPlatform.COINBOX);
 						
 				/*
 					switch(_trapType)
 					{
 						case TrapType.SPIKE:
-							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.SPIKED;
+							_platformMinion.SetTypeOfPlatform( = PlatformMinion.TypeofPlatform.SPIKED;
 							break;
 						case TrapType.HOLE:
-							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.HOLED;
+							_platformMinion.SetTypeOfPlatform( = PlatformMinion.TypeofPlatform.HOLED;
 							break;
 						case TrapType.COINBOX:
-							_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.COINBOX;
+							_platformMinion.SetTypeOfPlatform( = PlatformMinion.TypeofPlatform.COINBOX;
 							break;
 
 					}
 */
 					break;
 				case PlatformAction.SPAWNHEIGHCHANGE:
-					_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
+					_platformMinion.SetTypeOfPlatform( TypeofPlatform.NORMAL);
 					break;
 				case PlatformAction.SPAWNTRAPPATTERN:
-						_platformMinion._typeOfPlatform = (PlatformMinion.TypeofPlatform)  _patternDict[_patternRandomizer].GetValue(_spawnStackCounter) ;
+						_platformMinion.SetTypeOfPlatform( (TypeofPlatform)  _patternDict[_patternRandomizer].GetValue(_spawnStackCounter));
 						break;
 			}
 		}
 		else if (_spawnStackCounter < 0 )
 		{
-			_platformMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.NORMAL;
+			_platformMinion.SetTypeOfPlatform(  TypeofPlatform.NORMAL);
 			SetupNextAction(temp, _platformMinion);
 		}
 		_stacksBeforeTurn ++;
@@ -302,7 +305,9 @@ public class PlatformLord: MonoBehaviour {
 
 
 		_platformMinion.UpdateThisPlatform();
-		temp = null;
+        _platformMinion.SetBeforePlatform(previousPlatformMinion);
+        previousPlatformMinion = _platformMinion;
+        temp = null;
 		transform.position += transform.forward * 1f;
 	}
 	#endregion
@@ -430,11 +435,11 @@ public class PlatformLord: MonoBehaviour {
 		{
 		case PlatformDirection.LEFT:
 			_bodyRotation -= 90;
-			_platMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.LEFT;
+			_platMinion.SetTypeOfPlatform(  TypeofPlatform.LEFT);
 			break;
 		case PlatformDirection.RIGHT:
 			_bodyRotation += 90;
-			_platMinion._typeOfPlatform = PlatformMinion.TypeofPlatform.RIGHT;
+			_platMinion.SetTypeOfPlatform(  TypeofPlatform.RIGHT);
 			break;
 		}
 		_platMinion.UpdateThisPlatform();

@@ -163,13 +163,7 @@ namespace Retroman
             {
                 if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)))
                 {
-                    _jumpDelaySwitch = true;
-                    StartCoroutine(JumpDelayENUM());
-                    _rigidbody.AddForce(transform.up * (15000/25));//15000);
-                   Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
-                    isJumping = true;
-
-                    SoundControls.Instance._sfxJump.Play();
+                    JumpStart();
                     return;
 
                 }
@@ -181,7 +175,7 @@ namespace Retroman
 
                     if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0)))
                     {
-                        _rigidbody.AddForce(transform.up * (650/25));// 650);
+                        JumpHold();
                     }
                 }
             }
@@ -191,6 +185,41 @@ namespace Retroman
           //  RaycastFunction();
 
         }
+        public void GenericJump()
+        {
+            if(isJumping == false)
+            {
+
+                _jumpDelaySwitch = true;
+                StartCoroutine(JumpDelayENUM());
+                _rigidbody.AddForce(transform.up * (15000 / 25));//15000);
+                Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
+                isJumping = true;
+
+                SoundControls.Instance._sfxJump.Play();
+            }
+            else
+            {
+
+                _rigidbody.AddForce(transform.up * (650 / 25));// 650);
+            }
+        }
+        public void JumpStart()
+        {
+
+            _jumpDelaySwitch = true;
+            StartCoroutine(JumpDelayENUM());
+            _rigidbody.AddForce(transform.up * (15000 / 25));//15000);
+            Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
+            isJumping = true;
+
+            SoundControls.Instance._sfxJump.Play();
+        }
+        public void JumpHold()
+        {
+            _rigidbody.AddForce(transform.up * (650 / 25));// 650);
+        }
+
         //==========================================================================================================================================	
         #region COROUTINES
         IEnumerator JumpDelayENUM()
