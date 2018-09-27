@@ -13,8 +13,11 @@ using Common.Signal;
 
 using Common.Query;
 
+using UniRx;
 namespace Framework
 {
+    using Common.Utils;
+    using Retroman;
     using TMPro;
 
     public class SystemVersion : MonoBehaviour
@@ -41,6 +44,19 @@ namespace Framework
             QuerySystem.RegisterResolver(QueryIds.ReleaseVersion, (IQueryRequest request, IMutableQueryResult result) => {
                 result.Set(ReleaseVersion);
             });
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<ShowVersion>().Subscribe(_ => 
+            {
+                if(_.IfActive == false)
+                {
+                    LabelVersion.gameObject.SetActive(false);
+
+                }
+                else
+                {
+                    LabelVersion.gameObject.SetActive(true);
+                }
+            }).AddTo(this);
 
             UpdateLabel();
         }
