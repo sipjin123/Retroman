@@ -25,6 +25,7 @@ using Sandbox.Audio;
 using Sandbox.Popup;
 using Sandbox.Preloader;
 using Sandbox.Services;
+using Synergy88;
 
 namespace Retroman
 {
@@ -116,23 +117,23 @@ namespace Retroman
                     switch (Fsm.GetCurrentStateName())
                     {
                         case "game":
-                            Debug.LogError("Cu STate is game");
+                            Debug.LogError("BackButton Game");
                             this._RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsGame });
                             break;
                         case "shop":
 
                             this._RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsShop });
-                            Debug.LogError("Cu STate is shop");
+                            Debug.LogError("BackButton Shop");
                             break;
                         case "title":
 
                             this._RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsTitle });
-                            Debug.LogError("Cu STate is title");
+                            Debug.LogError("BackButton Title");
                             break;
                         case "settings":
 
                             this._RetroMessageBroker.Publish(new PressBackButton { BackButtonType = BackButtonType.SceneIsSettings });
-                            Debug.LogError("Cu STate is settings");
+                            Debug.LogError("BackButton Settings");
                             break;
                     }
             }).AddTo(this);
@@ -244,12 +245,15 @@ namespace Retroman
             idle.AddAction(new FsmDelegateAction(idle, delegate (FsmState owner)
             {
                 string splashScene = "Splash";
+                string splashMovieScene = "SplashMovie";
 
                 Preloaders preloaders = Preloaders.Preloader001;
 
-                // idle state
-                Promise.All(Scene.LoadScenePromise<SplashRoot>(splashScene))
-                    .Then(_ => FSceneObject.GetScene<SplashRoot>(splashScene).Wait())
+                // idle state 
+                //Promise.All(Scene.LoadScenePromise<SplashRoot>(splashScene))
+                    //.Then(_ => FSceneObject.GetScene<SplashRoot>(splashScene).Wait())
+                Promise.All(Scene.LoadScenePromise<SplashMovieRoot>(splashMovieScene))
+                    .Then(_ => FSceneObject.GetScene<SplashMovieRoot>(splashMovieScene).Wait())
                     .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Preloader = Scene.GetSceneRoot<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Preloader.LoadLoadingScreenPromise(preloaders))
@@ -259,7 +263,7 @@ namespace Retroman
             splash.AddAction(new FsmDelegateAction(splash, delegate (FsmState owner)
             {
                 // state 1
-            }));
+            }));  
 
             preload.AddAction(new FsmDelegateAction(preload, delegate (FsmState owner)
             {
@@ -286,7 +290,8 @@ namespace Retroman
             {
                 
                 Promise.AllSequentially(Scene.EndFramePromise)
-                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
+                    .Then(_ => Scene.LoadScenePromise<BackgroundRoot>(EScene.Background))
+                    .Then(_ => Scene.LoadSceneAdditivePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                     .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
                     //.Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
@@ -296,7 +301,8 @@ namespace Retroman
                         Factory.Get<DataManagerService>().IfCanBack = true;
                         this._RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
                         this._RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
-                    });
+                    })
+                    .Then(_ => Scene.UnloadScenePromise(EScene.Background));
             }));
 
             game.AddAction(new FsmDelegateAction(game, delegate (FsmState owner)
@@ -306,12 +312,13 @@ namespace Retroman
                 if (skipProcess == false)
                 {
                     Promise.AllSequentially(Scene.EndFramePromise)
-                        .Then(_ => Scene.LoadScenePromise<SplashMovieRoot>(splashMoveScene))
-                        .Then(_ => Scene.LoadScenePromise<GameRoot>(EScene.GameRoot))
+                        .Then(_ => Scene.LoadScenePromise<BackgroundRoot>(EScene.Background))
+                        .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                         .Then(_ =>
                         {
                             this._RetroMessageBroker.Publish(new LaunchGamePlay());
-                        });
+                        })
+                        .Then(_ => Scene.UnloadScenePromise(EScene.Background));
                 }
                 else
                 {
@@ -321,10 +328,14 @@ namespace Retroman
 
             shop.AddAction(new FsmDelegateAction(shop, delegate (FsmState owner)
             {
+                BackgroundRoot bgroot = new BackgroundRoot() ;
                 Promise.AllSequentially(Scene.EndFramePromise)
-                       .Then(_ => Scene.LoadScenePromise<ShopRoot>(EScene.ShopRoot))
-                       .Then(_=> {
-                       });
+                        .Then(_ => Scene.LoadSceneAdditivePromise<BackgroundRoot>(EScene.Background))
+                        //.Then(_=> Scene.GetSceneRoot<BackgroundRoot>(EScene.Background).WaitPromise(2) )
+                        .Then(_ => Scene.LoadScenePromise<ShopRoot>(EScene.ShopRoot));
+                //.Then(_ => Scene.UnloadScenePromise(EScene.Background));
+                
+                return;
             }));
             settings.AddAction(new FsmDelegateAction(settings, delegate (FsmState owner)
             {

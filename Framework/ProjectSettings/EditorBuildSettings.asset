@@ -83,4 +83,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/Popup/Scenes/InsufficientGoldPopup.unity
     guid: 8179af94bac451e47940e9db0e532f3b
+  - enabled: 1
+    path: Assets/Sandbox/Background/Scenes/Background.unity
+    guid: f0e44820e3c9640188a7e584f96f8dfe
   m_configObjects: {}

@@ -11,16 +11,22 @@ MonoBehaviour:
   m_Script: {fileID: -2115301841, guid: b96583fe9d2614f3081becbbd70cd55f, type: 3}
   m_Name: FacebookSettings
   m_EditorClassIdentifier: 
-  selectedAppIndex: 1
+  selectedAppIndex: 3
   clientTokens:
+  - 
+  - 
   - 
   - 
   appIds:
   - '486689981521692 '
   - 2021578457871688
+  - 135095420779256
+  - 523014684840203
   appLabels:
   - Framework
   - Wil to Play
+  - Retro Man
+  - Chewey
   cookie: 1
   logging: 1
   status: 1
@@ -28,6 +34,8 @@ MonoBehaviour:
   frictionlessRequests: 1
   iosURLSuffix: 
   appLinkSchemes:
+  - list: []
+  - list: []
   - list: []
   - list: []
   uploadAccessToken: 

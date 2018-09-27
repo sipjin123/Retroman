@@ -16,6 +16,8 @@ using Framework;
 using Common.Utils;
 using Sandbox.ButtonSandbox;
 using Sandbox.Popup;
+using Sandbox.Background;
+using uPromise;
 
 namespace Retroman
 {
@@ -33,23 +35,52 @@ namespace Retroman
             base.Awake();
             SetupButtons();
 
+            bool LogBackbutton = true;
+
             msgBroker = Factory.Get<DataManagerService>().MessageBroker;
             msgBroker.Receive<PressBackButton>().Subscribe(_ =>
             {
                 if (_.BackButtonType == BackButtonType.SceneIsGame)
                 {
                     PopupCollectionRoot popCol = Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection);
-                    if(popCol.IsLoaded(PopupType.ResultsPopup))//if ( ResultsCanvas.enabled)
+                    Debug.LogError("ActivePopup :: " + popCol.HasActivePopup());
+                    Debug.LogError(popCol.CurrentPopup.ToPopup().Type);
+                
+                    if (popCol.IsLoaded(PopupType.ConvertOnline))
                     {
+                        if (LogBackbutton)
+                            Debug.LogError("Close Online Popup");
+                        popCol.Hide();
+                    }
+                    else if (popCol.IsLoaded(PopupType.ConvertOffline))
+                    {
+                        if (LogBackbutton)
+                            Debug.LogError("Close Offline Popup");
+                        popCol.Hide();
+                    }
+                    else if (popCol.IsLoaded(PopupType.ConnectToFGC))
+                    {
+                        if (LogBackbutton)
+                            Debug.LogError("Close ConnectFGC Popup");
+                        popCol.Hide();
+                    }
+                    else if (popCol.IsLoaded(PopupType.ResultsPopup))//if ( ResultsCanvas.enabled)
+                    {
+                        if (LogBackbutton)
+                            Debug.LogError("Go to Title Scene");
+                        popCol.Hide();
                         GoToTitlebutton();
                     }
                     else if (_GameControls.CanAccessBackButton() == false)
                     {
+                        if (LogBackbutton)
+                            Debug.LogError("Cant Access");
                         return;
                     }
                     else
                     {
-
+                        if (LogBackbutton)
+                            Debug.LogError("Pause");
                         Factory.Get<DataManagerService>().MessageBroker.Publish(new TogglePause());
                     }
                 }
