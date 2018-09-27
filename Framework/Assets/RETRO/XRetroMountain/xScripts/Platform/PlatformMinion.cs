@@ -1,25 +1,63 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum TypeofPlatform
+{
+    NORMAL,
+    SPIKED,
+    HOLED,
+    UPSPIKE,
+    LOWHOLE,
+    UPGROUND,
+    LOWGROUND,
+    COINBOX,
+    LEFT,
+    RIGHT,
+    UNKNOWN
+}
+
+public enum PlatformRunnability
+{
+    Null,
+    CanRun,
+    MustJump
+}
 public class PlatformMinion : MonoBehaviour {
 
+    public PlatformMinion PrePlatform;
+    public void SetBeforePlatform(PlatformMinion platminion)
+    {
+        PrePlatform = platminion;
+    }
+    public void SetTypeOfPlatform(TypeofPlatform platformType)
+    {
+        if ( platformType == TypeofPlatform.HOLED ||
+            platformType == TypeofPlatform.LOWHOLE ||
+            platformType == TypeofPlatform.SPIKED ||
+            platformType == TypeofPlatform.UNKNOWN ||
+            platformType == TypeofPlatform.UPSPIKE)
+        {
+            _PlatformRunnability = PlatformRunnability.MustJump;
+        }
+        else if (
+            platformType == TypeofPlatform.LEFT ||
+            platformType == TypeofPlatform.LOWGROUND ||
+            platformType == TypeofPlatform.NORMAL ||
+            platformType == TypeofPlatform.COINBOX ||
+            platformType == TypeofPlatform.RIGHT ||
+            platformType == TypeofPlatform.UPGROUND )
+        {
 
-	public enum TypeofPlatform
-	{
-		NORMAL,
-		SPIKED,
-		HOLED,
-		UPSPIKE,
-		LOWHOLE,
-		UPGROUND,
-		LOWGROUND,
-		COINBOX,
-		LEFT,
-		RIGHT,
-		UNKNOWN
-	}
-	public TypeofPlatform _typeOfPlatform;
-	public TypeofPlatform _previousTypeOfPlatform;
+            _PlatformRunnability = PlatformRunnability.CanRun;
+        }
+
+        _TypeOfPlatform = platformType;
+    }
+    public TypeofPlatform TypeOfPlatform { get { return _TypeOfPlatform; } }
+    private	TypeofPlatform _TypeOfPlatform;
+
+
+    public TypeofPlatform _previousTypeOfPlatform;
 	public enum HeightOfPlatform
 	{
 		LOW,
@@ -29,9 +67,11 @@ public class PlatformMinion : MonoBehaviour {
 	}
 	public HeightOfPlatform _heightOfPlatform;
 
+    [SerializeField]
+    PlatformRunnability _PlatformRunnability;
+    public PlatformRunnability PlatformRunnability { get { return _PlatformRunnability; } }
 
-
-	public GameObject _meshParent;
+    public GameObject _meshParent;
 	public GameObject _trapParent;
 
 	public GameObject  _spikeObject, _holeObject, _coinBoxObject, _coinBoxMesh, _coinBoxEffects, _leftObject, _rightObject;
@@ -67,7 +107,7 @@ public class PlatformMinion : MonoBehaviour {
         _boxCollider.enabled = false;
         _boxCollider.enabled = true;
 		DisableAll();
-		switch(_typeOfPlatform)
+		switch(_TypeOfPlatform)
 		{
 			case TypeofPlatform.UNKNOWN:
 				return;
@@ -139,18 +179,18 @@ public class PlatformMinion : MonoBehaviour {
                 break;
 		}
 
-		if(_typeOfPlatform == TypeofPlatform.UPGROUND || _typeOfPlatform == TypeofPlatform.UPSPIKE)
+		if(_TypeOfPlatform == TypeofPlatform.UPGROUND || _TypeOfPlatform == TypeofPlatform.UPSPIKE)
 		{
             transform.position = new Vector3( transform.position.x, transform.position.y +1.5f, transform.position.z);
             //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
         }
-		else if(_typeOfPlatform == TypeofPlatform.LOWGROUND || _typeOfPlatform == TypeofPlatform.LOWHOLE)
+		else if(_TypeOfPlatform == TypeofPlatform.LOWGROUND || _TypeOfPlatform == TypeofPlatform.LOWHOLE)
 		{
             transform.position = new Vector3( transform.position.x, transform.position.y -1.5f, transform.position.z);
             //transform.localEulerAngles = new Vector3(15, transform.position.y, transform.position.z);
         }
 
-		_previousTypeOfPlatform = _typeOfPlatform;
+		_previousTypeOfPlatform = _TypeOfPlatform;
 
 		_shadowObject.transform.position = new Vector3 ( _shadowObject.transform.position.x, -3 , _shadowObject.transform.position.z );
 	}
