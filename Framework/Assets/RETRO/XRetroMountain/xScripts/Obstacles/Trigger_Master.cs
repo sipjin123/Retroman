@@ -60,11 +60,11 @@ namespace Retroman
                         Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
                         break;
                     case TypeOfTrigger.LEFT:
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new UpdatePlayerAction { PlayerAction = PlayerControls.PlayerAction.TURNLEFT });
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new UpdatePlayerAction { PlayerAction = PlayerAction.TURNLEFT });
                         //Factory.Get<DataManagerService>().PlayerControls._playerAction = PlayerControls.PlayerAction.TURNLEFT;
                         break;
                     case TypeOfTrigger.RIGHT:
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new UpdatePlayerAction { PlayerAction = PlayerControls.PlayerAction.TURNLEFT });
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new UpdatePlayerAction { PlayerAction = PlayerAction.TURNLEFT });
                         //Factory.Get<DataManagerService>().PlayerControls._playerAction = PlayerControls.PlayerAction.TURNLEFT;
                         break;
                     case TypeOfTrigger.WATER:

@@ -26,22 +26,22 @@ namespace Retroman
 			sr = this.GetComponent<SpriteRenderer>();
 			switch (pc._playerType)
 			{
-				case Retroman.PlayerControls.PlayerType.NORMAL:
+				case Retroman.PlayerType.NORMAL:
 					sr.sprite = charSprite[0];
 					break;
-				case Retroman.PlayerControls.PlayerType.CAT:
+				case Retroman.PlayerType.CAT:
 					sr.sprite = charSprite[1];
 					break;
-				case Retroman.PlayerControls.PlayerType.DONKEYKONG:
+				case Retroman.PlayerType.DONKEYKONG:
 					sr.sprite = charSprite[2];
 					break;
-				case Retroman.PlayerControls.PlayerType.SONIC:
+				case Retroman.PlayerType.SONIC:
 					sr.sprite = charSprite[3];
 					break;
-				case Retroman.PlayerControls.PlayerType.UNICORN:
+				case Retroman.PlayerType.UNICORN:
 					sr.sprite = charSprite[4];
 					break;
-				case Retroman.PlayerControls.PlayerType.YOSHI:
+				case Retroman.PlayerType.YOSHI:
 					sr.sprite = charSprite[5];
 					break;
 					

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using Sirenix.OdinInspector;
 public enum TypeofPlatform
 {
     NORMAL,
@@ -22,12 +22,21 @@ public enum PlatformRunnability
     CanRun,
     MustJump
 }
-public class PlatformMinion : MonoBehaviour {
-
-    public PlatformMinion PrePlatform;
+public class PlatformMinion : SerializedMonoBehaviour
+{
+    public PlatformMinion PrePlatform
+    {
+        get
+        {
+            if (_PrePlatform == null)
+                return this;
+            return _PrePlatform;
+        }
+    }
+    PlatformMinion _PrePlatform;
     public void SetBeforePlatform(PlatformMinion platminion)
     {
-        PrePlatform = platminion;
+        _PrePlatform = platminion;
     }
     public void SetTypeOfPlatform(TypeofPlatform platformType)
     {
@@ -81,10 +90,20 @@ public class PlatformMinion : MonoBehaviour {
 
     [SerializeField]
 	BoxCollider _boxCollider;
-
-    
-	void Awake()
+    private void OnTriggerEnter(Collider other)
+    {
+        string objname = other.name;
+        if (objname != "A" && objname != "GroundDetector") 
+        Debug.LogError("Minion[" + gameObject.name + "] hit :: "+other.name);
+    }
+    [Button]
+    void SetMyOwn()
+    {
+        _PrePlatform = this;
+    }
+    void Awake()
 	{
+        _PrePlatform = this;
         int randomizedVAlue = Random.Range(0, 4);
         if (randomizedVAlue == 1)
         {

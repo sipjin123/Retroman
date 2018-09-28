@@ -105,7 +105,7 @@ namespace Retroman
     }
     public class UpdatePlayerAction
     {
-        public PlayerControls.PlayerAction PlayerAction;
+        public PlayerAction PlayerAction;
     }
     public class EnablePlayerControls
     {
@@ -136,6 +136,15 @@ namespace Retroman
     {
 
     }
+    public class PlayerControlSpawned
+    {
+        public PlayerControls PlayerControls;
+    }
+    public class CommandAIJump
+    {
+
+    }
+
 }
 public enum BackButtonType
 {

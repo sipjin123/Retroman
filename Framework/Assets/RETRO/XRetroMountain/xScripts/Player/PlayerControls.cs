@@ -4,28 +4,13 @@ using Common.Utils;
 using UniRx;
 namespace Retroman
 {
-    public class PlayerControls : MonoBehaviour {
+    public class PlayerControls : MonoBehaviour
+    {
         #region VARIABLES
-        public enum PlayerType
-        {
-            NORMAL,
-            CAT,
-            DONKEYKONG,
-            SONIC,
-            UNICORN,
-            YOSHI,
-        }
         public PlayerType _playerType;
-        public enum PlayerAction
-        {
-            TURNRIGHT,
-            TURNLEFT,
-            JUMP,
-            FORWARD,
-            FALL
-        }
         public PlayerAction _playerAction;
 
+        CurrDirection cD = CurrDirection.Right;
         //RAYCAST 
         public bool isGrounded;
         public GameObject RayObject;
@@ -70,14 +55,24 @@ namespace Retroman
         [SerializeField]
         private CameraControls _CameraControls;
 
+        MessageBroker _Broker;
+
         int WaterMaskLayerIndex = 0;
         int GroundMaskLayerIndex = 0;
         int FallStopperMaskLayerIndex = 0;
 
-
+        //SIR HECTOR STUFF
         public Transform VFXJumpSpawn;
         public GameObject RunningVFX;
         public GhostAnimator gA;
+
+        
+        //CONSTANTS
+        const string RIGHT = "Right";
+        const string LEFT = "Left";
+        const string MID_RIGHT = "MidRight";
+        const string MID_LEFT = "MidLeft"; 
+        const string FALL_STOPPER = "FallStopper";
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
@@ -86,10 +81,12 @@ namespace Retroman
             WaterMaskLayerIndex = LayerMask.NameToLayer(WaterMaskID);
             GroundMaskLayerIndex = LayerMask.NameToLayer(GroundMaskID);
             FallStopperMaskLayerIndex = LayerMask.NameToLayer(FallStopperMaskID);
+
+            _Broker = Factory.Get<DataManagerService>().MessageBroker;
         }
         public void Start()
         {
-               isGrounded = true;
+            isGrounded = true;
             _activePlayerObject = false;
 
 
@@ -118,6 +115,8 @@ namespace Retroman
             if (currentChar <= -1)
                 currentChar = 0;
             SetupPlayerType( currentChar );
+
+            _Broker.Publish(new PlayerControlSpawned { PlayerControls = this });
         }
         public void SetupPlayerType(int _playaTyp)
         {
@@ -185,6 +184,7 @@ namespace Retroman
           //  RaycastFunction();
 
         }
+        #region JUMPING
         public void GenericJump()
         {
             if(isJumping == false)
@@ -219,18 +219,13 @@ namespace Retroman
         {
             _rigidbody.AddForce(transform.up * (650 / 25));// 650);
         }
-
-        //==========================================================================================================================================	
-        #region COROUTINES
         IEnumerator JumpDelayENUM()
         {
             yield return new WaitForSeconds(0.25f);
             _jumpDelaySwitch = false;
         }
         #endregion
-        //==========================================================================================================================================
-      
-
+        //==========================================================================================================================================	
         #region RAYCAST
         void RaycastFunction()
         {
@@ -289,15 +284,6 @@ namespace Retroman
         #endregion
         //==========================================================================================================================================
         #region FUNCTIONS
-
-        private enum CurrDirection
-        {
-            Left,
-            Right
-        }
-        
-        CurrDirection cD = CurrDirection.Right;
-            
         void PlayerTurnFunction()
         {
             if (_playerAction == PlayerAction.TURNLEFT)
@@ -342,23 +328,27 @@ namespace Retroman
 
         private void OnTriggerStay(Collider hit)
         {
-            if (hit.gameObject.name == "Left"
-           || hit.gameObject.name == "Right"
-           || hit.gameObject.name == "MidLeft"
-           || hit.gameObject.name == "MidRight")
+            if (hit.gameObject.name == LEFT
+           || hit.gameObject.name == RIGHT
+           || hit.gameObject.name == MID_LEFT
+           || hit.gameObject.name == MID_RIGHT)
             {
                 lerpToThisObject = hit.gameObject;
-                if (hit.gameObject.name == "Left")
+                if (hit.gameObject.name == LEFT)
+                {
                     _playerAction = PlayerAction.TURNLEFT;
-                if (hit.gameObject.name == "Right")
-                    _playerAction = PlayerAction.TURNRIGHT;
-                if (hit.gameObject.name == "MidRight")
-                {
-                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 0 });
                 }
-                if (hit.gameObject.name == "MidLeft")
+                if (hit.gameObject.name == RIGHT)
                 {
-                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 180 });
+                    _playerAction = PlayerAction.TURNRIGHT;
+                }
+                if (hit.gameObject.name == MID_RIGHT)
+                {
+                    _Broker.Publish(new ChangeCamAngle { Angle = 0 });
+                }
+                if (hit.gameObject.name == MID_LEFT)
+                {
+                    _Broker.Publish(new ChangeCamAngle { Angle = 180 });
                 }
                 hit.GetComponent<MeshRenderer>().material.color = Color.black;
                 hit.GetComponent<BoxCollider>().enabled = (false);
@@ -366,7 +356,7 @@ namespace Retroman
         }
 
         void OnTriggerEnter(Collider hit)
-        {if (hit.gameObject.name == "FallStopper")
+        {if (hit.gameObject.name == FALL_STOPPER)
             {
                 _playerAction = PlayerAction.FALL;
             }
@@ -392,13 +382,14 @@ namespace Retroman
         void OnEnable()
         {
 
-            
 
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<SetupPlayerSplash>().Subscribe(_ =>
+            _Broker.Receive<CommandAIJump>().Subscribe(_ =>
             {
-                Debug.LogError("WATER DEATH PART 2");
-               //   
+                GenericJump();
+            }).AddTo(this);
+
+            _Broker.Receive<SetupPlayerSplash>().Subscribe(_ =>
+            {
                 _splash.SetActive(_.IfActive);
                 _splash.transform.position =  _deathAnim.transform.GetChild(0).transform.position;
                 if (cD  == CurrDirection.Right )
@@ -408,43 +399,38 @@ namespace Retroman
                
             }).AddTo(this);
 
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<EnablePlayerShadows>().Subscribe(_ =>
+            _Broker.Receive<EnablePlayerShadows>().Subscribe(_ =>
             {
 
                 _shadowObject.SetActive(_.IfActive);
             }).AddTo(this);
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<ActivePlayerObject>().Subscribe(_ =>
+            _Broker.Receive<ActivePlayerObject>().Subscribe(_ =>
             {
                 _activePlayerObject = _.IfActive;
             }).AddTo(this);
-            
 
-            Factory.Get<DataManagerService>().MessageBroker.Receive<EnablePlayerControls>().Subscribe(_ =>
+            _Broker.Receive<EnablePlayerControls>().Subscribe(_ =>
             {
 
                 GetComponent<PlayerControls>().enabled = _.IfACtive;
             }).AddTo(this);
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<UpdatePlayerAction>().Subscribe(_ =>
+            _Broker.Receive<UpdatePlayerAction>().Subscribe(_ =>
             {
 
                 _playerAction = _.PlayerAction;
             }).AddTo(this);
-
-            Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ =>
+            _Broker.Receive<LaunchGamePlay>().Subscribe(_ =>
             {
                
 
             }).AddTo(this);
-            Factory.Get<DataManagerService>().MessageBroker.Receive<DisablePlayableCharacter>().Subscribe(_ =>
+            _Broker.Receive<DisablePlayableCharacter>().Subscribe(_ =>
             {
 
                 transform.GetChild(0).gameObject.SetActive(false);
 
             }).AddTo(this);
-            Factory.Get<DataManagerService>().MessageBroker.Receive<EnableRagdoll>().Subscribe(_ =>
+            _Broker.Receive<EnableRagdoll>().Subscribe(_ =>
             {
                 _deathAnim.SetActive(true);
                if (cD  == CurrDirection.Right )
@@ -453,10 +439,10 @@ namespace Retroman
                     gA.StartAnimation(false);
                
             }).AddTo(this);
-            
 
 
-            Factory.Get<DataManagerService>().MessageBroker.Receive<PauseGame>().Subscribe(_ =>
+
+            _Broker.Receive<PauseGame>().Subscribe(_ =>
             {
                 if (_.IfPause)
                 {
@@ -482,7 +468,32 @@ namespace Retroman
             _rigidbody.useGravity = true;
             _CameraControls._startFollow = true;
         }
-        
+
         #endregion
     }
+    #region ENUM
+    public enum CurrDirection
+    {
+        Left,
+        Right
+    }
+
+    public enum PlayerType
+    {
+        NORMAL,
+        CAT,
+        DONKEYKONG,
+        SONIC,
+        UNICORN,
+        YOSHI,
+    }
+    public enum PlayerAction
+    {
+        TURNRIGHT,
+        TURNLEFT,
+        JUMP,
+        FORWARD,
+        FALL
+    }
+    #endregion
 }

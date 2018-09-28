@@ -1,51 +1,72 @@
-﻿using Retroman;
+﻿using Common.Utils;
+using Retroman;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
-
-public class RetroPlayerAI : MonoBehaviour {
-
+using Zenject;
+public class RetroPlayerAI : MonoInstaller
+{
+    IAIController _IAIController;
+    const string FALL_STOPPER = "FallStopper";
     public GameObject _DetectorObject;
-    public GameObject _DetectorObject1;
     float RayLength = 15;
 
-    PlayerControls _PlayerControls;
-
-    private void Start()
+    [Inject]
+    public RetroPlayerAI(IAIController playerCont)
     {
-        _PlayerControls = GetComponent<PlayerControls>();
-        Assertion.AssertNotNull(_PlayerControls);
+        _IAIController = playerCont;
     }
+
+    PlayerControls _PlayerControls;
+    Transform _PlayerTransform;
+    MessageBroker _Broker;
+
+    bool ifActive;
+    Vector3 DefaultSetup = new Vector3(0,1,1.75f);
+    public void InjectPlayerControls(PlayerControls playerCont)
+    {
+        _Broker = Factory.Get<DataManagerService>().MessageBroker;
+        _PlayerControls = playerCont;
+        _PlayerTransform = playerCont.transform;
+        ifActive = true;
+    }
+
     private void FixedUpdate()
     {
+        if (ifActive == false)
+            return;
+        transform.position = _PlayerTransform.position;
+        transform.rotation = _PlayerTransform.rotation;
+
         RaycastHit ray;
         Debug.DrawRay(_DetectorObject.transform.position, -_DetectorObject.transform.up * RayLength, Color.yellow);
-        //if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out Rayhit))
         if (Physics.Raycast(_DetectorObject.transform.position,-_DetectorObject.transform.transform.up * RayLength ,out ray))
         {
-            Debug.LogError("Hitting :: " + ray.collider.gameObject.name);
-            if (ray.collider.GetComponent<PlatformMinion>() == null || ray.collider.gameObject.name == "FallStopper")
+            PlatformMinion minionHit = ray.collider.gameObject.GetComponent<PlatformMinion>();
+            if (minionHit == null || ray.collider.gameObject.name == FALL_STOPPER)
             {
-
-                _PlayerControls.GenericJump();
+                _Broker.Publish(new CommandAIJump());
             }
             else
             {
-                Debug.LogError("Hitting :: " + ray.collider.gameObject.name + " " 
-                    + ray.collider.gameObject.GetComponent<PlatformMinion>().TypeOfPlatform.ToString() + " "
-                    + ray.collider.gameObject.GetComponent<PlatformMinion>().PlatformRunnability.ToString());
-                PlatformMinion minionHit = ray.collider.gameObject.GetComponent<PlatformMinion>();
-                if(minionHit.PlatformRunnability == PlatformRunnability.MustJump)
+                if (minionHit)
                 {
-                    _PlayerControls.GenericJump();
-                }
-                else
-                {
-                    Debug.LogError("Current is :: " + minionHit.transform.position.y + " Before is :: " + minionHit.PrePlatform.transform.position.y);
-                    if(minionHit.transform.position.y > minionHit.PrePlatform.transform.position.y)
+                    switch (minionHit.PlatformRunnability)
                     {
-                        Debug.LogError("It Is Higher");
-                        _PlayerControls.GenericJump();
+                        case PlatformRunnability.MustJump:
+                            {
+                                _Broker.Publish(new CommandAIJump());
+                            }
+                            break;
+                        case PlatformRunnability.CanRun:
+                            {
+                                if (minionHit.transform.position.y > minionHit.PrePlatform.transform.position.y)
+                                {
+                                    _Broker.Publish(new CommandAIJump());
+                                }
+                            }
+                            break;
                     }
                 }
             }

@@ -41,7 +41,7 @@ namespace Retroman
             Input.multiTouchEnabled = false;
             IFTestMode = false;
             Factory.Register<DataManagerService>(this);
-
+            Debug.LogError("Data Manager Set");
             GameCoins = PlayerPrefs.GetFloat(TotalGold_Key,0);
             SaveThisItem(ShopItems[0].ItemNameId);
             CurrentCharacterSelected = PlayerPrefs.GetInt(CurrentCharacterSelected_Key,1);
@@ -67,7 +67,7 @@ namespace Retroman
         {
             _MessageBroker = broker;
 
-
+            Factory.Get<AutomatedTestService>().InjectBroker(_MessageBroker);
             _MessageBroker.Receive<AddCoin>().Subscribe(_ =>
             {
 
