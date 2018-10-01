@@ -42,7 +42,15 @@ namespace Sandbox.GraphQL
         LEADERBOARD_TOP,
         EVENT_JOIN,
         PLAYER_DATA,
-        EVENT_PLAYER_COUNT
+        EVENT_PLAYER_COUNT,
+
+        PLAYER_UPDATE,
+
+        GET_FGC_WALLET,
+        GET_WALLET,
+        GET_CURRENCY,
+        SEND_CURRENCY,
+        CONVERT_CURRENCY,
     }
     #endregion
 
@@ -51,6 +59,7 @@ namespace Sandbox.GraphQL
     public class Data
     {
         public PlayerLogin player_login;//player_login 
+        public PlayerUpdate player_update;//player_update
         public List<Config> configuration;//configuration
         public List<EventAnnouncement> announcements;//announcements
         public LobbyActiveInstance lobby_activeInstance;//lobby_activeInstance 
@@ -68,6 +77,10 @@ namespace Sandbox.GraphQL
         public List<LeaderboardStanding> leaderboard_standing; //around_leaderboard
         public List<LeaderboardStanding> leaderboard_players; //around_leaderboard
         public JoinEventResultData event_join; //join_event
+        public FGCWallet fgc_wallet; //
+        public GenericWallet genericWallet;
+        public FGCCurrency wallet; //wallet
+        public WalletConvert wallet_convert; //wallet_convert
     }
 
     [Serializable]

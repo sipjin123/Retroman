@@ -1,33 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Advertisements;
+
 using Sirenix.OdinInspector;
-using Framework;
+
 using UniRx;
-using System.Text.RegularExpressions;
+using UniRx.Triggers;
+
+using Common.Fsm;
+using Common.Query;
+
+using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public class UpdateProfileResult
+    [Serializable]
+    public class UpdateProfileResult : IJson
 	{
 		public string id;
 	}
 
 	public class UpdatePlayerProfileRequest : UnitRequest 
 	{
-		private ObscuredString Token;
-
 		public override void Initialze(GraphInfo info)
 		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
-				.Where(_ => _.Type == GraphQLRequestType.LOGIN)
-				.Subscribe(_ => Token = _.GetData<ObscuredString>())
-				.AddTo(this);
-
             this.Receive<PlayerProfileData>()
-                .Subscribe(_ => UpdatePlayerProfile(Token.GetDecrypted(), _))
+                .Subscribe(_ => UpdatePlayerProfile(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
                 .AddTo(this);
 		}
 
@@ -35,13 +37,14 @@ namespace Sandbox.GraphQL
 		{
 			Payload payload = new Payload();
 			payload.AddString("message", "Profile Update");
-			payload.AddJsonString("body", data.ToJsonString());	
+			payload.AddJsonString("body", data.ToJson());	
 
 			Builder builder = Builder.Mutation();
 			Function func = builder.CreateFunction("event_trigger");
 			func.AddString("token", token);
 			func.AddString("slug", "profile_update");		
 			func.Add("payload", payload.ToString());
+
 			Return ret = builder.CreateReturn("id");
 			Debug.LogErrorFormat("builder:{0}", builder.ToString());
 			ProcessRequest(GraphInfo,builder.ToString() , UpdatePlayerProfile);
@@ -75,7 +78,7 @@ namespace Sandbox.GraphQL
 			data.middle_name = "bonifacio";
 			data.mobile_number = "09968292812"; 	
 
-			UpdatePlayerProfile(Token.GetDecrypted(), data);	
+			UpdatePlayerProfile(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), data);	
 		}
 	}
 }

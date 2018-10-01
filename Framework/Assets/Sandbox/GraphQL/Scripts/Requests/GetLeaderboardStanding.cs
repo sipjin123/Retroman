@@ -1,52 +1,54 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
-using Framework;
+using UnityEngine.Advertisements;
+
+using Sirenix.OdinInspector;
+
 using UniRx;
-using System;
+using UniRx.Triggers;
+
+using Common.Fsm;
+using Common.Query;
+
+using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
+    public struct LeaderboardDataUpdateRequestSignal : IRequestSignal
+    {
+
+    }
 
     [Serializable]
-	public class LeaderboardPlayerDetail
-	{
+	public class LeaderboardPlayerDetail : IJson
+    {
 		public string id;
 		public PlayerProfileRequestData data;
 	}
 
 	[Serializable]
-	public class LeaderboardStanding
-	{
+	public class LeaderboardStanding : IJson
+    {
 		public string value;
         public string standing;
         public LeaderboardPlayerDetail player;
 	}
-
-	public struct RequestLeaderboardDataUpdate
-	{
-
-	}
-
-	public class GetLeaderboardStanding : UnitRequest {
-
-        private ObscuredString Token;
-
+    
+	public class GetLeaderboardStanding : UnitRequest
+    {
         public override void Initialze(GraphInfo info)
 		{
 			this.Receive<GraphQLRequestSuccessfulSignal>()
-				.Where(_ => _.Type == GraphQLRequestType.LOGIN)
-				.Subscribe(_ => Token = _.GetData<ObscuredString>())
-				.AddTo(this);
-
-			this.Receive<GraphQLRequestSuccessfulSignal>()
 				.Where(_ => _.Type == GraphQLRequestType.LEADERBOARD_TOP)
-				.Subscribe(_ => GetLeaderboardAround(Token.GetDecrypted()))
+				.Subscribe(_ => GetLeaderboardAround(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
 				.AddTo(this);
 
-			this.Receive<RequestLeaderboardDataUpdate>()
-				.Subscribe(_sig =>GetLeaderboardAround(Token.GetDecrypted(), 2))
+			this.Receive<LeaderboardDataUpdateRequestSignal>()
+				.Subscribe(_sig => GetLeaderboardAround(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), 2))
 				.AddTo(this);
 		}
 

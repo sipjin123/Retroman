@@ -14,14 +14,15 @@ using Sirenix.OdinInspector;
 
 using Framework;
 
+using Common;
+using Common.Query;
+
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public struct GraphQLAnnouncementRequestSignal
+    public struct GraphQLAnnouncementRequestSignal : IRequestSignal
     {
-        public ObscuredString Token;
-        public ObscuredBool ShowUpcoming;
+        public string Token;
+        public bool ShowUpcoming;
     }
 
     ///"id": "9dce93e0-7371-11e8-9607-ed1d276f8a49",
@@ -31,7 +32,7 @@ namespace Sandbox.GraphQL
     ///"display_from": "2018-06-19T07:32:14.492Z",
     ///"data": "{\"address\":\"Quezon City\",\"registration_start\":\"2018-07-02T03:33:28.000Z\",\"registration_end\":\"2018-07-06T03:33:28.000Z\",\"max_registrants\":100}"
     [Serializable]
-    public class EventAnnouncement
+    public class EventAnnouncement : IJson
     {
         public string id;
         public string subject;
@@ -45,7 +46,7 @@ namespace Sandbox.GraphQL
     }
 
     [Serializable]
-    public class AnnouncementData
+    public class AnnouncementData : IJson
     {
         public string address;
         public string registration_start;
@@ -59,19 +60,12 @@ namespace Sandbox.GraphQL
         [SerializeField, ShowInInspector]
         private List<EventAnnouncement> Announcements;
         
-        private ObscuredString Token;
-
         public override void Initialze(GraphInfo info)
         {
             base.Initialze(info);
-
-            this.Receive<GraphQLRequestSuccessfulSignal>()
-                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
-                 .Subscribe(_ => Token = _.GetData<ObscuredString>())
-                 .AddTo(this);
-
+            
             this.Receive<GraphQLAnnouncementRequestSignal>()
-                .Subscribe(_ => GetEvents(Token.GetDecrypted(), _.ShowUpcoming))
+                .Subscribe(_ => GetEvents(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _.ShowUpcoming))
                 .AddTo(this);
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
@@ -156,7 +150,7 @@ namespace Sandbox.GraphQL
         [Button(25)]
         private void GetGameEvents()
         {
-            GetEvents(Token.GetDecrypted());
+            GetEvents(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));
         }
         #endregion
     }

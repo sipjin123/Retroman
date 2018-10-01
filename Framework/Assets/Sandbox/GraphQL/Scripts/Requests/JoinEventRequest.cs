@@ -1,15 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Advertisements;
+
+using Sirenix.OdinInspector;
+
+using UniRx;
+using UniRx.Triggers;
+
+using Common.Fsm;
+using Common.Query;
 
 using Framework;
-using UniRx;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public class JoinEventData
+    [Serializable]
+    public struct JoinEventDataSignal : IRequestSignal, IJson
 	{
 		public string announcement_id;
 
@@ -19,30 +29,24 @@ namespace Sandbox.GraphQL
 		}
 	}
 
-	public class JoinEventResultData
-	{
+    [Serializable]
+    public class JoinEventResultData : IJson
+    {
 		public string id;
 	}
 
-	public class JoinEventRequest : UnitRequest {
-
-        private ObscuredString Token;
-
+	public class JoinEventRequest : UnitRequest
+    {
         public override void Initialze(GraphInfo info)
 		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
-				.Where(_ => _.Type == GraphQLRequestType.LOGIN)
-				.Subscribe(_ => Token = _.GetData<ObscuredString>())
-				.AddTo(this);
-
-			this.Receive<JoinEventData>()
-				.Subscribe(_ => JoinEvent(Token.GetDecrypted(), _))
+			this.Receive<JoinEventDataSignal>()
+				.Subscribe(_ => JoinEvent(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
 				.AddTo(this);
 			
 		}
 
 		#region Request
-		public void JoinEvent(string token, JoinEventData data)
+		public void JoinEvent(string token, JoinEventDataSignal data)
 		{
 			Payload payload = new Payload();
 			payload.AddString("message", "Event Register");

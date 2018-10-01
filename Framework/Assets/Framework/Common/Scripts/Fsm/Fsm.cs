@@ -8,6 +8,8 @@ using UniRx.Triggers;
 
 namespace Common.Fsm
 {
+    using System.Linq;
+
     [Serializable]
     public class Fsm
     {
@@ -25,6 +27,7 @@ namespace Common.Fsm
         private string currentStateName;
 
         private readonly Dictionary<string, FsmState> stateMap;
+        public FsmState[] States { get { return this.stateMap.Values.ToArray(); } }
 
         private Dictionary<string, FsmState> globalTransitionMap;
 
@@ -183,7 +186,7 @@ namespace Common.Fsm
             FsmState transitionState = ResolveTransition(eventId);
             if (transitionState == null)
             {
-                Debug.LogWarning(string.Format("The current state {0} has no transtion for event {1}.", this.currentState.GetName(), eventId));
+                Debug.LogWarning(string.Format("Fsm {0}'s current state {1} has no transtion for event {2}.", this.name, this.currentState.GetName(), eventId));
             }
             else
             {

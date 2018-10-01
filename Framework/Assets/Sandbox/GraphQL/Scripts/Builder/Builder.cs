@@ -25,7 +25,8 @@ namespace Sandbox.GraphQL
         mutation,
     }
 
-    public class Function
+    [Serializable]
+    public class Function : IJson
     {
         public string Smiley = ",)";
         public string Frown = " )";
@@ -82,7 +83,8 @@ namespace Sandbox.GraphQL
         }
     }
 
-    public class Payload
+    [Serializable]
+    public class Payload : IJson
     {
         public readonly string SPACE = " ";
         public Dictionary<string, object> Values = new Dictionary<string, object>();
@@ -129,7 +131,8 @@ namespace Sandbox.GraphQL
         }
     }
 
-    public class Return
+    [Serializable]
+    public class Return : IJson
     {
         public readonly string SPACE = " ";
         public string Name = string.Empty;
@@ -149,19 +152,22 @@ namespace Sandbox.GraphQL
             Values.AddRange(values);
         }
 
-        public void Add(string value)
+        public Return Add(string value)
         {
             Values.Add(value);
+            return this;
         }
 
-        public void Add(Return value)
+        public Return Add(Return value)
         {
             Values.Add((object)value);
+            return this;
         }
 
-        public void Add(string name, Return value)
+        public Return Add(string name, Return value)
         {
             Values.Add((object)(name + SPACE + value.ToString()));
+            return this;
         }
 
         public override string ToString()
@@ -176,7 +182,8 @@ namespace Sandbox.GraphQL
         }
     }
 
-    public class Builder
+    [Serializable]
+    public class Builder : IJson
     {
         public static readonly string QOUTE = @"";
         public static readonly string DOUBLE_QOUTE = @"""";

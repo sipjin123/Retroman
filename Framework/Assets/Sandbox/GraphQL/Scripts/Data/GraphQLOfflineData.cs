@@ -18,8 +18,6 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
     [Serializable]
     public class LoginData
     {
@@ -76,7 +74,7 @@ namespace Sandbox.GraphQL
                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                 .Subscribe(_ => 
                 {
-                    LoginData.Token = _.GetData<ObscuredString>().GetDecrypted();
+                    LoginData.Token = _.GetData<string>();
                     SaveToDisk(LoginDataPath.GetPath(), LoginData);
                 })
                 .AddTo(this);

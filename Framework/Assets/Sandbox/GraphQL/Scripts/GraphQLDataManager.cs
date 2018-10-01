@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.Advertisements;
 
 using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 
 using UniRx;
 using UniRx.Triggers;
@@ -19,8 +18,6 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
     using Sandbox.Popup;
     using Sandbox.Services;
     using Sandbox.UnityAds;
@@ -57,7 +54,7 @@ namespace Sandbox.GraphQL
 
     public struct PlayAdRequestSignal
     {
-        public ObscuredBool IsSkippable;
+        public bool IsSkippable;
         public CustomAdType CustomAdType;
         public UnityAds.AdReward FallbackAdType;
     }
@@ -65,16 +62,16 @@ namespace Sandbox.GraphQL
     public class CustomAdAvailableSignal
     {
         public CustomAdType Type;
-        public Action<ObscuredBool> CallBack;
+        public Action<bool> CallBack;
     }
 
     public struct CustomAdUnavailableSignal { }
 
     public struct AdFinishedPlayingSignal
     {
-        public ObscuredString ad_id;
-        public ObscuredBool was_skipped;
-        public ObscuredFloat timemark;
+        public string ad_id;
+        public bool was_skipped;
+        public float timemark;
         public CustomAdType ad_type;
     }
 
@@ -101,11 +98,9 @@ namespace Sandbox.GraphQL
 
         private Dictionary<GraphQLRequestType, Action<GraphQLRequestFailedSignal>> FailedActionMap = new Dictionary<GraphQLRequestType, Action<GraphQLRequestFailedSignal>>();
         private Dictionary<GraphQLRequestType, Action<GraphQLRequestSuccessfulSignal>> SuccessActionMap = new Dictionary<GraphQLRequestType, Action<GraphQLRequestSuccessfulSignal>>();
-        private PopupCollectionRoot PopupCollectionRoot;
         
         private Coroutine PendingTransactions_CR;
-
-        private ObscuredString Token;
+        
         public List<Advertisement> AllOldAds;
         public List<Advertisement> AllNewAds;
         public List<Advertisement> AdsToServe;
@@ -115,10 +110,10 @@ namespace Sandbox.GraphQL
         public List<PendingTransactions> FailedTransactions;
         public List<PendingTransactions> RecentTransactions;
 
-        private ObscuredInt CurrAd; // save
-        private ObscuredInt InterstitialAdsServed;
-        private ObscuredInt RewardAdsServed;
-        private ObscuredBool SendEndAdEvent;
+        private int CurrAd; // save
+        private int InterstitialAdsServed;
+        private int RewardAdsServed;
+        private bool SendEndAdEvent;
         
         #region IService
         public override void InitializeService()
@@ -192,18 +187,18 @@ namespace Sandbox.GraphQL
                                 case AdType.image:
                                     AdData.Skiptime = GraphQLSetupData.SkipTimeForImageAds;
                                     AdData.EndTime = GraphQLSetupData.EndTimeForImageAds;
-                                    this.Publish(new OnShowPopupSignal() { Popup = Popup.CustomAdPopupImage, PopupData = new PopupData() { Data = AdData }});
+                                    this.Publish(new OnShowPopupSignal() { Popup = PopupType.CustomAdPopupImage, PopupData = new PopupData(AdData) });
 
                                     Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupImage\n");
                                     break;
                                 case AdType.video:
                                     AdData.Skiptime = GraphQLSetupData.SkipTimeForVideoAds;
-                                    this.Publish(new OnShowPopupSignal() { Popup = Popup.CustomAdPopupVideo, PopupData = new PopupData() { Data = AdData } });
+                                    this.Publish(new OnShowPopupSignal() { Popup = PopupType.CustomAdPopupVideo, PopupData = new PopupData(AdData) });
 
                                     Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupVideo\n");
                                     break;
                             }
-                            this.Publish(new GraphQLPlayAdRequestSignal() { token = Token, ad_id = AdsToServe[CurrAd].id });
+                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].id });
                             CurrAd = (CurrAd + 1) % AdsToServe.Count;
                             GraphQLOfflineData.SaveServicedAds(InterstitialAdsServed, RewardAdsServed, DateTime.Now);
                         }
@@ -239,7 +234,7 @@ namespace Sandbox.GraphQL
 
                     this.Publish(new GraphQLEndAdSignal()
                     {
-                        token = Token,
+                        token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN),
                         was_skipped = _.was_skipped,
                         timemark = _.timemark,
                         AdRequest = CurrAdPlayTransaction,
@@ -291,6 +286,178 @@ namespace Sandbox.GraphQL
             CurrentServiceState.Value = ServiceState.Initialized;
         }
 
+        public override IEnumerator InitializeServiceSequentially()
+        {
+            #region Init Fields
+            SendEndAdEvent = false;
+            CurrAd = 0;
+            #endregion
+
+            #region Setup
+            GraphQLOfflineData.Initialize();
+            FailedTransactions = new List<PendingTransactions>(GraphQLOfflineData.GetPendingTransactionList());
+
+            if (GraphQLOfflineData.AdsPlayData.DateOfService.Date != DateTime.Now.Date)
+            {
+                InterstitialAdsServed = 0;
+                RewardAdsServed = 0;
+            }
+            else
+            {
+                InterstitialAdsServed = GraphQLOfflineData.AdsPlayData.InterstitialAds;
+                RewardAdsServed = GraphQLOfflineData.AdsPlayData.RewardAds;
+            }
+            SetupResolversForSignals();
+            SetupFsm();
+            #endregion
+
+            #region Receivers
+            this.Receive<PlayAdRequestSignal>().Subscribe(_ =>
+            {
+                if (DebugUseUnityAds)
+                {
+                    this.Publish(new ShowUnityAdsSignal() { isRewardedVideo = !_.IsSkippable, rewardType = _.FallbackAdType });
+                    return;
+                }
+
+
+                if (
+                    (AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.CACHE_ADS) // in process of caching ads. assumed online
+                    || AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.ADS_READY) // assummed all ads cached. assumed online
+                    || (AllOldAds != null) //local cache exists  
+                    )
+                    && AdsToServe.Count > 0
+                   )
+                {
+                    //check if chosen ad to play is already cached
+                    if (GraphQLAdDownloader.AdDownloaded(AdsToServe[CurrAd].id))
+                    {
+                        bool ServeCustomAd = false;
+                        if (_.IsSkippable && InterstitialAdsServed < GraphQLSetupData.MaxInterstitialAdsPerDay)
+                        {
+                            ServeCustomAd = true;
+                            InterstitialAdsServed++;
+                        }
+                        else if (!_.IsSkippable && RewardAdsServed < GraphQLSetupData.MaxRewardAdsPerDay)
+                        {
+                            ServeCustomAd = true;
+                            RewardAdsServed++;
+                        }
+
+                        if (ServeCustomAd)
+                        {
+                            GraphQLAdData AdData = new GraphQLAdData();
+                            //check if curradd is within ads to serve count
+                            AdData.AdId = AdsToServe[CurrAd].id;
+                            AdData.AdPath = GraphQLAdDownloader.GetAdLocalPath(AdsToServe[CurrAd].id);
+                            AdData.IsSkippable = _.IsSkippable;
+                            AdData.AdType = _.CustomAdType;
+                            switch (AdsToServe[CurrAd].GetAdType())
+                            {
+                                case AdType.image:
+                                    AdData.Skiptime = GraphQLSetupData.SkipTimeForImageAds;
+                                    AdData.EndTime = GraphQLSetupData.EndTimeForImageAds;
+                                    this.Publish(new OnShowPopupSignal() { Popup = PopupType.CustomAdPopupImage, PopupData = new PopupData(AdData) });
+
+                                    Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupImage\n");
+                                    break;
+                                case AdType.video:
+                                    AdData.Skiptime = GraphQLSetupData.SkipTimeForVideoAds;
+                                    this.Publish(new OnShowPopupSignal() { Popup = PopupType.CustomAdPopupVideo, PopupData = new PopupData(AdData) });
+
+                                    Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupVideo\n");
+                                    break;
+                            }
+                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].id });
+                            CurrAd = (CurrAd + 1) % AdsToServe.Count;
+                            GraphQLOfflineData.SaveServicedAds(InterstitialAdsServed, RewardAdsServed, DateTime.Now);
+                        }
+                        else
+                        {
+                            this.Publish(new ShowUnityAdsSignal() { isRewardedVideo = !_.IsSkippable, rewardType = _.FallbackAdType });
+                        }
+                    }
+                    else
+                    {
+                        //this.Publish(new ShowUnityAdsSignal() { isRewardedVideo = false, rewardType = UnityAds.AdReward.NoReward });
+                        this.Publish(new ShowUnityAdsSignal() { isRewardedVideo = !_.IsSkippable, rewardType = _.FallbackAdType });
+                    }
+                }
+                else
+                {
+                    // play unity ads
+                    //this.Publish(new CustomAdUnavailableSignal());
+                    this.Publish(new ShowUnityAdsSignal() { isRewardedVideo = !_.IsSkippable, rewardType = _.FallbackAdType });
+                }
+            }).AddTo(this);
+
+            this.Receive<AdFinishedPlayingSignal>().Subscribe(_ =>
+            {
+                if (SendEndAdEvent)
+                {
+                    PendingTransactions.Add(new PendingTransactions
+                    {
+                        Advertisment = CurrAdPlayTransaction.ShallowCopy(),
+                        TimeMark = _.timemark,
+                        WasSkipped = _.was_skipped
+                    });
+
+                    this.Publish(new GraphQLEndAdSignal()
+                    {
+                        token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN),
+                        was_skipped = _.was_skipped,
+                        timemark = _.timemark,
+                        AdRequest = CurrAdPlayTransaction,
+                    });
+                }
+            }).AddTo(this);
+
+            this.Receive<CustomAdAvailableSignal>()
+                .Where(_ => _.Type == CustomAdType.Interstitial)
+                .Subscribe(_ =>
+                {
+                    _.CallBack
+                    (
+                        RewardAdsServed < GraphQLSetupData.MaxInterstitialAdsPerDay
+                        && (
+                            AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.CACHE_ADS) // in process of caching ads. assumed online
+                            || AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.ADS_READY)
+                            || (AllOldAds != null)
+                           )
+                        &&
+                        AdsToServe.Count > 0
+                    );
+                }).AddTo(this);
+
+            this.Receive<CustomAdAvailableSignal>()
+                .Where(_ => _.Type == CustomAdType.Reward)
+                .Subscribe(_ =>
+                {
+                    _.CallBack
+                    (
+                        RewardAdsServed < GraphQLSetupData.MaxRewardAdsPerDay
+                        && (
+                            AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.CACHE_ADS) // in process of caching ads. assumed online
+                            || AdManagerFsm.GetCurrentStateName().Equals(GraphQLAdsFsmStates.ADS_READY)
+                            || (AllOldAds != null)
+                           )
+                        &&
+                        AdsToServe.Count > 0
+                    );
+                }).AddTo(this);
+            #endregion
+
+            Observable
+                .FromCoroutine(FlushFailedTransaction)
+                .RepeatSafe()
+                .Subscribe()
+                .AddTo(this);
+
+            yield return null;
+
+            CurrentServiceState.Value = ServiceState.Initialized;
+        }
+
         public override void TerminateService()
         {
         }
@@ -313,7 +480,6 @@ namespace Sandbox.GraphQL
             #region FSM Actions
             Login.AddAction(new FsmDelegateAction(Login, _ => 
             {
-                this.Publish(new GraphQLLoginRequestSignal() { unique_id = Platform.DeviceId });
             }));
 
             LoginFailed.AddAction(new FsmDelegateAction(LoginFailed, _ => 
@@ -324,7 +490,7 @@ namespace Sandbox.GraphQL
             FetchAdsList.AddAction(new FsmDelegateAction(FetchAdsList, delegate 
             {
                 AllOldAds = GraphQLOfflineData.GetOldAdList();
-                this.Publish(new GraphQLGetAllAdsRequestSignal() { token = Token });
+                this.Publish(new GraphQLGetAllAdsRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN) });
             }));
 
             FetchAdsFailed.AddAction(new FsmDelegateAction(FetchAdsFailed, delegate 
@@ -465,7 +631,6 @@ namespace Sandbox.GraphQL
         #region Success Resolvers
         private void LoginSuccessResolver(GraphQLRequestSuccessfulSignal sig)
         {
-            Token = sig.GetData<ObscuredString>();
             AdManagerFsm.SendEvent(GraphQLAdsFsmTransitions.LOGIN_SUCCESSFUL);
         }
 
@@ -544,7 +709,7 @@ namespace Sandbox.GraphQL
                     FailedTransactions.Remove(Top);
                     this.Publish(new GraphQLEndAdSignal()
                     {
-                        token = Token,
+                        token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN),
                         AdRequest = Top.Advertisment,
                         was_skipped = Top.WasSkipped,
                         timemark = Top.TimeMark
@@ -577,14 +742,14 @@ namespace Sandbox.GraphQL
         [Button(25)]
         public void RequestAd()
         {
-            this.Publish(new GraphQLPlayAdRequestSignal() { token = Token, ad_id = AllNewAds[CurrAd].id });
+            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AllNewAds[CurrAd].id });
             CurrAd = (CurrAd + 1) % AllNewAds.Count;
         }
 
         [Button(25)]
         public void EndAd()
         {
-            this.Publish(new GraphQLEndAdSignal() { token = Token, AdRequest = CurrAdPlayTransaction, was_skipped = false, timemark = 2.4f });
+            this.Publish(new GraphQLEndAdSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), AdRequest = CurrAdPlayTransaction, was_skipped = false, timemark = 2.4f });
         }
 
         [SerializeField, ShowInInspector]

@@ -1,22 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
-using Framework;
-using UniRx;
-using Common.Query;
 using Sirenix.OdinInspector;
-using Sandbox.Security;
-using System.Linq;
-using System;
+
+using UniRx;
+
+using Common.Query;
+
+using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public struct SignalUpdateProfileResult
+    public struct UpdateProfileResultSignalSignal : IRequestSignal
     {
-        public bool isUpdated;
+        public bool IsUpdated;
     }
 
     [Serializable]
@@ -97,7 +98,7 @@ namespace Sandbox.GraphQL
 
         public const string RESULT_DATA = "ResultDataStorage";
 
-        private ObscuredString Token = string.Empty;
+        private string Token = string.Empty;
 
         [SerializeField, ShowInInspector]
         private List<Config> Configs;
@@ -185,7 +186,7 @@ namespace Sandbox.GraphQL
             switch (result.Type)
             {
                 case GraphQLRequestType.LOGIN:
-                    Token = result.GetData<ObscuredString>();
+                    Token = result.GetData<string>();
                     break;
 
                 case GraphQLRequestType.CONFIGURE:
@@ -227,10 +228,7 @@ namespace Sandbox.GraphQL
             foreach (EventAnnouncement announcement in Announcements)
             {
                 AnnouncementData data = new AnnouncementData();
-                this.Publish<SignalGetEventPlayers>(new SignalGetEventPlayers()
-                {
-                    announcement_id = announcement.id
-                });
+                this.Publish(new GetEventPlayersSignal() { announcement_id = announcement.id });
                 data = JsonUtility.FromJson<AnnouncementData>(announcement.data);
                 announcement.eventData = data;
             }
@@ -257,9 +255,10 @@ namespace Sandbox.GraphQL
             List<LeaderboardStanding> aroundList = result.GetData<List<LeaderboardStanding>>();
             if (aroundList.Count < 3 && aroundList.Count > 0)
             {
-                this.Publish<RequestLeaderboardDataUpdate>(new RequestLeaderboardDataUpdate());
+                this.Publish(new LeaderboardDataUpdateRequestSignal());
                 return;
             }
+
             foreach (LeaderboardStanding item in aroundList)
             {
                 if (!LeaderboardData.ContainsKey(item.standing))
@@ -294,11 +293,12 @@ namespace Sandbox.GraphQL
 
         public void GetPlayerProfileResolver(GraphQLRequestSuccessfulSignal result)
         {
-            profile = new PlayerProfileData();
             PlayerProfileContainer json = result.GetData<PlayerProfileContainer>();
+            profile = new PlayerProfileData();
             profile = JsonUtility.FromJson<PlayerProfileData>(json.value);
             IsProfileUpdated.Value = profile != null;
-            Prefs.SetInt("HasLoggedIn", _IsProfileUpdated.Value ? 0 : 1);
+
+            PREFS.SetInt("HasLoggedIn", _IsProfileUpdated.Value ? 0 : 1);
         }
 
 

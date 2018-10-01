@@ -23,8 +23,10 @@ using Common.Utils;
 
 namespace Framework
 {
+    using Sandbox.ButtonSandbox;
+
     using UScene = UnityEngine.SceneManagement.Scene;
-    
+
     public interface IScene
     {
         ISceneData SceneData { get; set; }
@@ -41,7 +43,7 @@ namespace Framework
     /// <summary>
     /// This is the base MVP Presenter class to be extended by each scene root.
     /// </summary>
-    public partial class Scene : MonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour
     {
         /// <summary>
         /// String Dropdown representation of EScene enum in Editor
@@ -63,7 +65,7 @@ namespace Framework
             get { return _SceneType; }
             protected set { _SceneType = value; }
         }
-        
+
         /// <summary>
         /// Data container passed upon loading this scene.
         /// Note: 
@@ -112,12 +114,37 @@ namespace Framework
         /// <summary>
         /// Mapping of button types and click, hover, unhover, press, and release handlers.
         /// </summary>
-        protected Dictionary<EButton, Action<ButtonClickedSignal>> ButtonClickedMap = new Dictionary<EButton, Action<ButtonClickedSignal>>();
-        protected Dictionary<EButton, Action<ButtonHoveredSignal>> ButtonHoveredMap = new Dictionary<EButton, Action<ButtonHoveredSignal>>();
-        protected Dictionary<EButton, Action<ButtonUnhoveredSignal>> ButtonUnhoveredMap = new Dictionary<EButton, Action<ButtonUnhoveredSignal>>();
-        protected Dictionary<EButton, Action<ButtonPressedSignal>> ButtonPressedMap = new Dictionary<EButton, Action<ButtonPressedSignal>>();
-        protected Dictionary<EButton, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<EButton, Action<ButtonReleasedSignal>>();
+        //[ShowInInspector]
+        [TabGroup("New Group", "Buttons")]
+        protected Dictionary<int, Action<ButtonClickedSignal>> ButtonClickedMap = new Dictionary<int, Action<ButtonClickedSignal>>();
 
+        /// <summary>
+        /// Mapping of button types and click, hover, unhover, press, and release handlers.
+        /// </summary>
+        //[ShowInInspector]
+        [TabGroup("New Group", "Buttons")]
+        protected Dictionary<int, Action<ButtonHoveredSignal>> ButtonHoveredMap = new Dictionary<int, Action<ButtonHoveredSignal>>();
+
+        /// <summary>
+        /// Mapping of button types and click, hover, unhover, press, and release handlers.
+        /// </summary>
+        //[ShowInInspector]
+        [TabGroup("New Group", "Buttons")]
+        protected Dictionary<int, Action<ButtonUnhoveredSignal>> ButtonUnhoveredMap = new Dictionary<int, Action<ButtonUnhoveredSignal>>();
+
+        /// <summary>
+        /// Mapping of button types and click, hover, unhover, press, and release handlers.
+        /// </summary>
+        //[ShowInInspector]
+        [TabGroup("New Group", "Buttons")]
+        protected Dictionary<int, Action<ButtonPressedSignal>> ButtonPressedMap = new Dictionary<int, Action<ButtonPressedSignal>>();
+
+        /// <summary>
+        /// Mapping of button types and click, hover, unhover, press, and release handlers.
+        /// </summary>
+        //[ShowInInspector]
+        [TabGroup("New Group", "Buttons")]
+        protected Dictionary<int, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<int, Action<ButtonReleasedSignal>>();
 
         [SerializeField]
         [TabGroup("Scene")]
@@ -134,13 +161,15 @@ namespace Framework
 
         protected virtual void Awake()
         {
+            Assertion.Assert(CachedScene.IsEnum<EScene>(), D.ERROR + "Scene::Awake Scene({0}) has invalid CachedScene:{1}.\n", gameObject.name, CachedScene);
+
             // Update Scene Type & Depth from Editor
             SelectedScene = CachedScene;
             SceneType = CachedScene.ToEnum<EScene>();
 
             // Update canvas settings
             SetupSceneCanvas();
-            
+
             // Cache the Root scene object
             //Factory.Get<SceneReference>().Add(this);
             this.Publish(new OnCacheSceneSignal(this));
@@ -185,11 +214,11 @@ namespace Framework
 
         protected virtual void OnDestroy()
         {
-            ClearButtonHandler<EButton, ButtonClickedSignal>(ButtonClickedMap);
-            ClearButtonHandler<EButton, ButtonHoveredSignal>(ButtonHoveredMap);
-            ClearButtonHandler<EButton, ButtonUnhoveredSignal>(ButtonUnhoveredMap);
-            ClearButtonHandler<EButton, ButtonPressedSignal>(ButtonPressedMap);
-            ClearButtonHandler<EButton, ButtonReleasedSignal>(ButtonReleasaedMap);
+            ClearButtonHandler<int, ButtonClickedSignal>(ButtonClickedMap);
+            ClearButtonHandler<int, ButtonHoveredSignal>(ButtonHoveredMap);
+            ClearButtonHandler<int, ButtonUnhoveredSignal>(ButtonUnhoveredMap);
+            ClearButtonHandler<int, ButtonPressedSignal>(ButtonPressedMap);
+            ClearButtonHandler<int, ButtonReleasedSignal>(ButtonReleasaedMap);
 
 
             //Factory.Get<SceneReference>().Remove(this);
@@ -229,7 +258,7 @@ namespace Framework
             }
             else
             {
-                Debug.LogWarningFormat(D.WARNING + " No SystemCanvas attached to SceneRoot. Scene:{0}\n", gameObject.name);
+                Debug.LogWarningFormat(D.WARNING + "Scene::SetupSceneCanvas No SystemCanvas attached to SceneRoot. Scene:{0}\n", gameObject.name);
             }
         }
 
@@ -238,29 +267,51 @@ namespace Framework
         /// </summary>
         /// <param name="button"></param>
         /// <param name="action"></param>
-        protected void AddButtonHandler(EButton button, Action<ButtonClickedSignal> action)
+        protected void AddButtonHandler(ButtonType button, Action<ButtonClickedSignal> action)
         {
-            ButtonClickedMap[button] = (Action<ButtonClickedSignal>)action;
-        }
-        
-        protected void AddButtonHandler(EButton button, Action<ButtonHoveredSignal> action) 
-        {
-            ButtonHoveredMap[button] = (Action<ButtonHoveredSignal>)action;
+            Debug.LogFormat(D.F + "Scene::AddButtonHandler::ButtonClickedSignal Scene:{0} Button:{1}\n", gameObject.name, button.Type);
+
+            ButtonClickedMap[button.Value] = (Action<ButtonClickedSignal>)action;
         }
 
-        protected void AddButtonHandler(EButton button, Action<ButtonUnhoveredSignal> action)
+        /// <summary>
+        /// Sets the scene's handler for the given button type.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="action"></param>
+        protected void AddButtonHandler(ButtonType button, Action<ButtonHoveredSignal> action)
         {
-            ButtonUnhoveredMap[button] = (Action<ButtonUnhoveredSignal>)action;
+            ButtonHoveredMap[button.Value] = (Action<ButtonHoveredSignal>)action;
         }
 
-        protected void AddButtonHandler(EButton button, Action<ButtonPressedSignal> action)
+        /// <summary>
+        /// Sets the scene's handler for the given button type.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="action"></param>
+        protected void AddButtonHandler(ButtonType button, Action<ButtonUnhoveredSignal> action)
         {
-            ButtonPressedMap[button] = (Action<ButtonPressedSignal>)action;
+            ButtonUnhoveredMap[button.Value] = (Action<ButtonUnhoveredSignal>)action;
         }
 
-        protected void AddButtonHandler(EButton button, Action<ButtonReleasedSignal> action)
+        /// <summary>
+        /// Sets the scene's handler for the given button type.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="action"></param>
+        protected void AddButtonHandler(ButtonType button, Action<ButtonPressedSignal> action)
         {
-            ButtonReleasaedMap[button] = (Action<ButtonReleasedSignal>)action;
+            ButtonPressedMap[button.Value] = (Action<ButtonPressedSignal>)action;
+        }
+
+        /// <summary>
+        /// Sets the scene's handler for the given button type.
+        /// </summary>
+        /// <param name="button"></param>
+        /// <param name="action"></param>
+        protected void AddButtonHandler(ButtonType button, Action<ButtonReleasedSignal> action)
+        {
+            ButtonReleasaedMap[button.Value] = (Action<ButtonReleasedSignal>)action;
         }
 
         /// <summary>
@@ -271,12 +322,12 @@ namespace Framework
         {
             return SceneData != null;
         }
-        
+
         #region Signals
 
         private void OnClickedButton(ButtonClickedSignal signal)
         {
-            EButton button = signal.Button;
+            int button = signal.Button.Value;
 
             if (ButtonClickedMap.ContainsKey(button) && gameObject.activeSelf)
             {
@@ -287,7 +338,7 @@ namespace Framework
 
         private void OnHoveredButton(ButtonHoveredSignal signal)
         {
-            EButton button = signal.Button;
+            int button = signal.Button.Value;
 
             if (ButtonHoveredMap.ContainsKey(button) && gameObject.activeSelf)
             {
@@ -298,7 +349,7 @@ namespace Framework
 
         private void OnUnhoveredButton(ButtonUnhoveredSignal signal)
         {
-            EButton button = signal.Button;
+            int button = signal.Button.Value;
 
             if (ButtonUnhoveredMap.ContainsKey(button) && gameObject.activeSelf)
             {
@@ -309,7 +360,7 @@ namespace Framework
 
         private void OnPressedButton(ButtonPressedSignal signal)
         {
-            EButton button = signal.Button;
+            int button = signal.Button.Value;
 
             if (ButtonPressedMap.ContainsKey(button) && gameObject.activeSelf)
             {
@@ -320,7 +371,7 @@ namespace Framework
 
         private void OnReleasedButton(ButtonReleasedSignal signal)
         {
-            EButton button = signal.Button;
+            int button = signal.Button.Value;
 
             if (ButtonReleasaedMap.ContainsKey(button) && gameObject.activeSelf)
             {
@@ -351,7 +402,7 @@ namespace Framework
             {
                 return null;
             }
-            
+
             SceneEntry entry = Factory.Get<SceneReference>().Find(scene);
             return entry.RootObject.GetComponent<T>();
         }
@@ -372,7 +423,24 @@ namespace Framework
 
             return scenes[0];
         }
-        
+
+        public static T GetSceneObject<T>(string scene) where T : SceneObject
+        {
+            if (!IsLoaded(scene))
+            {
+                return null;
+            }
+
+            UScene loadedScene = SceneManager.GetSceneByName(scene);
+            List<GameObject> rootObjects = new List<GameObject>(loadedScene.GetRootGameObjects());
+            List<T> scenes = rootObjects.ToArray<T>();
+
+            // make sure the scenes only has 1 root object
+            Assertion.Assert(scenes.Count == 1, D.ERROR + " Scene::GetScene invalid scene! Scene:{0} Type:{1}\n", scene, typeof(T).FullName);
+
+            return scenes[0];
+        }
+
         public static bool IsLoaded(EScene scene)
         {
             return IsLoaded(scene.ToString());

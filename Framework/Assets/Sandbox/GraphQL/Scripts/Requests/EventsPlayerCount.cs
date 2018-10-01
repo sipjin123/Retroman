@@ -1,17 +1,21 @@
-﻿
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 using Framework;
+
+using Common;
+using Common.Query;
+
 using UniRx;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-	public class SignalGetEventPlayers
-	{
+    [Serializable]
+	public class GetEventPlayersSignal : IRequestSignal, IJson
+    {
 		public string announcement_id;
 
 		public string ToJsonString()
@@ -22,21 +26,14 @@ namespace Sandbox.GraphQL
 
 	public class EventsPlayerCount : UnitRequest 
 	{
-		private ObscuredString Token;
-
 		public override void Initialze(GraphInfo info)
 		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
-				.Where(_ => _.Type == GraphQLRequestType.LOGIN)
-				.Subscribe(_ => Token = _.GetData<ObscuredString>())
-				.AddTo(this);
-			
-			this.Receive<SignalGetEventPlayers>()
-				.Subscribe(_ => GetEventPlayerCount(Token, _))
+			this.Receive<GetEventPlayersSignal>()
+				.Subscribe(_ => GetEventPlayerCount(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
 				.AddTo(this);
 		}
 
-		private void GetEventPlayerCount(string token, SignalGetEventPlayers eventID)
+		private void GetEventPlayerCount(string token, GetEventPlayersSignal eventID)
 		{
 			Payload load = new Payload();
 			load.AddString("message", "Events Players");

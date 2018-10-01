@@ -13,10 +13,11 @@ using Sirenix.OdinInspector;
 using Common;
 using Common.Signal;
 
+using Sandbox.ButtonSandbox;
+
 namespace Framework
 {
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     /// <summary>
@@ -26,46 +27,15 @@ namespace Framework
     /// </summary>
 	public partial class Button : MonoBehaviour
     {
-        /// <summary>
-        /// Do not edit! cached values for Editor.
-        /// Stores the string value of EButton enum of this button.
-        /// </summary>
         [SerializeField]
         [LabelText("ButtonType")]
-        [ValueDropdown("Buttons")]
-        [OnValueChanged("UpdateButtonTypeString")]
-        private string SelectedButton;
-
-        /// <summary>
-        /// The type of button this is.
-        /// </summary>
-        protected EButton _ButtonType;
-        public EButton ButtonType
+        [ValueDropdown("GetButtons")]
+        protected string _Button;
+        public int ButtonType
         {
-            get { return _ButtonType; }
-            private set { _ButtonType = value; }
-        }
-
-        private void Awake()
-        {
-            // Update Button Type & Depth from Editor
-            SelectedButton = CachedButton;
-            ButtonType = CachedButton.ToEnum<EButton>();
-        }
-
-        private void Start()
-        {
-            Assertion.Assert(ButtonType != EButton.Invalid);
-
+            get { return _Button.ToButtonValue(); }
         }
         
-        private void OnEnable()
-        {
-            // Update Button Type & Depth from Editor
-            SelectedButton = CachedButton;
-            ButtonType = CachedButton.ToEnum<EButton>();
-        }
-
         private void Reset()
         {
             Debug.LogFormat(D.CHECK + "Button::Reset Name:{0} Setup EventTrigger!\n", gameObject.name);
@@ -80,7 +50,7 @@ namespace Framework
         {
             this.Publish(new ButtonClickedSignal()
             {
-                Button = ButtonType
+                Button = ButtonType.ToButton()
             });
 		}
         
@@ -92,7 +62,7 @@ namespace Framework
         {
             this.Publish(new ButtonHoveredSignal()
             {
-                Button = ButtonType
+                Button = ButtonType.ToButton()
             });
         }
 
@@ -104,7 +74,7 @@ namespace Framework
         {
             this.Publish(new ButtonUnhoveredSignal()
             {
-                Button = ButtonType
+                Button = ButtonType.ToButton()
             });
         }
 
@@ -116,7 +86,7 @@ namespace Framework
         {
             this.Publish(new ButtonPressedSignal()
             {
-                Button = ButtonType
+                Button = ButtonType.ToButton()
             });
         }
 
@@ -128,7 +98,7 @@ namespace Framework
         {
             this.Publish(new ButtonReleasedSignal()
             {
-                Button = ButtonType
+                Button = ButtonType.ToButton()
             });
         }
     }

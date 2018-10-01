@@ -15,9 +15,6 @@ using Sirenix.Serialization;
 using UniRx;
 using UniRx.Triggers;
 
-using Sirenix.OdinInspector;
-using Sirenix.Serialization;
-
 using Common;
 using Common.Fsm;
 using Common.Query;
@@ -28,9 +25,6 @@ using Framework;
 
 namespace Sandbox.Preloader
 {
-    // alias
-    using CColor = Framework.Color;
-
     /// <summary>
     /// This is an interface to be implemented by preloaders that can fade in and fade out.
     /// </summary>

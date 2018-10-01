@@ -28,7 +28,6 @@ namespace Sandbox.Preloader
     using UColor = UnityEngine.Color;
     using URandom = UnityEngine.Random;
     using UScene = UnityEngine.SceneManagement.Scene;
-    using CColor = Framework.Color;
     using CSScene = Framework.Scene;
 
     /// <summary>
@@ -122,15 +121,13 @@ namespace Sandbox.Preloader
             // force set scene type and depth
             SceneType = EScene.Preloader;
 
-            Assertion.Assert(Blocker, string.Format(CColor.red.LogHeader("[ERROR]") + " PreloaderRoot::Awake Blocker:{0} is null!\n", Blocker));
-            Assertion.Assert(Container, string.Format(CColor.red.LogHeader("[ERROR]") + " PreloaderRoot::Awake Container:{0} is null!\n", Container));
+            Assertion.Assert(Blocker, string.Format(D.ERROR + "PreloaderRoot::Awake Blocker:{0} is null!\n", Blocker));
+            Assertion.Assert(Container, string.Format(D.ERROR + "PreloaderRoot::Awake Container:{0} is null!\n", Container));
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-
-            //QuerySystem.RemoveResolver(QueryIds.LoadingProgress);
         }
         #endregion
         
@@ -219,7 +216,7 @@ namespace Sandbox.Preloader
         {
             yield return null;
 
-            // +AS:180404 TODO
+            // TODO: +AS:180404
             //  - Fix canvas sorting with SystemCanvas (Add SystemCanvas Support)
             //  - Disabled temporarily
             //*

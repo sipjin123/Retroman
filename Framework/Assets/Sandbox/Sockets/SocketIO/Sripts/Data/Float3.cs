@@ -46,6 +46,12 @@ namespace Sandbox.SocketIo
             return string.Format(format, X, Y, Z);
         }
 
+        public Vector3 ToVector3()
+        {
+            Vector3 v = new Vector3(X, Y, Z);
+            return v;
+        }
+
         #region operators, overrides, etc.
         
         public static Float3 operator +(Float3 a, Float3 b)

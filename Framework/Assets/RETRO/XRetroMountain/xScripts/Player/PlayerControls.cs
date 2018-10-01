@@ -10,10 +10,10 @@ namespace Retroman
         {
             NORMAL,
             CAT,
+            DONKEYKONG,
+            SONIC,
             UNICORN,
             YOSHI,
-            SONIC,
-            DONKEYKONG
         }
         public PlayerType _playerType;
         public enum PlayerAction
@@ -69,17 +69,20 @@ namespace Retroman
 
         [SerializeField]
         private CameraControls _CameraControls;
-        public PlatformLord _PlatformLord;
 
         int WaterMaskLayerIndex = 0;
         int GroundMaskLayerIndex = 0;
         int FallStopperMaskLayerIndex = 0;
+
+
+        public Transform VFXJumpSpawn;
+        public GameObject RunningVFX;
+        public GhostAnimator gA;
         #endregion
         //==========================================================================================================================================
         #region INITIALIZATION
         void Awake()
         {
-            Factory.Get<DataManagerService>().SetPlayer(this);
             WaterMaskLayerIndex = LayerMask.NameToLayer(WaterMaskID);
             GroundMaskLayerIndex = LayerMask.NameToLayer(GroundMaskID);
             FallStopperMaskLayerIndex = LayerMask.NameToLayer(FallStopperMaskID);
@@ -109,18 +112,23 @@ namespace Retroman
             _bodySpin.transform.GetChild((int)_playerType).gameObject.SetActive(true);
             _deathAnim.transform.GetChild(0).GetChild((int)_playerType).gameObject.SetActive(true);
 
-            SetupPlayerType(PlayerPrefs.GetInt(DataManagerService.CurrentCharacterSelected, 0));
+            int currentChar = Factory.Get<DataManagerService>().GetCurrentCharacter();
+
+            currentChar -= 1;
+            if (currentChar <= -1)
+                currentChar = 0;
+            SetupPlayerType( currentChar );
         }
         public void SetupPlayerType(int _playaTyp)
         {
             _playerType = (PlayerType)_playaTyp;
-
             for (int i = 0; i < _bodySpin.transform.childCount; i++)
             {
                 _bodySpin.transform.GetChild(i).gameObject.SetActive(false);
                 _deathAnim.transform.GetChild(0).GetChild(i).gameObject.SetActive(false);
             }
-            PlayerPrefs.SetInt(DataManagerService.CurrentCharacterSelected, (int)_playerType);
+            //PlayerPrefs.SetInt(DataManagerService.CurrentCharacterSelected_Key, (int)_playerType);
+
             _bodySpin.transform.GetChild((int)_playerType).gameObject.SetActive(true);
             _deathAnim.transform.GetChild(0).GetChild((int)_playerType).gameObject.SetActive(true);
         }
@@ -128,8 +136,16 @@ namespace Retroman
         //==========================================================================================================================================
         void FixedUpdate()
         {
+            if (Factory.Get<DataManagerService>().IFTestMode)
+            {
+                transform.position = new Vector3(transform.position.x, 7, transform.position.z);
+            }
+            RaycastFunction();
             if (!_activePlayerObject)
+            {
+                transform.localPosition = Vector3.zero;
                 return;
+            }
 
 
             if (_playerAction == PlayerAction.FORWARD)
@@ -147,12 +163,7 @@ namespace Retroman
             {
                 if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)))
                 {
-                    _jumpDelaySwitch = true;
-                    StartCoroutine(JumpDelayENUM());
-                    _rigidbody.AddForce(transform.up * 15000);
-                    isJumping = true;
-
-                    SoundControls.Instance._sfxJump.Play();
+                    JumpStart();
                     return;
 
                 }
@@ -164,16 +175,51 @@ namespace Retroman
 
                     if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0)))
                     {
-                        _rigidbody.AddForce(transform.up * 650);
+                        JumpHold();
                     }
                 }
             }
-            _rigidbody.AddForce(-transform.up * 1000);
+            _rigidbody.AddForce(-transform.up * (1000/25)); //1000);
 
             PlayerTurnFunction();
-            RaycastFunction();
+          //  RaycastFunction();
 
         }
+        public void GenericJump()
+        {
+            if(isJumping == false)
+            {
+
+                _jumpDelaySwitch = true;
+                StartCoroutine(JumpDelayENUM());
+                _rigidbody.AddForce(transform.up * (15000 / 25));//15000);
+                Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
+                isJumping = true;
+
+                SoundControls.Instance._sfxJump.Play();
+            }
+            else
+            {
+
+                _rigidbody.AddForce(transform.up * (650 / 25));// 650);
+            }
+        }
+        public void JumpStart()
+        {
+
+            _jumpDelaySwitch = true;
+            StartCoroutine(JumpDelayENUM());
+            _rigidbody.AddForce(transform.up * (15000 / 25));//15000);
+            Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpUpVFX);
+            isJumping = true;
+
+            SoundControls.Instance._sfxJump.Play();
+        }
+        public void JumpHold()
+        {
+            _rigidbody.AddForce(transform.up * (650 / 25));// 650);
+        }
+
         //==========================================================================================================================================	
         #region COROUTINES
         IEnumerator JumpDelayENUM()
@@ -188,24 +234,22 @@ namespace Retroman
         #region RAYCAST
         void RaycastFunction()
         {
-            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 1f, out Rayhit))// ,GroundWaterMask))
+            Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 10,Color.blue);
+
+            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out Rayhit))// ,GroundWaterMask))
             {
-                //Debug.LogError(Rayhit.collider.gameObject.tag+" "+Rayhit.collider.gameObject.name);
-                //Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 1, Color.red);
-
-                //_shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
-
-                //Debug.LogError("Rayhit is :: (" + Rayhit.collider.gameObject.name + ") Tag is : )" + Rayhit.collider.tag + ") Layer : " + LayerMask.LayerToName(Rayhit.collider.gameObject.layer)+" LayerPure: ("+Rayhit.collider.gameObject.layer+")");
+                //Debug.LogError(Rayhit.collider.gameObject.name+ " : " +LayerMask.LayerToName(Rayhit.collider.gameObject.layer));
 
 
-               // _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
-                if((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
+                if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
                 {
+                  
                     _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
                 }
 
                 if (isJumping)
                 {
+                  
                     if (Rayhit.collider.gameObject.layer == FallStopperMaskLayerIndex)
                     {
                         _shadowObject.SetActive(false);
@@ -214,21 +258,51 @@ namespace Retroman
                     {
                         _shadowObject.SetActive(true);
                     }
+                    else
+                    {
+                        _shadowObject.SetActive(false);
+                    }
+
+                    //RunningVFX.SetActive(false);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 0;
+                 
+                }
+                else
+                {
+
+                    //RunningVFX.SetActive(true);
+                    ParticleSystem ps = RunningVFX.GetComponent<ParticleSystem>();
+                    var emission = ps.emission;
+                    emission.rateOverTime = 10;
+                  
                 }
 
             }
             else
             {
-              //  _shadowObject.SetActive(false);
+                //Debug.LogError("No hit");
+                _shadowObject.SetActive(false);
             }
         }
         #endregion
         //==========================================================================================================================================
         #region FUNCTIONS
+
+        private enum CurrDirection
+        {
+            Left,
+            Right
+        }
+        
+        CurrDirection cD = CurrDirection.Right;
+            
         void PlayerTurnFunction()
         {
             if (_playerAction == PlayerAction.TURNLEFT)
             {
+                cD = CurrDirection.Right;
                 player_rotation -= rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -242,6 +316,7 @@ namespace Retroman
             }
             else if (_playerAction == PlayerAction.TURNRIGHT)
             {
+                cD = CurrDirection.Left;
                 player_rotation += rotateSpeed;
                 rotatedValue += rotateSpeed;
                 if (rotatedValue >= 90)
@@ -264,14 +339,13 @@ namespace Retroman
         #endregion
         //==========================================================================================================================================
         #region COLLISIONS
-        void OnTriggerEnter(Collider hit)
+
+        private void OnTriggerStay(Collider hit)
         {
-           // Debug.LogError("Trigger Hit is :: " + hit.gameObject.name + " Tag is : " + hit.tag + " Layer : " + LayerMask.LayerToName(hit.gameObject.layer));
-            //TURNING
             if (hit.gameObject.name == "Left"
-                || hit.gameObject.name == "Right"
-                || hit.gameObject.name == "MidLeft"
-                || hit.gameObject.name == "MidRight")
+           || hit.gameObject.name == "Right"
+           || hit.gameObject.name == "MidLeft"
+           || hit.gameObject.name == "MidRight")
             {
                 lerpToThisObject = hit.gameObject;
                 if (hit.gameObject.name == "Left")
@@ -279,25 +353,34 @@ namespace Retroman
                 if (hit.gameObject.name == "Right")
                     _playerAction = PlayerAction.TURNRIGHT;
                 if (hit.gameObject.name == "MidRight")
+                {
                     Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 0 });
+                }
                 if (hit.gameObject.name == "MidLeft")
+                {
                     Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeCamAngle { Angle = 180 });
-                hit.gameObject.SetActive(false);
+                }
+                hit.GetComponent<MeshRenderer>().material.color = Color.black;
+                hit.GetComponent<BoxCollider>().enabled = (false);
             }
-            //FALLING
-            else if (hit.gameObject.name == "FallStopper")
+        }
+
+        void OnTriggerEnter(Collider hit)
+        {if (hit.gameObject.name == "FallStopper")
             {
                 _playerAction = PlayerAction.FALL;
             }
             //JUMPING
             if (!_jumpDelaySwitch)
             {
-                if (hit.gameObject.tag == "Ground")
+                if(hit.GetComponent<PlatformMinion>() != null)//if (LayerMask.LayerToName( hit.gameObject.layer) == "GroundOnly")
                 {
                     isGrounded = true;
                     if (isJumping)
                     {
                         _rigidbody.velocity = new Vector3(0, 0, 0);
+                         Factory.Get<VFXHandler>().RequestVFX(VFXJumpSpawn.position, VFXHandler.VFXList.JumpVFX);
+
                     }
                     isJumping = false;
                 }
@@ -308,11 +391,70 @@ namespace Retroman
         #region SIGNALS
         void OnEnable()
         {
+
+            
+
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<SetupPlayerSplash>().Subscribe(_ =>
+            {
+                Debug.LogError("WATER DEATH PART 2");
+               //   
+                _splash.SetActive(_.IfActive);
+                _splash.transform.position =  _deathAnim.transform.GetChild(0).transform.position;
+                if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
+               
+            }).AddTo(this);
+
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<EnablePlayerShadows>().Subscribe(_ =>
+            {
+
+                _shadowObject.SetActive(_.IfActive);
+            }).AddTo(this);
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<ActivePlayerObject>().Subscribe(_ =>
+            {
+                _activePlayerObject = _.IfActive;
+            }).AddTo(this);
+            
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<EnablePlayerControls>().Subscribe(_ =>
+            {
+
+                GetComponent<PlayerControls>().enabled = _.IfACtive;
+            }).AddTo(this);
+
+            Factory.Get<DataManagerService>().MessageBroker.Receive<UpdatePlayerAction>().Subscribe(_ =>
+            {
+
+                _playerAction = _.PlayerAction;
+            }).AddTo(this);
+
             Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ =>
             {
                
 
             }).AddTo(this);
+            Factory.Get<DataManagerService>().MessageBroker.Receive<DisablePlayableCharacter>().Subscribe(_ =>
+            {
+
+                transform.GetChild(0).gameObject.SetActive(false);
+
+            }).AddTo(this);
+            Factory.Get<DataManagerService>().MessageBroker.Receive<EnableRagdoll>().Subscribe(_ =>
+            {
+                _deathAnim.SetActive(true);
+               if (cD  == CurrDirection.Right )
+                    gA.StartAnimation(true);
+                else
+                    gA.StartAnimation(false);
+               
+            }).AddTo(this);
+            
+
 
             Factory.Get<DataManagerService>().MessageBroker.Receive<PauseGame>().Subscribe(_ =>
             {

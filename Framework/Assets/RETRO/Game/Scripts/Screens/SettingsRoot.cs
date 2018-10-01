@@ -3,16 +3,26 @@ using System.Collections;
 
 using Common.Signal;
 using Framework;
+using Common.Utils;
+using UniRx;
+using Common.Query;
 
-namespace Synergy88 {
+using Sandbox.ButtonSandbox;
+
+namespace Retroman {
 	
-	public class SettingsRoot : Scene {
+	public class SettingsRoot : Scene
+    {
 
 		public GameObject _toggleBGM, _toggleSFX;
 		bool _BGMswitch, _SFXswitch;
 		public GameObject _CreditsWindow;
 
-        void Awake() {
+        public CanvasGroup InteractiveCanvas;
+        bool _DisableBackButton;
+
+        protected override void Awake()
+        {
 			if(PlayerPrefs.GetInt("BGMSWITCH",1) == 0)
 				_BGMswitch = false;
 			else
@@ -26,33 +36,40 @@ namespace Synergy88 {
 			_toggleBGM.SetActive( _BGMswitch );
 
 
-			base.Awake();
+             base.Awake();
+            SetupSignals();
+            SetupButtons();
 		}
 
-        void Start() {
+        void SetupButtons()
+        {
+            this.AddButtonHandler(ButtonType.Back, (ButtonClickedSignal signal) =>
+            {
+                BackButtonClick();
+            });
+        }
+        void SetupSignals()
+        {
+            Factory.Get<DataManagerService>().MessageBroker.Receive<PressBackButton>().Subscribe(_ =>
+            {
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button");
+                Debug.LogError(D.LOG + " SettingsRoot :: Received Soft Back Button" + _.BackButtonType);
+                if (_.BackButtonType == BackButtonType.SceneIsSettings)
+                {
+                    Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = false });
 
-            /*
+                    BackButtonClick();
+                }
+            });
+        }
 
-			this.AddButtonHandler(EButtonType.Credits, (ISignalParameters parameters) => {
+        public void CreditsOnClick()
+        {
+            _CreditsWindow.SetActive(true);
+            SoundControls.Instance._buttonClick.Play();
+        }
 
-
-				_CreditsWindow.SetActive(true);
-				SoundControls.Instance._buttonClick.Play();
-			});
-
-			this.AddButtonHandler(EButtonType.Restore, (ISignalParameters parameters) => {
-				// toggle interstitals
-				S88Signals.ON_TOGGLE_INTERSTITIAL_ADS.Dispatch();
-
-				// test unity ads
-				S88Signals.ON_SHOW_UNITY_ADS.ClearParameters();
-				S88Signals.ON_SHOW_UNITY_ADS.AddParameter(S88Params.UNITY_ADS_REGION, "001Region");
-				S88Signals.ON_SHOW_UNITY_ADS.Dispatch();
-				SoundControls.Instance._buttonClick.Play();
-			});*/
-		}
-
-        void OnEnable() {
+        protected override void OnEnable() {
 			base.OnEnable();
 			_CreditsWindow.SetActive(false);
 		}
@@ -91,6 +108,19 @@ namespace Synergy88 {
 			}
 			SoundControls.Instance.SetUpSounds();
 		}
+        public void BackButtonClick()
+        {
+            if (_DisableBackButton)
+            {
+                Debug.LogError(D.ERROR + " SPAM IS BLOCKED BY SETTINGS");
+                return;
+            }
+            _DisableBackButton = true;
+            InteractiveCanvas.interactable = false;
+
+            SoundControls.Instance._buttonClick.Play();
+            Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+        }
 	}
 
 }

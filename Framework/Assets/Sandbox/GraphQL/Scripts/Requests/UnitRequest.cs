@@ -16,6 +16,11 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    public interface IRequestSignal
+    {
+
+    }
+
     public class UnitRequest : MonoBehaviour
     {
         [SerializeField]

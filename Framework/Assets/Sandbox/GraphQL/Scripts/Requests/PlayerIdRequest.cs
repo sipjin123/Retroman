@@ -1,38 +1,47 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Advertisements;
+
+using Sirenix.OdinInspector;
+
+using UniRx;
+using UniRx.Triggers;
+
+using Common.Fsm;
+using Common.Query;
 
 using Framework;
-using UniRx;
-using System;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
     [Serializable]
-    public class PlayerIDContainer
+    public class PlayerIDContainer : IJson
     {
         public string id;
+        public string device_id;
+        public string facebook_id;
+        public string gamesparks_id;
     }
 
     public class PlayerIdRequest : UnitRequest
     {
-        private ObscuredString Token;
+        [SerializeField]
+        private PlayerIDContainer PlayerInfo;
 
         public override void Initialze(GraphInfo info)
         {
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
-               .Subscribe(_ =>
-               {
-                   Token = _.GetData<ObscuredString>();
-                   RequestPlayerID(Token.GetDecrypted());
-               }).AddTo(this);
+               .Subscribe(_ => RequestPlayerID(_.GetData<string>()))
+               .AddTo(this);
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type == GraphQLRequestType.PLAYER_PROFILE)
-                .Subscribe(_ => RequestPlayerID(Token.GetDecrypted()))
+                .Subscribe(_ => RequestPlayerID(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
                 .AddTo(this);
         }
 
@@ -41,7 +50,8 @@ namespace Sandbox.GraphQL
             Builder builder = Builder.Query();
             Function function = builder.CreateFunction("player");
             function.AddString("token", token);
-            Return ret = builder.CreateReturn("id");
+            Return ret = builder.CreateReturn("id", "device_id", "facebook_id", "gamesparks_id");
+
             ProcessRequest(GraphInfo, builder.ToString(), ProcessPlayerID);
         }
 
@@ -53,7 +63,8 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_DATA, Data = result.Result.data.player });
+                PlayerInfo = result.Result.data.player;
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_DATA, Data = PlayerInfo });
             }
         }
 

@@ -108,70 +108,13 @@ namespace Sandbox.SocketIo
         [Serializable]
         public class Data
         {
-            public List<float> initial_target;
-            public int last_command;
-            public int score;
-            public int lives_left;
-            public int perfect_streak;
-            public int elapsed;
-            public string hot_start;
-            public string hot_end;
-            public string hot_multiplier;
             public string status;
         }
 
         public string type;
         public Data data;
     }
-
-    [Serializable]
-    public class Miss
-    {
-        public static readonly string TYPE = "miss";
-
-        [Serializable]
-        public class Data
-        {
-            public int timestamp;
-            public int lives_left;
-        }
-
-        public string type;
-        public Data data;
-    }
-
-    [Serializable]
-    public class Score
-    {
-        public static readonly string TYPE = "score";
-
-        [Serializable]
-        public class Data
-        {
-            public int timestamp;
-            public int score;
-        }
-
-        public string type;
-        public Data data;
-    }
-
-    [Serializable]
-    public class InitialTarget
-    {
-        public static readonly string TYPE = "initial_target";
-
-        [Serializable]
-        public class Data
-        {
-            public int timestamp;
-            public List<float> initial_target;
-        }
-
-        public string type;
-        public Data data;
-    }
-
+    
     [Serializable]
     public class LobbyStatusChanged
     {
@@ -305,9 +248,6 @@ namespace Sandbox.SocketIo
     {
         // Socket Commands
         public static readonly string START_GAME_COMMAND = "/start";               // emit "message": /start
-        public static readonly string INITIAL_TARGET_COMMAND = "target {0} {1}";   // emin "message": target 14076 x,y,z
-        public static readonly string SEND_SCORE_COMMAND = "+ {0} {1}";            // emit "message": + 14076 3.9,1.5,4.0,0.0,3.4,9.7,0.0,-9.8,0.0,-3.3,7.5,4.7,1.2
-        public static readonly string SEND_MISS_COMMAND = "- {0}";                 // emit "message": - 14076.95
         public static readonly string END_GAME_COMMAND = "/end";                   // emit "message": /end
         public static readonly string LEAVE_GAME_COMMAND = "/leave";               // emit "message": /leave
         public static readonly string STATUS_COMMAND = "/status";                  // emit "message": /status
@@ -338,7 +278,7 @@ namespace Sandbox.SocketIo
                 .Where(_ => !CheatDetected.GetDecrypted())
                 .Subscribe(_ =>
                 {
-                    // +AS:06192018 [TEST AUTOCONNECT] Connect to pubsub socket
+                    // NOTE: +AS:06192018 [TEST AUTOCONNECT] Connect to pubsub socket
                     List<Config> configs = _.GetData<List<Config>>();
                     
                     Connect(configs.Find(c => c.key.Equals(PUBSUB)));
@@ -362,36 +302,6 @@ namespace Sandbox.SocketIo
                 {
                     // emit "message": /start
                     EmitMessage(START_GAME_COMMAND);
-                })
-                .AddTo(this);
-
-            this.Receive<OnSetInitialTarget>()
-                .Where(_ => !CheatDetected.GetDecrypted())
-                .Subscribe(_ =>
-                {
-                    // emin message 14076 x,y,z
-                    string message = string.Format(INITIAL_TARGET_COMMAND, _.Timestamp.GetDecrypted(), _.Target.GetDecrypted().ToString());
-                    EmitMessage(message);
-                })
-                .AddTo(this);
-
-            this.Receive<OnSendScoreSignal>()
-                .Where(_ => !CheatDetected.GetDecrypted())
-                .Subscribe(_ =>
-                {
-                    // emit "message": + 14076 3.9,1.5,4.0,0.0,3.4,9.7,0.0,-9.8,0.0,-3.3,7.5,4.7,1.2
-                    string message = string.Format(SEND_SCORE_COMMAND, _.Timestamp.GetDecrypted(), _.ToString());
-                    EmitMessage(message);
-                })
-                .AddTo(this);
-
-            this.Receive<OnSendMissSignal>()
-                .Where(_ => !CheatDetected.GetDecrypted())
-                .Subscribe(_ =>
-                {
-                    // emit "message": - 14076.95
-                    string message = string.Format(SEND_MISS_COMMAND, _.Timestamp.GetDecrypted());
-                    EmitMessage(message);
                 })
                 .AddTo(this);
             
@@ -450,8 +360,6 @@ namespace Sandbox.SocketIo
             SocketHandlers.Add(MessageType.player_joined, HandlePlayerJoined);
             SocketHandlers.Add(MessageType.player_reconnected, HandlePlayerJoined);
             SocketHandlers.Add(MessageType.player_left, HandlePlayerLeft);
-            SocketHandlers.Add(MessageType.score, HandleScore);
-            SocketHandlers.Add(MessageType.miss, HandleMiss);
             SocketHandlers.Add(MessageType.status, HandleStatus);
             SocketHandlers.Add(MessageType.lobby_status_changed, HandleLobbyStatusChanged);
 
@@ -596,26 +504,7 @@ namespace Sandbox.SocketIo
             SystemMessage system = JsonUtility.FromJson<SystemMessage>(message);
             Debug.LogFormat(D.SOCKETS + "SockedConnections::HandleSystem Message:{0}\n", system.data.message);
         }
-
-        /*
-        {
-            "type": "initial_target",
-            "data": {
-                "timestamp": 8201,
-                "initial_target": [
-                    0,
-                    3.4,
-                    9.7
-                ]
-            }
-        }
-        //*/
-        private void HandleInitialTarget(string message)
-        {
-            InitialTarget target = JsonUtility.FromJson<InitialTarget>(message);
-            Debug.LogFormat(D.SOCKETS + "SockedConnections::HandleInitialTarget Timestamp:{0} Target:{1}\n", target.data.timestamp, target.data.initial_target);
-        }
-
+        
         /*
         {
             "type": "player_joined",
@@ -672,38 +561,6 @@ namespace Sandbox.SocketIo
 
         /*
         {
-            "type": "score",
-            "data": {
-                "timestamp": 60962,
-                "score": 1
-            }
-        }
-        //*/
-        private void HandleScore(string message)
-        {
-            Score score = JsonUtility.FromJson<Score>(message);
-            this.Publish(new OnUpdateServerScoreSignal() { Score = score.data.score });
-            Debug.LogFormat(D.SOCKETS + "SockedConnections::HandleScore Timestamp:{0} Score:{1}\n", score.data.timestamp, score.data.score);
-        }
-
-        /*
-        {
-            "type": "miss",
-            "data": {
-                "timestamp": 88149,
-                "lives_left": 2
-            }
-        }
-        //*/
-        private void HandleMiss(string message)
-        {
-            Miss miss = JsonUtility.FromJson<Miss>(message);
-            this.Publish(new OnUpdateServerLivesSignal() { Lives = miss.data.lives_left });
-            Debug.LogFormat(D.SOCKETS + "SockedConnections::HandleMiss Timestamp:{0} Lives:{1}\n", miss.data.timestamp, miss.data.lives_left);
-        }
-
-        /*
-        {
             "type": "status",
             "data": {
                 "initial_target": [
@@ -727,26 +584,10 @@ namespace Sandbox.SocketIo
         {
             Status status = JsonUtility.FromJson<Status>(message);
             LobbyStatus lobbyStatus = status.data.status.ToEnum<LobbyStatus>();
-
-            /*
-            public List<float> initial_target;
-            public int last_command;
-            public int score;
-            public int lives_left;
-            public int perfect_streak;
-            public int elapsed;
-            public string hot_start;
-            public string hot_end;
-            public string hot_multiplier;
-            public string status;
-            //*/
-
+            
             this.Publish(new OnLobbyStatusSignal()
             {
-                Status = lobbyStatus,
-                Score = status.data.score,
-                Lives = status.data.lives_left,
-                Elapsed = status.data.elapsed,
+                Status = lobbyStatus
             });
         }
     }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -11,12 +13,22 @@ using Framework;
 
 namespace Sandbox.Services
 {
-    using FColor = Framework.Color;
-
-    public class BaseService : MonoBehaviour, IService
+    public partial class BaseService : SerializedMonoBehaviour, IService
     {
         protected virtual void Awake()
         {
+            ServiceState = CurrentServiceState.Value;
+
+            CurrentServiceState
+                .Subscribe(state => ServiceState = state)
+                .AddTo(this);
+
+            SetupButtonReceivers();
+        }
+
+        protected virtual void OnDestroy()
+        {
+            CleanupButtonReceivers();
         }
 
         public virtual string ServiceName
@@ -40,8 +52,13 @@ namespace Sandbox.Services
         }
 
         [SerializeField]
+        private ServiceState ServiceState;
+
         private ReactiveProperty<ServiceState> _CurrentServiceState = new ReactiveProperty<ServiceState>(ServiceState.Uninitialized);
-        public ReactiveProperty<ServiceState> CurrentServiceState { get { return _CurrentServiceState; } }
+        public ReactiveProperty<ServiceState> CurrentServiceState
+        {
+            get { return _CurrentServiceState; }
+        }
 
         public virtual void InitializeService()
         {
@@ -52,14 +69,21 @@ namespace Sandbox.Services
         {
             Debug.LogWarningFormat(D.WARNING + " BaseService::TerminateService initialize is not implemented in {0} Service\n", gameObject.name);
         }
+
+        public virtual IEnumerator InitializeServiceSequentially()
+        {
+            yield return null;
+            Debug.LogWarningFormat(D.WARNING + " BaseService::InitializeServiceSequentially initialize is not implemented in {0} Service\n", gameObject.name);
+        }
         
-        [Button(25)]
+
+        [Button(ButtonSizes.Medium)]
         public void InitService()
         {
             InitializeService();
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void EndService()
         {
             TerminateService();

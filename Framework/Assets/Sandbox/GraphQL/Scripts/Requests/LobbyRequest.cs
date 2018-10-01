@@ -20,10 +20,6 @@ using Framework;
 #region Lobby and Socket Data
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    using Sandbox.SocketIo;
-    
     [Serializable]
     public class LobbyJoinReconnect : IJson
     {
@@ -75,89 +71,87 @@ namespace Sandbox.GraphQL
 #region Lobby and Socket Signals
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    using Sandbox.SocketIo;
-
-    public struct OnLobbyActiveInstanceSignal
+    public struct OnLobbyActiveInstanceSignal : IRequestSignal
     {
-        public ObscuredString Token;
+        public string Token;
     }
 
-    public struct OnCloseLobbySessionSignal
+    public struct OnCloseLobbySessionSignal : IRequestSignal
     {
-        public ObscuredString Token;
-        public ObscuredString LobbyId;
+        public string Token;
+        public string LobbyId;
     }
 
-    public struct OnLobbyOpenSignal
+    public struct OnLobbyOpenSignal : IRequestSignal
     {
-        public ObscuredString Token;
-        public ObscuredString Slug;
-        public ObscuredString Name;
+        public string Token;
+        public string Slug;
+        public string Name;
     }
 
-    public struct OnLobbyJoinSignal
+    public struct OnLobbyJoinSignal : IRequestSignal
     {
-        public ObscuredString Token;
-        public ObscuredString LobbyId;
-        public ObscuredString SocketId;
+        public string Token;
+        public string LobbyId;
+        public string SocketId;
     }
 
-    public struct OnLobbyReconnectSignal
+    public struct OnLobbyReconnectSignal : IRequestSignal
     {
-        public ObscuredString Token;
-        public ObscuredString LobbyId;
-        public ObscuredString SocketId;
+        public string Token;
+        public string LobbyId;
+        public string SocketId;
     }
 
-    public struct OnConnectToLobbySignal
+    public struct OnConnectToLobbySignal : IRequestSignal
     {
         public LobbyInfo Lobby;
     }
 
-    public struct OnStartGameSignal
+    public struct OnStartGameSignal : IRequestSignal
     {
     }
 
-    public struct OnSetInitialTarget
+    public struct OnSetInitialTargetSignal : IRequestSignal
     {
-        public ObscuredInt Timestamp;
-        public ObscuredFloat3 Target;
+        public int Timestamp;
+        public Vector3 Target;
     }
 
-    public struct OnSendScoreSignal
+    [Serializable]
+    public struct OnSendScoreSignal : IRequestSignal, IJson
     {
-        public ObscuredInt Timestamp;
-        public ObscuredFloat3 Source;
-        public ObscuredFloat3 Target;
-        public ObscuredFloat3 Gravity;
-        public ObscuredFloat3 Velocity;
-        public ObscuredFloat Duration;
-        public ShotType Shot;
+        public int Timestamp;
+        public Vector3 Source;
+        public Vector3 Target;
+        public Vector3 Gravity;
+        public Vector3 Velocity;
+        public float Duration;
+        //public ShotType Shot;
 
         public override string ToString()
         {
-            return string.Format("{0},{1},{2},{3},{4},{5}", Source.GetDecrypted(), Target.GetDecrypted(), Gravity.GetDecrypted(), Velocity.GetDecrypted(), Duration.GetDecrypted(), Shot.ToInt());
+            //return string.Format("{0},{1},{2},{3},{4},{5}", Source, Target, Gravity, Velocity, Duration, Shot.ToInt());
+            return string.Empty;
         }
     }
 
-    public struct OnSendMissSignal
+    public struct OnSendMissSignal : IRequestSignal
     {
-        public ObscuredInt Timestamp;
+        public int Timestamp;
     }
 
-    public struct OnEndGameSignal
-    {
-
-    }
-
-    public struct OnCloseSessionSignal
+    public struct OnEndGameSignal : IRequestSignal
     {
 
     }
 
-    public struct OnCheckLobbyStatus
+    public struct OnCloseSessionSignal : IRequestSignal
+    {
+
+    }
+
+    public struct OnCheckLobbyStatus : IRequestSignal
     {
 
     }
@@ -166,10 +160,6 @@ namespace Sandbox.GraphQL
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    using Sandbox.SocketIo;
-    
     public class LobbyRequest : UnitRequest
     {
         [SerializeField, ShowInInspector]
@@ -178,13 +168,13 @@ namespace Sandbox.GraphQL
         [SerializeField, ShowInInspector]
         private List<LobbyInfo> Lobbies;
         
-        private List<ObscuredString> JoinedLobbies;
+        private List<string> JoinedLobbies;
         
-        protected ObscuredString Token;
+        protected string Token;
         
         private Timestamp Timestamp;
 
-        private List<ShotType> Shots;
+        //private List<ShotType> Shots;
 
         public override void Initialze(GraphInfo info)
         {
@@ -192,35 +182,36 @@ namespace Sandbox.GraphQL
 
             ActiveLobby = null;
             Lobbies = new List<LobbyInfo>();
-            JoinedLobbies = new List<ObscuredString>();
+            JoinedLobbies = new List<string>();
             Timestamp = new Timestamp("StartGame");
-            Shots = new List<ShotType>() { ShotType.Normal, ShotType.Perfect };
+            //Shots = new List<ShotType>() { ShotType.Normal, ShotType.Perfect };
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
-                .Subscribe(_ => Token = _.GetData<ObscuredString>())
+                .Subscribe(_ => Token = _.GetData<string>())
                 .AddTo(this);
 
             this.Receive<OnLobbyActiveInstanceSignal>()
-                .Subscribe(_ => LobbyActiveInstance(_.Token.GetDecrypted()))
+                .Subscribe(_ => LobbyActiveInstance(_.Token))
                 .AddTo(this);
 
             this.Receive<OnLobbyOpenSignal>()
-                .Subscribe(_ => LobbyOpen(_.Token.GetDecrypted(), _.Slug, _.Name))
+                .Subscribe(_ => LobbyOpen(_.Token, _.Slug, _.Name))
                 .AddTo(this);
 
             this.Receive<OnLobbyJoinSignal>()
-                .Subscribe(_ => JoinGameSessionLobby(_.Token.GetDecrypted(), _.LobbyId, _.SocketId))
+                .Subscribe(_ => JoinGameSessionLobby(_.Token, _.LobbyId, _.SocketId))
                 .AddTo(this);
 
             this.Receive<OnLobbyReconnectSignal>()
-                .Subscribe(_ => ReconnectGameSessionLobby(_.Token.GetDecrypted(), _.LobbyId, _.SocketId))
+                .Subscribe(_ => ReconnectGameSessionLobby(_.Token, _.LobbyId, _.SocketId))
                 .AddTo(this);
 
             this.Receive<OnCloseLobbySessionSignal>()
-                .Subscribe(_ => CloseLobbySession(_.Token.GetDecrypted(), _.LobbyId))
+                .Subscribe(_ => CloseLobbySession(_.Token, _.LobbyId))
                 .AddTo(this);
             
+            /*
             this.Receive<OnLobbyStatusChangedSignal>()
                 .Where(_ => _.Status == LobbyStatus.IN_GAME)
                 .Subscribe(_ =>
@@ -229,6 +220,7 @@ namespace Sandbox.GraphQL
                     Timestamp.Record();
                 })
                 .AddTo(this);
+            //*/
         }
 
         #region Requests
@@ -303,8 +295,8 @@ namespace Sandbox.GraphQL
                 ActiveLobby = result.Result.data.lobby_activeInstance;
 
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_ACTIVE_INSTANCE, Data = ActiveLobby });
-                
-                /* +AS:20180625 TODO: Remove this snippet after the LobbyFlow setup.
+
+                /* TODO: +AS:20180625 Remove this snippet after the LobbyFlow setup.
                 // Do OpenLobby action if there is no active lobby
                 if (ActiveLobby.has_instance)
                 {
@@ -359,7 +351,7 @@ namespace Sandbox.GraphQL
 
                 Debug.LogFormat(D.LOBBY + "Registering new Lobby! LobbyId:{0}\n", lobby.id);
 
-                /* +AS:20180625 TODO: Remove this snippet after the LobbyFlow setup.
+                /* TODO: +AS:20180625 Remove this snippet after the LobbyFlow setup.
                 this.Publish(new OnConnectToLobbySignal() { Lobby = lobby });
                 //*/
             }
@@ -387,7 +379,7 @@ namespace Sandbox.GraphQL
                 Assertion.AssertNotNull(result.Result.data.lobby_join, "result.Result.data.lobby_join");
                 Assertion.AssertNotNull(result.Result.data.lobby_join.id, "result.Result.data.lobby_join.id");
                 JoinedLobbies.Add(result.Result.data.lobby_join.id);
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_JOIN, Data = JoinedLobbies.LastOrDefault().GetDecrypted() });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_JOIN, Data = JoinedLobbies.LastOrDefault() });
             }
         }
 
@@ -407,7 +399,7 @@ namespace Sandbox.GraphQL
                 Assertion.AssertNotNull(result.Result.data.lobby_reconnect, "result.Result.data.lobby_reconnect");
                 Assertion.AssertNotNull(result.Result.data.lobby_reconnect.id, "result.Result.data.lobby_reconnect.id");
                 JoinedLobbies.Add(result.Result.data.lobby_reconnect.id);
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_RECONNECT, Data = JoinedLobbies.LastOrDefault().GetDecrypted() });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_RECONNECT, Data = JoinedLobbies.LastOrDefault() });
             }
         }
         #endregion
@@ -438,11 +430,11 @@ namespace Sandbox.GraphQL
             }
             //*/
 
-            LobbyInfo lobby = Lobbies.LastOrDefault();
-            IQueryRequest request = QuerySystem.Start(SocketConnections.SOCKET_ID_QUERY);
-            request.AddParameter(SocketConnections.ID, lobby.id);
-            string socketId = QuerySystem.Complete<string>();
-            this.Publish(new OnLobbyJoinSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
+            //LobbyInfo lobby = Lobbies.LastOrDefault();
+            //IQueryRequest request = QuerySystem.Start(SocketConnections.SOCKET_ID_QUERY);
+            //request.AddParameter(SocketConnections.ID, lobby.id);
+            //string socketId = QuerySystem.Complete<string>();
+            //this.Publish(new OnLobbyJoinSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
         }
 
         [Button(25)]
@@ -458,11 +450,11 @@ namespace Sandbox.GraphQL
             }
             //*/
 
-            LobbyInfo lobby = Lobbies.LastOrDefault();
-            IQueryRequest request = QuerySystem.Start(SocketConnections.SOCKET_ID_QUERY);
-            request.AddParameter(SocketConnections.ID, lobby.id);
-            string socketId = QuerySystem.Complete<string>();
-            this.Publish(new OnLobbyReconnectSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
+            //LobbyInfo lobby = Lobbies.LastOrDefault();
+            //IQueryRequest request = QuerySystem.Start(SocketConnections.SOCKET_ID_QUERY);
+            //request.AddParameter(SocketConnections.ID, lobby.id);
+            //string socketId = QuerySystem.Complete<string>();
+            //this.Publish(new OnLobbyReconnectSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
         }
 
         [Button(25)]
@@ -482,10 +474,10 @@ namespace Sandbox.GraphQL
         [Button(25)]
         public void TestSetInitialTarget()
         {
-            this.Publish(new OnSetInitialTarget()
+            this.Publish(new OnSetInitialTargetSignal()
             {
                 Timestamp = Timestamp.Lapsed(),
-                Target = new Float3(0.0f, 3.4f, 9.7f),    // target
+                //Target = new Float3(0.0f, 3.4f, 9.7f),    // target
             });
         }
         
@@ -494,16 +486,16 @@ namespace Sandbox.GraphQL
         {
             // emit "message": + <timestamp> <data>
             // emit "message": + 14076.95 3.9,1.5,4.0,0.0,3.4,9.7,0.0,-9.8,0.0,-3.3,7.5,4.7,1.2
-            this.Publish(new OnSendScoreSignal()
-            {
-                Timestamp = Timestamp.Lapsed(),
-                Source = new Float3(3.9f, 1.5f, 4.0f),          // source
-                Target = new Float3(0.0f, 3.4f, 9.7f),          // target
-                Gravity = new Float3(0.0f, -9.8f, 0.0f),        // gravity
-                Velocity = new Float3(-3.3f, 7.5f, 4.7f),       // velocity
-                Duration = 1.2f,                                // duration
-                Shot = Shots.Random(),                          // shot type
-            });
+            //this.Publish(new OnSendScoreSignal()
+            //{
+            //    Timestamp = Timestamp.Lapsed(),
+            //    Source = new Float3(3.9f, 1.5f, 4.0f),          // source
+            //    Target = new Float3(0.0f, 3.4f, 9.7f),          // target
+            //    Gravity = new Float3(0.0f, -9.8f, 0.0f),        // gravity
+            //    Velocity = new Float3(-3.3f, 7.5f, 4.7f),       // velocity
+            //    Duration = 1.2f,                                // duration
+            //    Shot = Shots.Random(),                          // shot type
+            //});
         }
 
         [Button(25)]

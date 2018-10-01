@@ -20,13 +20,9 @@ using Common.Signal;
 
 namespace Framework
 {
+    using Sandbox.ButtonSandbox;
     using Sandbox.Services;
-    using Sandbox.Shooting;
-
-    // alias
-    using UColor = UnityEngine.Color;
-    using CColor = Framework.Color;
-
+    
     public class SystemRoot : Scene
     {
         [SerializeField]
@@ -66,27 +62,27 @@ namespace Framework
             
             Install();
 
-            AddButtonHandler(EButton.Close, delegate(ButtonClickedSignal signal)
+            AddButtonHandler(ButtonType.Close, delegate(ButtonClickedSignal signal)
             {
 
             });
 
-            AddButtonHandler(EButton.Close, delegate (ButtonHoveredSignal signal)
+            AddButtonHandler(ButtonType.Close, delegate (ButtonHoveredSignal signal)
             {
 
             });
 
-            AddButtonHandler(EButton.Close, delegate (ButtonUnhoveredSignal signal)
+            AddButtonHandler(ButtonType.Close, delegate (ButtonUnhoveredSignal signal)
             {
 
             });
 
-            AddButtonHandler(EButton.Close, delegate (ButtonPressedSignal signal)
+            AddButtonHandler(ButtonType.Close, delegate (ButtonPressedSignal signal)
             {
 
             });
 
-            AddButtonHandler(EButton.Close, delegate (ButtonReleasedSignal signal)
+            AddButtonHandler(ButtonType.Close, delegate (ButtonReleasedSignal signal)
             {
 
             });

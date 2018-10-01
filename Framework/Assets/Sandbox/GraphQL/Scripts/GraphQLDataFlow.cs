@@ -12,19 +12,21 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 
+using Common;
 using Common.Fsm;
+using Common.Query;
 
 using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
+    using Sandbox.Facebook;
     using Sandbox.Services;
-    
+    using Sirenix.Utilities;
+
     public struct OnGraphLoginSignal
     {
-
+        public bool IsGuest { get; set; }
     }
 
     public struct OnGraphQLDone
@@ -34,11 +36,13 @@ namespace Sandbox.GraphQL
 
     public class GraphQLDataFlow : BaseService
     {
+        [SerializeField]
         private Fsm Fsm;
         
         #region Fsm Events
         private readonly string CONTINUE = "Continue";
         private readonly string ON_LOGIN = "OnLogin";
+        private readonly string ON_LOGIN_FB = "OnLoginFb";
         private readonly string ON_CONFIGURE = "OnConfigure";
         private readonly string ON_REQUEST = "OnRequest";
         #endregion
@@ -46,21 +50,20 @@ namespace Sandbox.GraphQL
         #region Fsm States
         private readonly string IDLE = "Idle";
         private readonly string LOGIN = "Login";
+        private readonly string LOGIN_FB = "LoginFb";
         private readonly string CONFIGURE = "Configure";
         private readonly string REQUESTS = "Requests";
         private readonly string DONE = "Done";
         #endregion
 
         #region Action Map
-        [SerializeField, ShowInInspector]
-        private Dictionary<GraphQLRequestType, UnityEvent<GraphQLRequestSuccessfulSignal>> SuccessActionMap = new Dictionary<GraphQLRequestType, UnityEvent<GraphQLRequestSuccessfulSignal>>();
+        [SerializeField]
+        private Dictionary<GraphQLRequestType, Action<GraphQLRequestSuccessfulSignal>> SuccessActionMap = new Dictionary<GraphQLRequestType, Action<GraphQLRequestSuccessfulSignal>>();
         
-        [SerializeField, ShowInInspector]
-        private Dictionary<GraphQLRequestType, UnityEvent<GraphQLRequestFailedSignal>> FailedActionMap = new Dictionary<GraphQLRequestType, UnityEvent<GraphQLRequestFailedSignal>>();
+        [SerializeField]
+        private Dictionary<GraphQLRequestType, Action<GraphQLRequestFailedSignal>> FailedActionMap = new Dictionary<GraphQLRequestType, Action<GraphQLRequestFailedSignal>>();
         #endregion
         
-        private ObscuredString Token;
-
         #region Services
         public override void InitializeService()
         {
@@ -70,16 +73,26 @@ namespace Sandbox.GraphQL
             CurrentServiceState.Value = ServiceState.Initialized;
         }
 
+        public override IEnumerator InitializeServiceSequentially()
+        {
+            PrepareSignals();
+            PrepareFsm();
+
+            yield return null;
+
+            CurrentServiceState.Value = ServiceState.Initialized;
+        }
+
         public override void TerminateService()
         {
-            foreach(KeyValuePair<GraphQLRequestType, UnityEvent<GraphQLRequestSuccessfulSignal>> pair in SuccessActionMap)
+            foreach(KeyValuePair<GraphQLRequestType, Action<GraphQLRequestSuccessfulSignal>> pair in SuccessActionMap)
             {
-                pair.Value.RemoveAllListeners();
+                //pair.Value.RemoveAllListeners();
             }
 
-            foreach (KeyValuePair<GraphQLRequestType, UnityEvent<GraphQLRequestFailedSignal>> pair in FailedActionMap)
+            foreach (KeyValuePair<GraphQLRequestType, Action<GraphQLRequestFailedSignal>> pair in FailedActionMap)
             {
-                pair.Value.RemoveAllListeners();
+                //pair.Value.RemoveAllListeners();
             }
         }
         #endregion
@@ -91,33 +104,47 @@ namespace Sandbox.GraphQL
 
             FsmState idle = Fsm.AddState(IDLE);
             FsmState login = Fsm.AddState(LOGIN);
+            FsmState loginFb = Fsm.AddState(LOGIN_FB);
             FsmState configure = Fsm.AddState(CONFIGURE);
             FsmState requests = Fsm.AddState(REQUESTS);
             FsmState done = Fsm.AddState(DONE);
 
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.GRAPHQL + "GraphQLDataFlow::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
+
+            // Fsm transitions
             idle.AddTransition(ON_LOGIN, login);
+            idle.AddTransition(ON_LOGIN_FB, loginFb);
             idle.AddTransition(ON_REQUEST, requests);
 
             login.AddTransition(ON_CONFIGURE, configure);
+            loginFb.AddTransition(ON_CONFIGURE, configure);
             configure.AddTransition(CONTINUE, idle);
             requests.AddTransition(CONTINUE, done);
             done.AddTransition(CONTINUE, idle);
 
             login.AddAction(new FsmDelegateAction(login, delegate (FsmState owner)
             {
-                this.Publish(new GraphQLLoginRequestSignal() { unique_id = Platform.DeviceId });
+                this.Publish(new GraphQLLoginRequestSignal() { UniqueId = Platform.DeviceId });
+            }));
+
+            loginFb.AddAction(new FsmDelegateAction(loginFb, delegate (FsmState owner)
+            {
+                this.Publish(new GraphQLFBLoginRequestSignal() { UniqueId = Platform.DeviceId, FacebookToken = QuerySystem.Query<string>(FBID.UserFacebookToken) });
             }));
 
             configure.AddAction(new FsmDelegateAction(configure, delegate (FsmState owner)
             {
-                this.Publish(new GraphQLConfigureRequestSignal() { Token = Token });
+                this.Publish(new GraphQLConfigureRequestSignal() { Token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN) });
             }));
 
-            // +AS:06192018 TODO: Queue the graphql requests!
+            // TODO: +AS:06192018 Queue the graphql requests!
             requests.AddAction(new FsmDelegateAction(requests, delegate (FsmState owner)
             {
-                // [TEST]
-                this.Publish(new GraphQLAnnouncementRequestSignal() { Token = Token, ShowUpcoming = true });
+                // NOTE: +AS:06192018 Test only
+                this.Publish(new GraphQLAnnouncementRequestSignal() { Token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ShowUpcoming = true });
             }));
 
             done.AddAction(new FsmDelegateAction(done, delegate (FsmState owner)
@@ -130,6 +157,10 @@ namespace Sandbox.GraphQL
                 .Where(state => state == done)
                 .Subscribe(_ => this.Publish(new OnGraphQLDone()))
                 .AddTo(this);
+
+            this.UpdateAsObservable()
+                .Subscribe(_ => Fsm.Update())
+                .AddTo(this);
         }
         #endregion
 
@@ -140,7 +171,13 @@ namespace Sandbox.GraphQL
             {
                 Assertion.Assert(result, D.ERROR + "GraphDataFlow::PrepareSignals {0} should contain {1} resolver!\n", map, GraphQLRequestType.LOGIN);
             };
-
+            
+            /*
+            SuccessActionMap[GraphQLRequestType.LOGIN].AddListener(LoginSuccessResolver);
+            SuccessActionMap[GraphQLRequestType.CONFIGURE].AddListener(ConfigureSuccessResolver);
+            SuccessActionMap[GraphQLRequestType.ANNOUNCEMENTS].AddListener(AnnouncementSuccessResolver);
+            //*/
+           
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.LOGIN), GraphQLRequestType.LOGIN, "SuccessActionMap");
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.CONFIGURE), GraphQLRequestType.CONFIGURE, "SuccessActionMap");
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.ANNOUNCEMENTS), GraphQLRequestType.ANNOUNCEMENTS, "SuccessActionMap");
@@ -148,12 +185,6 @@ namespace Sandbox.GraphQL
             Assert(FailedActionMap.ContainsKey(GraphQLRequestType.LOGIN), GraphQLRequestType.LOGIN, "FailedActionMap");
             Assert(FailedActionMap.ContainsKey(GraphQLRequestType.CONFIGURE), GraphQLRequestType.CONFIGURE, "FailedActionMap");
             Assert(FailedActionMap.ContainsKey(GraphQLRequestType.ANNOUNCEMENTS), GraphQLRequestType.ANNOUNCEMENTS, "FailedActionMap");
-
-            /*
-            SuccessActionMap[GraphQLRequestType.LOGIN].AddListener(LoginSuccessResolver);
-            SuccessActionMap[GraphQLRequestType.CONFIGURE].AddListener(ConfigureSuccessResolver);
-            SuccessActionMap[GraphQLRequestType.ANNOUNCEMENTS].AddListener(AnnouncementSuccessResolver);
-            //*/
             
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => SuccessActionMap.ContainsKey(_.Type))
@@ -176,20 +207,52 @@ namespace Sandbox.GraphQL
                 .AddTo(this);
 
             this.Receive<OnGraphLoginSignal>()
+                .Where(_ => _.IsGuest)
                 .Subscribe(_ => Fsm.SendEvent(ON_LOGIN))
                 .AddTo(this);
+
+            this.Receive<OnGraphLoginSignal>()
+                .Where(_ => !_.IsGuest)
+                .Subscribe(_ => Fsm.SendEvent(ON_LOGIN_FB))
+                .AddTo(this);
+
+            this.Receive<OnGraphLoginSignal>()
+                .Subscribe(_ => Debug.LogFormat(D.FGC + "GraphQLDataFlow::OnGraphLoginSignal IsGuest:{0}\n", _.IsGuest))
+                .AddTo(this);
+
+
         }
         #endregion
 
         #region Success Resolvers
         public void LoginSuccessResolver(GraphQLRequestSuccessfulSignal result)
         {
-            Token = result.GetData<ObscuredString>();
             Fsm.SendEvent(ON_CONFIGURE);
+        }
+
+        public void ConfigureSuccessResolver(GraphQLRequestSuccessfulSignal result)
+        {
+            Fsm.SendEvent(CONTINUE);
+        }
+
+        public void AnnouncementSuccessResolver(GraphQLRequestSuccessfulSignal result)
+        {
+            Fsm.SendEvent(CONTINUE);
         }
         #endregion
 
         #region Failed Resolvers
+        public void LoginFailResolver(GraphQLRequestFailedSignal result)
+        {
+        }
+
+        public void ConfigureFailResolver(GraphQLRequestFailedSignal result)
+        {
+        }
+
+        public void AnnouncementFailResolver(GraphQLRequestFailedSignal result)
+        {
+        }
         #endregion
 
         #region Debug

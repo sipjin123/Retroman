@@ -33,26 +33,31 @@ namespace Sandbox.Popup
     using FScene = Framework.Scene;
     using UScene = UnityEngine.SceneManagement.Scene;
     using UObject = UnityEngine.Object;
+    using Sandbox.ButtonSandbox;
 
     public struct OnShowPopupSignal
     {
-        public Popup Popup;
+        public PopupType Popup;
         public PopupData PopupData;
     }
 
-    public class PopupCollectionRoot : FScene
+    public struct OnCloseActivePopup { }
+
+    public partial class PopupCollectionRoot : FScene
     {
         [SerializeField]
         [TabGroup("New Group", "Popup")]
         private int PlaneDistance = 30;
-
+        
         [SerializeField]
+        [LabelText("PopupType")]
+        [ValueDropdown("GetPopups")]
         [TabGroup("New Group", "Popup")]
-        private Popup _CurrentPopup;
-        public Popup CurrentPopup
+        private string _CurrentPopup;
+        public int CurrentPopup
         {
-            get { return _CurrentPopup; }
-            private set { _CurrentPopup = value; }
+            get { return _CurrentPopup.ToPopupValue(); }
+            private set { _CurrentPopup = value.ToPopup().Type; }
         }
 
         [SerializeField]
@@ -62,7 +67,7 @@ namespace Sandbox.Popup
         [SerializeField]
         [TabGroup("New Group", "Popup")]
         private List<PopupWindow> Popups;
-
+        
         #region Unity Life Cycle
 
         protected override void Awake()
@@ -71,27 +76,8 @@ namespace Sandbox.Popup
 
             Assertion.AssertNotNull(Blocker);
             Assertion.AssertNotNull(Popups);
-
-            //All Generic Button Handlers are moved to System Root
-            AddButtonHandler(EButton.Popup001, delegate (ButtonClickedSignal signal)
-            {
-                //QuerySystem.Query<PopupCollectionRoot>(QueryIds.PopupCollection).Show(Popup.Popup001);
-                Show(Popup.Popup001);
-            });
-
-            AddButtonHandler(EButton.Popup002, delegate (ButtonClickedSignal signal)
-            {
-                //QuerySystem.Query<PopupCollectionRoot>(QueryIds.PopupCollection).Show(Popup.Popup002);
-                Show(Popup.Popup002);
-            });
-
-            AddButtonHandler(EButton.Popup003, delegate (ButtonClickedSignal signal)
-            {
-                //QuerySystem.Query<PopupCollectionRoot>(QueryIds.PopupCollection).Show(Popup.Popup003);
-                Show(Popup.Popup003);
-            });
-
-            AddButtonHandler(EButton.Close, delegate (ButtonClickedSignal signal)
+            
+            AddButtonHandler(ButtonType.Close, delegate (ButtonClickedSignal signal)
             {
                 //Add Chronos 
                 CloseActivePopup();
@@ -99,6 +85,10 @@ namespace Sandbox.Popup
 
             this.Receive<OnShowPopupSignal>()
                 .Subscribe(_ => Show(_.Popup, _.PopupData))
+                .AddTo(this);
+
+            this.Receive<OnCloseActivePopup>()
+                .Subscribe(_ => this.CloseActivePopup())
                 .AddTo(this);
         }
 
@@ -126,8 +116,19 @@ namespace Sandbox.Popup
             SortPopupCanvas();
         }
 
+        /// <summary>
+        /// NOTE: Temp fix for PopupCollection sort order bug
+        /// TODO: Adjust SystemCanvas to handle the stack order of popups
+        /// </summary>
         private void SortPopupCanvas()
         {
+            Camera camera = null;
+            bool hasCamera = true;
+            if (hasCamera = (SystemCanvas.IsUsingSystemCamera() && QuerySystem.HasResolver(QueryIds.SystemCamera)))
+            {
+                camera = QuerySystem.Query<Camera>(QueryIds.SystemCamera);
+            }
+
             // Fix canvas order
             CanvasSetup canvas;
             int count = SystemCanvas.Count;
@@ -140,34 +141,44 @@ namespace Sandbox.Popup
                 if (i == 0)
                 {
                     canvas.PlaneDistance = Mathf.Max(0, PlaneDistance);
+                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 2;
                 }
                 // Front most
                 else if (i == 1)
                 {
                     canvas.PlaneDistance = Mathf.Max(0, PlaneDistance - 10);
+                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt();
                 }
                 // Middle
                 else
                 {
                     canvas.PlaneDistance = Mathf.Max(0, PlaneDistance - 5);
+                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 1;
+                }
+
+                canvas.Canvas.planeDistance = canvas.PlaneDistance;
+                canvas.Canvas.renderMode = canvas.RenderMode;
+
+                if (hasCamera)
+                {
+                    canvas.Canvas.worldCamera = camera;
                 }
 
                 SystemCanvas.CanvasList[i] = canvas;
                 Debug.LogFormat(D.WARNING + " A I:{0} D:{1} N:{2}\n", i, canvas.PlaneDistance, canvas.Canvas.name);
             }
-            
-            // setup scene canvas
-            SystemCanvas.SetupSceneCanvas();
         }
-
-        private IEnumerator Load(Popup popUp, Deferred deferred = null)
+        
+        private IEnumerator Load(PopupType popUp, Deferred deferred = null)
         {
             yield return StartCoroutine(Load(popUp, deferred, null));
         }
 
-        private IEnumerator Load(Popup popUp, Deferred deferred = null, PopupData popupData = null)
+        private IEnumerator Load(PopupType popUp, Deferred deferred = null, PopupData popupData = null)
         {
-            string popupScene = popUp.ToString();
+            string popupScene = popUp.Type;
+
+            Debug.LogFormat(D.POPUP + "PopupCollectionRoot::Load loading {0}\n", popupScene);
 
             //Debug.LogErrorFormat("++++Popup loaded! P:{0} Def:{1} Time:{2}\n", popUp, deferred, Time.time);
 
@@ -180,14 +191,20 @@ namespace Sandbox.Popup
 
             Transform root = transform;
             UScene loadedScene = SceneManager.GetSceneByName(popupScene);
-            List<GameObject> rawObjects = new List<GameObject>(loadedScene.GetRootGameObjects());
+            List<GameObject> rawObjects = new List<GameObject>();
+            loadedScene.GetRootGameObjects(rawObjects);
             List<PopupWindow> objects = rawObjects.ToArray<PopupWindow>();
 
+            if (objects.Count != 1)
+            {
+                rawObjects.ForEach(o => Debug.LogFormat(D.ERROR + "GameObject:{0} PopupWindow:{1}\n", o.name, o.GetComponent<PopupWindow>()));
+            }
+
             // make sure the scenes only has 1 root object
-            Assertion.Assert(objects.Count == 1);
+            Assertion.Assert(objects.Count == 1, D.ERROR + "PopupCollectionRoot::Load Popup:{0} should only have 1 PopupWindow. RawCount:{1} PopupCount:{2}\n", popupScene, rawObjects.Count, objects.Count);
 
             // fix object parenting setup
-            GameObject obj = objects[0].gameObject;
+            GameObject obj = objects.FirstOrDefault().gameObject;
             obj.transform.SetParent(root);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localScale = Vector3.one;
@@ -195,17 +212,18 @@ namespace Sandbox.Popup
             obj.SetActive(true);
 
             // fix canvas settings
+            Canvas canvas = obj.GetComponent<Canvas>();
             PopupWindow window = obj.GetComponent<PopupWindow>();
             window.SetPopupData(popupData);
             Popups.Add(window);
-
-            if (obj.GetComponent<Canvas>() != null)
+            
+            if (canvas != null)
             {
                 CanvasSetup setup = new CanvasSetup();
                 setup.RenderMode = RenderMode.ScreenSpaceCamera;
                 setup.PlaneDistance = PlaneDistance;
                 setup.SceneDepth = ESceneDepth.PopUp;
-                setup.Canvas = obj.GetComponent<Canvas>();
+                setup.Canvas = canvas;
 
                 if (SystemCanvas.Count <= 1)
                 {
@@ -218,14 +236,14 @@ namespace Sandbox.Popup
             }
             else
             {
-                Debug.LogError("The Loaded Object has NO Canvas\n");
+                Debug.LogErrorFormat(D.ERROR + "PopupCollectionRoot::Load The loaded object:{0} has no Canvas component.\n", obj.name);
             }
 
             // Fix canvas sorting
             SortPopupCanvas();
             //yield return SceneManager.UnloadSceneAsync(popupScene);
             //yield return SceneManager.UnloadSceneAsync(window.PopUp.ToString());
-            Popup pop = window.PopUp;
+            PopupType pop = window.PopUp.ToPopup();
             yield return StartCoroutine(UnloadScene(pop));
 
             //Debug.LogErrorFormat("----Popup unloaded! P:{0} Def:{1}\n", pop, deferred);
@@ -236,11 +254,11 @@ namespace Sandbox.Popup
             }
         }
 
-        private IEnumerator UnloadScene(Popup popup)
+        private IEnumerator UnloadScene(PopupType popup)
         {
             //Debug.LogErrorFormat("UnloadScene:{0} IsValid:{1}\n", popup, SceneManager.GetSceneByName(popup.ToString()).IsValid());
 
-            UScene loadedPopup = SceneManager.GetSceneByName(popup.ToString());
+            UScene loadedPopup = SceneManager.GetSceneByName(popup.Type);
 
             if (loadedPopup.isLoaded)
             {
@@ -254,20 +272,20 @@ namespace Sandbox.Popup
             GC.Collect();
         }
 
-        public bool IsLoaded(Popup popup)
+        public bool IsLoaded(PopupType popup)
         {
-            return Popups.Exists(p => p.PopUp == popup);
+            return Popups.Exists(p => p.PopUp == popup.Value);
         }
 
-        public Promise Show(Popup popup)
+        public Promise Show(PopupType popup)
         {
             // cache pop up
             return Show(popup, null);
         }
 
-        public Promise Show(Popup popup, PopupData data = null)
+        public Promise Show(PopupType popup, PopupData data = null)
         {
-            CurrentPopup = popup;
+            CurrentPopup = popup.Value;
             Blocker.SetActive(true);
             Deferred deferred = new Deferred();
             StartCoroutine(Load(popup, deferred, data));
@@ -291,9 +309,9 @@ namespace Sandbox.Popup
             return Popups[0].GetComponent<T>();
         }
 
-        public bool HasPopUp(Popup popup)
+        public bool HasPopUp(PopupType popup)
         {
-            return Popups.Exists(p => p.PopUp == popup);
+            return Popups.Exists(p => p.PopUp == popup.Value);
         }
 
         public bool HasActivePopup()
@@ -305,7 +323,7 @@ namespace Sandbox.Popup
         [Button(25)]
         public void ShowSamplePopup()
         {
-            Show(Popup.Popup001);
+            Show(PopupType.Popup001);
         }
 
         [TabGroup("New Group", "Popup")]

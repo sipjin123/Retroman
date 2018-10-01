@@ -1,32 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Advertisements;
+
+using Sirenix.OdinInspector;
+
+using UniRx;
+using UniRx.Triggers;
+
+using Common.Fsm;
+using Common.Query;
 
 using Framework;
-using UniRx;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public struct RequestGraphQLLeaderboard
-	{
+    public struct GraphQLLeaderboardRequestSignal : IRequestSignal
+    {
 
 	}
 
 	public class GetLeaderboardTop : UnitRequest
 	 {
-		private ObscuredString Token;
-
 		public override void Initialze(GraphInfo info)
 		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
-				.Where(_ => _.Type == GraphQLRequestType.LOGIN)
-				.Subscribe(_ => Token = _.GetData<ObscuredString>())
-				.AddTo(this);
-
-			this.Receive<RequestGraphQLLeaderboard>()
-				.Subscribe(_ => GetLeaderboardTopRank(Token.GetDecrypted()))
+			this.Receive<GraphQLLeaderboardRequestSignal>()
+				.Subscribe(_ => GetLeaderboardTopRank(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
 				.AddTo(this);
 		}
 

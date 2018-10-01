@@ -2,8 +2,6 @@
 
 using Sirenix.OdinInspector;
 
-using Sirenix.OdinInspector;
-
 namespace Sandbox.GraphQL
 {
     public class GraphQLAdData
@@ -15,5 +13,4 @@ namespace Sandbox.GraphQL
         public float EndTime;
         public CustomAdType AdType;
     }
-
 }

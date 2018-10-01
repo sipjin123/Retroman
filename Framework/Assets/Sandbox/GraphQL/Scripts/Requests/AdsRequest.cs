@@ -1,57 +1,56 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 using UnityEngine;
+using UnityEngine.Advertisements;
+
+using Sirenix.OdinInspector;
 
 using UniRx;
 using UniRx.Triggers;
 
-using Sirenix.OdinInspector;
+using Common.Fsm;
+using Common.Query;
 
 using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
     public enum AdError
     {
         ADD01,
         ADD02,
         AD003,
     }
-
-
-    public struct GraphQLGetAllAdsRequestSignal
+    
+    public struct GraphQLGetAllAdsRequestSignal : IRequestSignal
     {
-        public ObscuredString token;
+        public string token;
     }
 
-    public struct GrapQLGetRandomAdRequestSignal
+    public struct GrapQLGetRandomAdRequestSignal : IRequestSignal
     {
-        public ObscuredString token;
+        public string token;
     }
 
-    public struct GraphQLEndAdSignal
+    public struct GraphQLEndAdSignal : IRequestSignal
     {
-        public ObscuredString token;
-        public ObscuredBool was_skipped;
-        public ObscuredFloat timemark;
+        public string token;
+        public bool was_skipped;
+        public float timemark;
         public AdvertisementPlay AdRequest;
     }
 
-    public struct GraphQLPlayAdRequestSignal
+    public struct GraphQLPlayAdRequestSignal : IRequestSignal
     {
-        public ObscuredString token;
-        public ObscuredString ad_id;
+        public string token;
+        public string ad_id;
     }
 
     [Serializable]
-    public class Advertisement
+    public class Advertisement : IJson
     {
         public string id;
         public string name;
@@ -67,14 +66,14 @@ namespace Sandbox.GraphQL
     }
 
     [Serializable]
-    public class AdvertisementEnd
+    public class AdvertisementEnd : IJson
     {
         public string id;
         public string status;
     }
 
     [Serializable]
-    public class AdvertisementPlay
+    public class AdvertisementPlay : IJson
     {
         public string id;//transaction id of ad
         public string status;
@@ -86,7 +85,7 @@ namespace Sandbox.GraphQL
     }
 
     [Serializable]
-    public class AdvertisementRandom
+    public class AdvertisementRandom : IJson
     {
         public string id;
         public string status;
@@ -96,7 +95,6 @@ namespace Sandbox.GraphQL
     public class AdsRequest : UnitRequest
     {
         #region Debug
-        private ObscuredString Token;
         public AdvertisementRandom CurrAd;
         public List<Advertisement> AllAds;
         #endregion
@@ -107,28 +105,23 @@ namespace Sandbox.GraphQL
             //also cache user data
             #region GraphQL Requests
             this.Receive<GraphQLGetAllAdsRequestSignal>()
-                .Subscribe(_ => GetAllAds(_.token.GetDecrypted()))
+                .Subscribe(_ => GetAllAds(_.token))
                 .AddTo(this);
 
             this.Receive<GrapQLGetRandomAdRequestSignal>()
-                .Subscribe(_ => GetRandomAd(_.token.GetDecrypted()))
+                .Subscribe(_ => GetRandomAd(_.token))
                 .AddTo(this);
 
             this.Receive<GraphQLEndAdSignal>()
-                .Subscribe(_ => EndAd(_.token.GetDecrypted(), _.AdRequest, _.was_skipped, _.timemark))
+                .Subscribe(_ => EndAd(_.token, _.AdRequest, _.was_skipped, _.timemark))
                 .AddTo(this);
 
             this.Receive<GraphQLPlayAdRequestSignal>()
-                .Subscribe(_ => PlayAd(_.token.GetDecrypted(), _.ad_id))
+                .Subscribe(_ => PlayAd(_.token, _.ad_id))
                 .AddTo(this);
             #endregion
 
             #region Debug
-            this.Receive<GraphQLRequestSuccessfulSignal>()
-                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
-                 .Subscribe(_ => Token = _.GetData<ObscuredString>())
-                 .AddTo(this);
-
             this.Receive<GraphQLRequestSuccessfulSignal>()
                  .Where(_ => _.Type == GraphQLRequestType.GET_ALL_ADS)
                  .Subscribe(_ => AllAds = _.GetData<List<Advertisement>>())
@@ -292,15 +285,7 @@ namespace Sandbox.GraphQL
             else
             {
                 ResultData data = result.Result;
-                if (data.data.advertisements == null || !string.IsNullOrEmpty(data.error.message))
-                {
-                    Debug.LogError(data.error.message);
-                    this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.GET_ALL_ADS });
-                }
-                else
-                {
-                    this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_ALL_ADS, Data = data.data.advertisements });
-                }
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_ALL_ADS, Data = data.data.advertisements });
             }
         }
 
@@ -413,13 +398,13 @@ namespace Sandbox.GraphQL
         [Button(25)]
         public void GetRandomAd()
         {
-            GetRandomAd(Token.GetDecrypted());
+            GetRandomAd(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));
         }
 
         [Button(25)]
         public void GetAllAds()
         {
-            GetAllAds(Token.GetDecrypted());
+            GetAllAds(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));
         }
         #endregion
     }

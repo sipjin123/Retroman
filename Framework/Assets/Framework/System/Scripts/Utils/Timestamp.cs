@@ -13,14 +13,12 @@ using Common.Signal;
 
 namespace Framework
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
     [Serializable]
     public class Timestamp
     {
-        private ObscuredString Key = "Timestamp";
+        private string Key = "Timestamp";
 
-        private ObscuredFloat RootTime;
+        private float RootTime;
 
         public Timestamp(string key)
         {

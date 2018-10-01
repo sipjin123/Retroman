@@ -35,6 +35,15 @@ namespace Sandbox.GraphQL
             CurrentServiceState.Value = ServiceState.Initialized;
         }
 
+        public override IEnumerator InitializeServiceSequentially()
+        {
+            InitializeRequests();
+
+            yield return null;
+
+            CurrentServiceState.Value = ServiceState.Initialized;
+        }
+
         public override void TerminateService()
         {
         }

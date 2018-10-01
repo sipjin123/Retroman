@@ -62,8 +62,9 @@ namespace Synergy88 {
 		}
 		public void ConfirmationYes()
 		{
+            /*
 			SoundControls.Instance._buttonClick.Play();
-			string _id = data.ItemId;
+			string _id = data.ItemNameId;
 			int _price = int.Parse(data.ItemPrice);
 			int _number = int.Parse(data.ItemStoreId);
 
@@ -71,7 +72,7 @@ namespace Synergy88 {
 			S88Signals.ON_UPDATE_PLAYER_CURRENCY.ClearParameters();
 			S88Signals.ON_UPDATE_PLAYER_CURRENCY.AddParameter(S88Params.PLAYER_CURRENCY, -_price );
 			S88Signals.ON_UPDATE_PLAYER_CURRENCY.Dispatch();
-			PlayerPrefs.SetInt("Bought"+ data.ItemId,1);
+			PlayerPrefs.SetInt("Bought"+ data.ItemNameId,1);
 			PlayerPrefs.SetInt("CurrentCharacter",_number) ;
 
 			DisableConrimationWindow();
@@ -79,7 +80,7 @@ namespace Synergy88 {
 
 			S88Signals.ON_STORE_ITEM_PURCHASE.ClearParameters();
 			S88Signals.ON_STORE_ITEM_PURCHASE.AddParameter(S88Params.STORE_ITEM_ID, _id);
-			S88Signals.ON_STORE_ITEM_PURCHASE.Dispatch();
+			S88Signals.ON_STORE_ITEM_PURCHASE.Dispatch();*/
 		}
 
 

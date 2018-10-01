@@ -95,10 +95,10 @@ namespace Sandbox.Audio
 
         //gradually shifts the sound comming from our audio sources to the this clip:
         // maxVolume should be in 0-to-1 range
-        public void CrossFade(AudioClip clipToPlay, float maxVolume, float fadingTime, float delay_before_crossFade = 0)
+        public void CrossFade(AudioClip clipToPlay, float maxVolume, float fadingTime, float delay_before_crossFade = 0, bool loop = false)
         {
             //var fadeRoutine = StartCoroutine(Fade(clipToPlay, maxVolume, fadingTime, delay_before_crossFade));
-            StartCoroutine(Fade(clipToPlay, maxVolume, fadingTime, delay_before_crossFade));
+            StartCoroutine(Fade(clipToPlay, maxVolume, fadingTime, delay_before_crossFade, loop));
 
         }//end CrossFade()
 
@@ -125,7 +125,7 @@ namespace Sandbox.Audio
         }
 
 
-        IEnumerator Fade(AudioClip playMe, float maxVolume, float fadingTime, float delay_before_crossFade = 0)
+        IEnumerator Fade(AudioClip playMe, float maxVolume, float fadingTime, float delay_before_crossFade = 0, bool loop = false)
         {
             if (delay_before_crossFade > 0)
             {
@@ -148,6 +148,10 @@ namespace Sandbox.Audio
                 newActiveSource = _source0;
             }
 
+            //update loop
+            curActiveSource.loop = loop;
+            newActiveSource.loop = loop;
+
             //perform the switching
             newActiveSource.clip = playMe;
             newActiveSource.Play();
@@ -162,6 +166,7 @@ namespace Sandbox.Audio
             {
                 StopCoroutine(_newSourceFadeRoutine);
             }
+
             bool sameClip = false;
             if (curActiveSource.clip == newActiveSource.clip)
             {

@@ -22,7 +22,7 @@ namespace Framework
     {
         private static readonly char SEP = Path.DirectorySeparatorChar;
 
-        [SerializeField, ShowInInspector]
+        [SerializeField]
         private string _UserId;
         public string UserId
         {
@@ -30,7 +30,7 @@ namespace Framework
             private set { _UserId = value; }
         }
 
-        [SerializeField, ShowInInspector]
+        [SerializeField]
         private string _LocalPath;
         public string LocalPath
         {
@@ -38,7 +38,7 @@ namespace Framework
             private set { _LocalPath = value; }
         }
 
-        [SerializeField, ShowInInspector]
+        [SerializeField]
         private string _LocalFolder;
         public string LocalFolder
         {
@@ -48,33 +48,37 @@ namespace Framework
 
         private readonly SimpleEncryption Encryption;
 
-        // +AS:20180627 TODO:Support file extension
-        public LocalData(string userId, params object[] fileName)
+        // TODO: +AS:20180627 Support file extension
+        public LocalData(string userId, params object[] folders)
         {
-            Assertion.Assert(fileName.Length > 0);
+            Assertion.AssertNotEmpty(userId, D.ERROR + "UserId should not be null or empty!\n");
+            Assertion.Assert(folders.Length > 0, D.ERROR + "folders should never be zero!\n");
 
             UserId = userId;
-            Encryption = new SimpleEncryption(UserId.ToBytes(), UserId);
+            Encryption = new SimpleEncryption(UserId.ToUTF8Bytes(), UserId);
             LocalPath = string.Format("{0}{1}{2}", Application.persistentDataPath, SEP, UserId);
             CreateDirectory(LocalPath);
 
-            int len = fileName.Length;
+            int len = folders.Length;
             if (len >= 2)
             {
                 for (int i = 0; i < len - 1; i++)
                 {
-                    LocalPath = string.Format("{0}{1}{2}", LocalPath, SEP, fileName[i]);
+                    LocalPath = string.Format("{0}{1}{2}", LocalPath, SEP, folders[i]);
                     CreateDirectory(LocalPath);
                 }
             }
 
             LocalFolder = string.Format("{0}{1}", LocalPath, SEP);
-            LocalPath = string.Format("{0}{1}{2}", LocalPath, SEP, fileName.LastOrDefault());
+            LocalPath = string.Format("{0}{1}{2}", LocalPath, SEP, folders.LastOrDefault());
         }
 
         public void CreateDirectory(string folder)
         {
-            Directory.CreateDirectory(folder);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
         }
 
         public string GetPath()
@@ -87,13 +91,20 @@ namespace Framework
             return File.Exists(LocalPath);
         }
 
+        public void Delete()
+        {
+            if (Exists()) 
+            {
+                File.Delete(LocalPath);
+            }
+        }
+
 #if ENCRYPT_LOCAL_DATA
         public void AppendToDisk<T>(T data, bool encrypt = true) where T : IJson
 #else
         public void AppendToDisk<T>(T data, bool encrypt = false) where T : IJson
 #endif
         {
-            // Create empty profile
             using (StreamWriter writer = new StreamWriter(LocalPath, true))
             {
                 if (!encrypt)
@@ -113,7 +124,6 @@ namespace Framework
         public void AppendToDisk<T>(List<T> data, bool encrypt = false) where T : IJson
 #endif
         {
-            // Create empty profile
             using (StreamWriter writer = new StreamWriter(LocalPath, true))
             {
                 if (!encrypt)
@@ -133,7 +143,6 @@ namespace Framework
         public void ReplaceToDisk<T>(T data, bool encrypt = false) where T : IJson
 #endif
         {
-            // Create empty profile
             using (StreamWriter writer = new StreamWriter(LocalPath, false))
             {
                 if (!encrypt)
@@ -153,7 +162,6 @@ namespace Framework
         public void ReplaceToDisk<T>(List<T> data, bool encrypt = false) where T : IJson
 #endif
         {
-            // Create empty profile
             using (StreamWriter writer = new StreamWriter(LocalPath, false))
             {
                 if (!encrypt)
@@ -181,11 +189,11 @@ namespace Framework
                 {
                     if (!isEncrypted)
                     {
-                        t = line.FromJson<T>();
+                        t = line.ToJson<T>();
                     }
                     else
                     {
-                        t = Encryption.Decrypt(line).FromJson<T>();
+                        t = Encryption.Decrypt(line).ToJson<T>();
                     }
 
                     break;
@@ -210,11 +218,11 @@ namespace Framework
                 {
                     if (!isEncrypted)
                     {
-                        t = line.FromJson<T>();
+                        t = line.ToJson<T>();
                     }
                     else
                     {
-                        t = Encryption.Decrypt(line).FromJson<T>();
+                        t = Encryption.Decrypt(line).ToJson<T>();
                     }
 
                     set.Add(t);

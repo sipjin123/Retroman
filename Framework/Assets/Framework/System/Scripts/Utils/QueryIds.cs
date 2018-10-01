@@ -18,19 +18,7 @@ namespace Framework
         public const string CurrentScene = "CurrentScene";
         public const string PreviousScene = "PreviousScene";
         public const string Preloader = "Preloader";
-        public const string PopupCollection = "PopupCollection";
-        public const string LoadingProgress = "LoadingProgress";
-
-        // Facebook Login
-        public const string HasLoggedInUser = "HasLoggedInUser";
-        public const string UserEmail = "UserEmail";
-        public const string UserFacebookId = "UserFacebookId";
-        public const string UserFirstName = "UserFirstName";
-        public const string UserFullName = "UserFullName";
-        public const string UserProfilePhoto = "UserProfilePhoto";
-        public const string UserGender = "UserGender";
-        public const string UserBirthday = "UserBirthday";
-
+        
         // IAP
         public const string StoreIsReady = "StoreIsReady";
         public const string StoreItems = "StoreItems";
@@ -134,8 +122,7 @@ namespace Framework
         public const string PreloaderLoadingProgress = "PreloaderLoadingProgress";
         public const string FreeCoinAmount = "FreeCoinAmount";
         public const string CoinAmount = "CoinAmount";
-        public const string FBPhoto = "FBPhoto";
-        public const string MusicIsMute = "MusicIsMute";
+
         public const string DebugBuild = "DebugBuild";
         public const string IsConnected = "IsConnected";
         public const string Connecting = "Connecting";

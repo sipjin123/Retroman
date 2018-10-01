@@ -69,9 +69,12 @@ namespace Synergy88 {
 		}
 
 		protected override void OnEnable() {
-			try{
-                Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(true);
-			}catch{}
+			try
+            {
+                Debug.LogError("Repalced to UI");
+                // Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(true);
+            }
+            catch{}
 			S88Signals.ON_CLICKED_BUTTON.AddListener(ResetGame);
 
 				
@@ -87,7 +90,8 @@ namespace Synergy88 {
 
 		protected override void OnDisable() {
 			try{
-                Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(false);
+                Debug.LogError("Repalced to UI");
+            //    Factory.Get<DataManagerService>().GameControls._resultCharParent.SetActive(false);
 			}catch{}
 			S88Signals.ON_CLICKED_BUTTON.RemoveListener(ResetGame);
 			base.OnDisable();

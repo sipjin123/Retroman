@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -11,6 +13,12 @@ using Framework;
 
 namespace Sandbox.Services
 {
+    public enum LoadType
+    {
+        Sequential,
+        Parallel,
+    };
+
     /// <summary>
     /// This handles initialization and termination of services.
     /// IService references are retrieved from this GameObject's children.
@@ -21,22 +29,23 @@ namespace Sandbox.Services
     {
         [SerializeField]
         [TabGroup("New Group", "Services")]
+        private LoadType _LoadType = LoadType.Sequential;
+        public LoadType LoadType
+        {
+            get { return _LoadType; }
+        }
+
+        [SerializeField]
+        [TabGroup("New Group", "Services")]
         private IService[] Services;
 
-        protected override void OnEnable()
+        protected override void Start()
         {
-            base.OnEnable();
+            base.Start();
 
             InitializeServices();
         }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-
-            TerminateServices();
-        }
-
+        
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -44,13 +53,20 @@ namespace Sandbox.Services
             TerminateServices();
         }
 
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Services")]
+        public void CacheServices()
+        {
+            // get all services from child GameObjects
+            Services = GetComponentsInChildren<IService>();
+        }
+
         /// <summary>
         /// Finds and initializes services.
         /// </summary>
         private void InitializeServices()
         {
-            // get all services from child GameObjects
-            Services = GetComponentsInChildren<IService>();
+            CacheServices();
 
             if (Services.Length == 0)
             {
@@ -59,10 +75,23 @@ namespace Sandbox.Services
                 return;
             }
 
+            if (LoadType.Equals(LoadType.Parallel))
+            {
+                StartCoroutine(InitializeServicesParallelly());
+            }
+            else
+            {
+                StartCoroutine(InitializeServicesSequentially());
+            }
+        }
+
+        private IEnumerator InitializeServicesParallelly()
+        {
+            yield return null;
             // initialize each service
             foreach (IService service in Services)
             {
-                Debug.LogWarningFormat("{0} Initializing {1}...", Time.time, service.ServiceName);
+                Debug.LogFormat(D.SERVICE + "{0} Initializing {1}...\n", Time.time, service.ServiceName);
 
                 // subscribe to service being ready
                 service.CurrentServiceState
@@ -70,7 +99,7 @@ namespace Sandbox.Services
                     .Take(1)
                     .Subscribe(state =>
                     {
-                        Debug.LogWarningFormat("{0} {1} state: {2}", Time.time, service.ServiceName, state);
+                        Debug.LogFormat(D.SERVICE + "{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
                         CheckAllServicesReady();
                     })
                     .AddTo(this);
@@ -79,15 +108,40 @@ namespace Sandbox.Services
                 service.InitializeService();
             }
         }
+        private IEnumerator InitializeServicesSequentially()
+        {
+            // initialize each service
+            foreach (IService service in Services)
+            {
+                Debug.LogFormat(D.SERVICE + "{0} Initializing {1}...\n", Time.time, service.ServiceName);
+
+                // subscribe to service being ready
+                service.CurrentServiceState
+                    .Where(state => state > ServiceState.Uninitialized)
+                    .Take(1)
+                    .Subscribe(state =>
+                    {
+                        Debug.LogFormat(D.SERVICE + "{0} {1} state: {2}\n", Time.time, service.ServiceName, state);
+                        CheckAllServicesReady();
+                    })
+                    .AddTo(this);
+
+                // initialize service
+                yield return StartCoroutine(service.InitializeServiceSequentially());
+            }
+        }
 
         /// <summary>
         /// Checks if all services are ready and publishes ServicesReadySignal when they are.
         /// </summary>
         private void CheckAllServicesReady()
         {
-            bool allServicesReady = Array.Find(Services, s => s.CurrentServiceState.Value == ServiceState.Uninitialized) == null && // check if no service is still at None state
+            bool allServicesReady =
+                Array.Find(Services, s => s.CurrentServiceState.Value == ServiceState.Uninitialized) == null && // check if no service is still at None state
                 Array.Find(Services, s => s.CurrentServiceState.Value == ServiceState.Error && s.IsServiceRequired) == null; // check if no required service has an error
-            Debug.LogWarningFormat("{0} CheckAllServicesReady: {1}", Time.time, allServicesReady);
+
+            Debug.LogFormat(D.SERVICE + "{0} CheckAllServicesReady: {1}\n", Time.time, allServicesReady);
+
             if (allServicesReady)
             {
                 // let system know services are ready
@@ -108,7 +162,7 @@ namespace Sandbox.Services
             {
                 if (service == null)
                 {
-                    UnityEngine.Debug.LogWarningFormat("ServicesRoot: Tried to terminate a null service reference");
+                    Debug.LogFormat(D.SERVICE + "ServicesRoot: Tried to terminate a null service reference\n");
                     continue;
                 }
 

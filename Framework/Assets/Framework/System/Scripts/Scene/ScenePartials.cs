@@ -12,6 +12,7 @@ using UniRx;
 using Common;
 using Common.Query;
 using Common.Signal;
+using Common.Utils;
 
 namespace Framework
 {
@@ -22,12 +23,11 @@ namespace Framework
     using System.Linq;
 
     // alias
-    using CColor = Framework.Color;
     using UScene = UnityEngine.SceneManagement.Scene;
 
     #region Scene extension (Load, Unload, and Wait)
 
-    public partial class Scene : MonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour
     {
         public static ValueDropdownList<string> SceneList;
 
@@ -263,7 +263,7 @@ namespace Framework
 
             this.Publish(new OnLoadSceneSignal(scene));
         }
-
+        
         /// <summary>
         /// Loads the given scene additively.
         /// </summary>
@@ -417,6 +417,13 @@ namespace Framework
 
         public IEnumerator UnloadAllScenes()
         {
+            List<SceneEntry> entries = Factory.Get<SceneReference>().FindScenes(false);
+            foreach (SceneEntry e in entries)
+            {
+                AsyncOperation operation = SceneManager.UnloadSceneAsync(e.Scene);
+                yield return operation;
+            }
+            
             int sceneCount = SceneManager.sceneCount;
             UScene[] scenes = new UScene[sceneCount];
 
@@ -453,7 +460,7 @@ namespace Framework
                         break;
                     }
 
-                    Debug.LogFormat(D.L("[FRAMEWORK]") + " Scene::UnloadAllScenes Unloading Scene:{0}\n", sceneName);
+                    Debug.LogFormat(D.F + " Scene::UnloadAllScenes Unloading Scene:{0}\n", sceneName);
 
                     operation = SceneManager.UnloadSceneAsync(sceneName);
                     unload = true;

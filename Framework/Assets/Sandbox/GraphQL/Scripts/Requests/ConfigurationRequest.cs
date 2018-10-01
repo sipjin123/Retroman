@@ -16,15 +16,13 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
-    using CodeStage.AntiCheat.ObscuredTypes;
-
-    public struct GraphQLConfigureRequestSignal
+    public struct GraphQLConfigureRequestSignal : IRequestSignal
     {
-        public ObscuredString Token;
+        public string Token;
     }
     
     [Serializable]
-    public class Config
+    public class Config : IJson
     {
         public string key;
         public string value;
@@ -40,7 +38,7 @@ namespace Sandbox.GraphQL
             base.Initialze(info);
 
             this.Receive<GraphQLConfigureRequestSignal>()
-                .Subscribe(_ => Configure(_.Token.GetDecrypted()))
+                .Subscribe(_ => Configure(_.Token))
                 .AddTo(this);
         }
 

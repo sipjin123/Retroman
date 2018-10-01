@@ -41,16 +41,17 @@ namespace Sandbox.Downloader
 
         private AssetDownloadedData DownloadedData;
 
-        public IEnumerator InitializeServiceSequentially()
+        public override IEnumerator InitializeServiceSequentially()
         {
-            InitializeService();
-
-            while (CurrentServiceState.Value != ServiceState.Initialized)
-            {
-                yield return null;
-            }
+            this.Receive<DownloadAssetSignal>()
+                //.ObserveOnMainThread()
+                //.Delay(TimeSpan.FromSeconds(0.15))
+                .Subscribe(sig => OnDownloadImage(sig))
+                .AddTo(this);
 
             yield return null;
+
+            CurrentServiceState.Value = ServiceState.Initialized;
         }
 
         public override void InitializeService()
@@ -63,7 +64,7 @@ namespace Sandbox.Downloader
 
             CurrentServiceState.Value = ServiceState.Initialized;
         }
-
+        
         public override void TerminateService()
         {
         }
