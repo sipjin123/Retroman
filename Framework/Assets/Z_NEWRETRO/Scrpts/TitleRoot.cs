@@ -26,8 +26,9 @@ namespace Retroman
         public Canvas _ExitGameCanvas;
         public Canvas _SpamBlockerCanvas;
 
-        MessageBroker _MessageBroker;
+        MessageBroker _Broker;
         public CanvasGroup _InteractiveCanvas;
+        //=====================================================================
         protected override void Awake()
         {
             base.Awake();
@@ -36,9 +37,10 @@ namespace Retroman
         protected override void Start()
         {
             base.Start();
-            _MessageBroker = Factory.Get<DataManagerService>().MessageBroker;
+            _Broker = Factory.Get<DataManagerService>().MessageBroker;
             ButtonSetup();
             InitializeSignals();
+            _Broker.Publish(new AUTOMATED_UI_STATE { Scene = EScene.TitleRoot });
         }
 
         protected override void OnEnable()
@@ -55,16 +57,24 @@ namespace Retroman
         {
             base.OnDestroy();
         }
-
+        //=====================================================================
         void InitializeSignals()
         {
-            _MessageBroker.Receive<PressBackButton>().Subscribe(_ => 
+            _Broker.Receive<AUTOMATE_TRIGGER>().Subscribe(_ =>
             {
-                if (ifCoolDownSpam == true)
+                switch(_.AutomateType)
                 {
-                    Debug.LogError(D.B + "Do Not Spam");
-                    return;
+                    case AutomateType.GoToGame:
+                        GoToGame();
+                        break;
                 }
+            }).AddTo(this);
+
+
+
+
+            _Broker.Receive<PressBackButton>().Subscribe(_ => 
+            {
 
                 if (_.BackButtonType == BackButtonType.SceneIsTitle)
                 {
@@ -89,55 +99,30 @@ namespace Retroman
            // _MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ => { MainCanvas.enabled = false; }).AddTo(this);
         }
 
-        void ButtonSetup()
+        //=====================================================================
+        #region SCENEFLOW
+        void GoToGame()
         {
-            AddButtonHandler(ButtonType.StartGame, delegate (ButtonClickedSignal signal)
-            {
-                _InteractiveCanvas.interactable = false;
-                GenericButtonPressed();
-                _MessageBroker.Publish(new LaunchGamePlay());
-            });
-            AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
-            {
-                _InteractiveCanvas.interactable = false;
-                GenericButtonPressed();
-                _MessageBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
-            });
-            AddButtonHandler(ButtonType.TutorialButton, delegate (ButtonClickedSignal signal)
-            {
-                GenericButtonPressed();
-                _MessageBroker.Publish(new ToggleCoins { IfActive = false });
-                _TutorialCanvas.enabled = (true);
-            });
-            AddButtonHandler(ButtonType.SettingsButton, delegate (ButtonClickedSignal signal)
-            {
-                _InteractiveCanvas.interactable = false;
-                GenericButtonPressed();
-                
-                _MessageBroker.Publish(new ChangeScene { Scene = EScene.SettingsRoot });
-                //_MessageBroker.Publish(new ToggleSetting { IfActive = true });
-            });
-        }
-
-        void GenericButtonPressed()
-        {
-            if (ifCoolDownSpam == false)
-            {
-                StartCoroutine(DelaySpam());
-            }
+            _InteractiveCanvas.interactable = false;
             SoundControls.Instance._buttonClick.Play();
+            _Broker.Publish(new LaunchGamePlay());
         }
-
-        bool ifCoolDownSpam;
-        IEnumerator DelaySpam()
+        void GoToSettings()
         {
-            _SpamBlockerCanvas.enabled = true;
-            ifCoolDownSpam = true;
-            yield return new WaitForSeconds(1);
-            ifCoolDownSpam = false;
-            _SpamBlockerCanvas.enabled = false;
-        }
+            _InteractiveCanvas.interactable = false;
+            SoundControls.Instance._buttonClick.Play();
 
+            _Broker.Publish(new ChangeScene { Scene = EScene.SettingsRoot });
+            //_MessageBroker.Publish(new ToggleSetting { IfActive = true });
+        }
+        void GoToShop()
+        {
+            _InteractiveCanvas.interactable = false;
+            SoundControls.Instance._buttonClick.Play();
+            _Broker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
+        }
+        #endregion
+        //=====================================================================
         #region BUTTONS CLICKS
         public void CloseTutorial()
         {
@@ -156,5 +141,30 @@ namespace Retroman
             _ExitGameCanvas.enabled = (false);
         }
         #endregion
+        //=====================================================================
+        #region BUTTON SETUP
+        void ButtonSetup()
+        {
+            AddButtonHandler(ButtonType.StartGame, delegate (ButtonClickedSignal signal)
+            {
+                GoToGame();
+            });
+            AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
+            {
+                GoToShop();
+            });
+            AddButtonHandler(ButtonType.TutorialButton, delegate (ButtonClickedSignal signal)
+            {
+                SoundControls.Instance._buttonClick.Play();
+                _Broker.Publish(new ToggleCoins { IfActive = false });
+                _TutorialCanvas.enabled = (true);
+            });
+            AddButtonHandler(ButtonType.SettingsButton, delegate (ButtonClickedSignal signal)
+            {
+                GoToSettings();
+            });
+        }
+        #endregion
+        //=====================================================================
     }
 }

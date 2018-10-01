@@ -44,7 +44,7 @@ public class GameControls : SerializedMonoBehaviour
 
     //IN GAME OPTIONS
     public bool _isPaused;
-
+    MessageBroker _Broker;
     public GameObject _startUpDesign;
 
     float _storeTimeScale;
@@ -53,12 +53,16 @@ public class GameControls : SerializedMonoBehaviour
     #region INITIALIZATION
     void Awake()
     {
+        _Broker = Factory.Get<DataManagerService>().MessageBroker;
+
+
+
         if (Factory.Get<DataManagerService>().GetHighScore() == 0)
         {
             UIHighScore.enabled = false;
             UIHighScore2.enabled = false;
         }
-        Factory.Get<DataManagerService>().MessageBroker.Receive<TogglePause>().Subscribe(_ =>
+        _Broker.Receive<TogglePause>().Subscribe(_ =>
         {
             if (_isPaused)
             {
@@ -69,7 +73,7 @@ public class GameControls : SerializedMonoBehaviour
                 LevelPause(true);
             }
         }).AddTo(this);
-        Factory.Get<DataManagerService>().MessageBroker.Receive<GameOverSignal>().Subscribe(_ =>
+        _Broker.Receive<GameOverSignal>().Subscribe(_ =>
         {
             if (Factory.Get<DataManagerService>().IFTestMode)
             {
@@ -77,18 +81,18 @@ public class GameControls : SerializedMonoBehaviour
             }
             GameOverIT();
         }).AddTo(this);
-        Factory.Get<DataManagerService>().MessageBroker.Receive<LaunchGamePlay>().Subscribe(_ =>
+        _Broker.Receive<LaunchGamePlay>().Subscribe(_ =>
         {
             StartButton();
         }).AddTo(this);
 
-        Factory.Get<DataManagerService>().MessageBroker.Receive<UpdateScore>().Subscribe(_ =>
+        _Broker.Receive<UpdateScore>().Subscribe(_ =>
         {
 
             UptateScoreing();
         }).AddTo(this);
 
-        Factory.Get<DataManagerService>().MessageBroker.Receive<AddScore>().Subscribe(_ =>
+        _Broker.Receive<AddScore>().Subscribe(_ =>
         {
             Score += _.ScoreToAdd;
         }).AddTo(this);
@@ -128,7 +132,7 @@ public class GameControls : SerializedMonoBehaviour
         _camAnim.enabled = false;
         _playerAnim.enabled = false;
 
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new PauseGame { IfPause = false });
+        _Broker.Publish(new PauseGame { IfPause = false });
         _InGameWindow.enabled = (true);
 
         UIScore.text = "0";
@@ -149,7 +153,7 @@ public class GameControls : SerializedMonoBehaviour
         if (_switch)
         {
             SoundControls.Instance.PauseBGM();
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ActivePlayerObject { IfActive = false });
+            _Broker.Publish(new ActivePlayerObject { IfActive = false });
             _resumeButton.SetActive(true);
             _pauseButton.SetActive(false);
             _storeTimeScale = Time.timeScale;
@@ -158,7 +162,7 @@ public class GameControls : SerializedMonoBehaviour
         else
         {
             SoundControls.Instance.REsumeBGM();
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new ActivePlayerObject { IfActive = true });
+            _Broker.Publish(new ActivePlayerObject { IfActive = true });
             _resumeButton.SetActive(false);
             _pauseButton.SetActive(true);
             Time.timeScale = _storeTimeScale;
@@ -166,9 +170,10 @@ public class GameControls : SerializedMonoBehaviour
     }
     public void ResetGame()
     {
+        Debug.LogError("Reached Reset Button Feasture");
         ResetButton.interactable = false;
         SoundControls.Instance._buttonClick.Play();
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new ChangeScene { Scene = Framework.EScene.GameRoot });
+        _Broker.Publish(new ChangeScene { Scene = Framework.EScene.GameRoot });
     }
     #endregion
     //==========================================================================================================================================
@@ -177,21 +182,21 @@ public class GameControls : SerializedMonoBehaviour
     {
 
         //  Factory.Get<DataManagerService>().PlayerControls._deathAnim.SetActive(true);
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new EnableRagdoll());
+        _Broker.Publish(new EnableRagdoll());
         StartCoroutine(GameOverDelay());
 
         SoundControls.Instance._sfxBGM.gameObject.SetActive(false);
         // Factory.Get<DataManagerService>().PlayerControls.enabled = false;
 
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new EnablePlayerControls { IfACtive = false });
+        _Broker.Publish(new EnablePlayerControls { IfACtive = false });
     }
     public IEnumerator GameOverDelay()
     {
         _InGameWindow.enabled = (false);
 
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new DisablePlayableCharacter());
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new EnablePlayerShadows { IfActive = false });
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new AddCoin { CoinsToAdd = (int)Score });
+        _Broker.Publish(new DisablePlayableCharacter());
+        _Broker.Publish(new EnablePlayerShadows { IfActive = false });
+        _Broker.Publish(new AddCoin { CoinsToAdd = (int)Score });
 
         //SET SCORE
         Factory.Get<DataManagerService>().SetScore(Score);
@@ -211,9 +216,10 @@ public class GameControls : SerializedMonoBehaviour
         Time.timeScale = 0;
 
         Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Show(PopupType.ResultsPopup);
+        _Broker.Publish(new AUTOMATED_UI_STATE { Scene = EScene.ResultRoot});
 
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new EndGame());
-        Factory.Get<DataManagerService>().MessageBroker.Publish(new ToggleCoins { IfActive = true });
+        _Broker.Publish(new EndGame());
+        _Broker.Publish(new ToggleCoins { IfActive = true });
 
     }
     #endregion

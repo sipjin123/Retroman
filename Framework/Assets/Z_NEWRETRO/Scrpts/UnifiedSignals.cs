@@ -20,6 +20,15 @@ public class UnifiedSignals : MonoBehaviour {
 
 namespace Retroman
 {
+    public class AUTOMATED_UI_STATE
+    {
+        public EScene Scene;
+    }
+    public class AUTOMATE_TRIGGER
+    {
+        public AutomateType AutomateType;
+    }
+
     public class ChangeScene
     {
         public EScene Scene;
@@ -140,7 +149,7 @@ namespace Retroman
     {
         public PlayerControls PlayerControls;
     }
-    public class CommandAIJump
+    public class CharJumpSignal
     {
 
     }
@@ -153,4 +162,9 @@ public enum BackButtonType
     SceneIsGame,
     ExitGame,
     SceneIsSettings
+}
+public enum AutomateType
+{
+    GoToGame,
+    ResetGame
 }

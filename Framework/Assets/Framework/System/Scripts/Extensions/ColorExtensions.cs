@@ -27,6 +27,7 @@ namespace Framework
         public static readonly string FGC = Color.cyan.LogHeader("[FGC]");
         public static readonly string SERVICE = Color.gray.LogHeader("[SERVICE]");
         public static readonly string GRAPHQL = Color.cyan.LogHeader("[GRAPHQL]");
+        public static readonly string AUTOMATION = Color.cyan.LogHeader("[AUTOMATION]");
 
         public static string L(string header)
         {

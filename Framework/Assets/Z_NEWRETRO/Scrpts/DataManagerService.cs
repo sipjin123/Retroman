@@ -5,6 +5,7 @@ using UniRx;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using Synergy88;
+using Zenject;
 
 namespace Retroman
 {
@@ -21,6 +22,13 @@ namespace Retroman
 
         public bool IFTestMode;
         public bool IfCanBack;
+
+        [SerializeField]
+        private SceneContext _SceneContext;
+
+        [SerializeField]
+        private ControlCenter _ControlCenter;
+
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
@@ -41,7 +49,6 @@ namespace Retroman
             Input.multiTouchEnabled = false;
             IFTestMode = false;
             Factory.Register<DataManagerService>(this);
-            Debug.LogError("Data Manager Set");
             GameCoins = PlayerPrefs.GetFloat(TotalGold_Key,0);
             SaveThisItem(ShopItems[0].ItemNameId);
             CurrentCharacterSelected = PlayerPrefs.GetInt(CurrentCharacterSelected_Key,1);
@@ -66,8 +73,9 @@ namespace Retroman
         public void InjectBroker(MessageBroker broker)
         {
             _MessageBroker = broker;
-
-            Factory.Get<AutomatedTestService>().InjectBroker(_MessageBroker);
+            _ControlCenter.InjectBroker(_MessageBroker);
+           // _SceneContext.Install();
+            //Factory.Get<AutomatedTestService>().InjectBroker(_MessageBroker);
             _MessageBroker.Receive<AddCoin>().Subscribe(_ =>
             {
 

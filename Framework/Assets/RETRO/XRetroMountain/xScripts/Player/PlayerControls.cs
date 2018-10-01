@@ -2,6 +2,8 @@
 using System.Collections;
 using Common.Utils;
 using UniRx;
+using Framework;
+
 namespace Retroman
 {
     public class PlayerControls : MonoBehaviour
@@ -157,6 +159,12 @@ namespace Retroman
                     _walkCounter--;
                 }
             }
+
+
+
+
+
+            /*//AUTOMATE
             //JUMP START
             if (!isJumping && isGrounded)
             {
@@ -177,12 +185,11 @@ namespace Retroman
                         JumpHold();
                     }
                 }
-            }
+            }*/
             _rigidbody.AddForce(-transform.up * (1000/25)); //1000);
 
             PlayerTurnFunction();
           //  RaycastFunction();
-
         }
         #region JUMPING
         public void GenericJump()
@@ -383,7 +390,7 @@ namespace Retroman
         {
 
 
-            _Broker.Receive<CommandAIJump>().Subscribe(_ =>
+            _Broker.Receive<CharJumpSignal>().Subscribe(_ =>
             {
                 GenericJump();
             }).AddTo(this);

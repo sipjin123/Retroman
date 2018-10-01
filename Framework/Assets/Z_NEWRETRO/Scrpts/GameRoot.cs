@@ -27,7 +27,7 @@ namespace Retroman
 
         public GameObject PauseResetButton;
         public GameControls _GameControls;
-        MessageBroker msgBroker;
+        MessageBroker _Broker;
         //--------
 
         protected override void Awake()
@@ -37,8 +37,20 @@ namespace Retroman
 
             bool LogBackbutton = true;
 
-            msgBroker = Factory.Get<DataManagerService>().MessageBroker;
-            msgBroker.Receive<PressBackButton>().Subscribe(_ =>
+            _Broker = Factory.Get<DataManagerService>().MessageBroker;
+
+
+            _Broker.Receive<AUTOMATE_TRIGGER>().Subscribe(_ =>
+            {
+                switch (_.AutomateType)
+                {
+                    case AutomateType.ResetGame:
+                        GoToGame();
+                        break;
+                }
+            }).AddTo(this);
+
+            _Broker.Receive<PressBackButton>().Subscribe(_ =>
             {
                 if (_.BackButtonType == BackButtonType.SceneIsGame)
                 {
@@ -109,11 +121,11 @@ namespace Retroman
         }
         public void GoToTitlebutton()
         {
-            msgBroker.Publish(new TriggerCanvasInteraction());
-            msgBroker.Publish(new ToggleCoins { IfActive = false });
+            _Broker.Publish(new TriggerCanvasInteraction());
+            _Broker.Publish(new ToggleCoins { IfActive = false });
             Debug.LogError("Toggle OFF!!");
             SoundControls.Instance._buttonClick.Play();
-            msgBroker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+            _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
         }
         void SetupButtons()
         {
@@ -125,22 +137,31 @@ namespace Retroman
             });
             AddButtonHandler(ButtonType.ResetGame, delegate (ButtonClickedSignal signal)
             {
-
-                Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
-                msgBroker.Publish(new TriggerCanvasInteraction());
-
-                SoundControls.Instance._buttonClick.Play();
-                if (PauseResetButton)
-                    PauseResetButton.SetActive(false);
-                msgBroker.Publish(new ChangeScene { Scene = EScene.GameRoot });
+                GoToGame();
             });
             AddButtonHandler(ButtonType.GoToShop, delegate (ButtonClickedSignal signal)
             {
-                Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
-                msgBroker.Publish(new TriggerCanvasInteraction());
-                SoundControls.Instance._buttonClick.Play();
-                msgBroker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
+                GoToShop();
             });
+        }
+
+        void GoToGame()
+        {
+
+            Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
+            _Broker.Publish(new TriggerCanvasInteraction());
+
+            SoundControls.Instance._buttonClick.Play();
+            if (PauseResetButton)
+                PauseResetButton.SetActive(false);
+            _Broker.Publish(new ChangeScene { Scene = EScene.GameRoot });
+        }
+        void GoToShop()
+        {
+            Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
+            _Broker.Publish(new TriggerCanvasInteraction());
+            SoundControls.Instance._buttonClick.Play();
+            _Broker.Publish(new ChangeScene { Scene = EScene.ShopRoot });
         }
     }
 }

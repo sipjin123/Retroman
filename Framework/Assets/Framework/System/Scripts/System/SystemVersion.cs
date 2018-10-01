@@ -45,6 +45,7 @@ namespace Framework
                 result.Set(ReleaseVersion);
             });
 
+
             Factory.Get<DataManagerService>().MessageBroker.Receive<ShowVersion>().Subscribe(_ => 
             {
                 if(_.IfActive == false)
