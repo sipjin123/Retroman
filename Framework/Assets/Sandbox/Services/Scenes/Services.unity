@@ -245,8 +245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _AutomatedController: {fileID: 909325826}
-  _ControlType: 1
-  _UIControlType: 1
+  _ControlType: 0
+  _UIControlType: 0
 --- !u!4 &287353241
 Transform:
   m_ObjectHideFlags: 0
@@ -788,7 +788,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2402078a2026eb74499c6534c267da6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Objects: []
 --- !u!4 &1353786709
 Transform:
   m_ObjectHideFlags: 1
@@ -1528,48 +1527,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be205b8c5a2f88c408c5e5343719637c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _keys:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _values:
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
 --- !u!114 &1938261078
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1581,51 +1538,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b5fe0e79f64584a83676f21be2d2a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _keys:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _values:
-  - _keys:
-    - DefaultBehaviorEditor._SceneType.EditProperty
-    _values:
-    - _showDropdown: 0
-      _serializedIsActive: 1
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
-  - _keys: []
-    _values: []
-    _target: {fileID: 0}
 --- !u!4 &1938261079
 Transform:
   m_ObjectHideFlags: 1
