@@ -27,9 +27,13 @@ namespace Retroman
         private SceneContext _SceneContext;
 
         [SerializeField]
-        private AutomatedController _ControlCenter;
+        private AutomatedController _AutomatedCharController;
         [SerializeField]
         private AutomatedSceneFlow _AutomatedSceneFlow;
+
+        [SerializeField]
+        private DataAutomation _AutomatedDataController;
+        
 
         private void Update()
         {
@@ -75,8 +79,9 @@ namespace Retroman
         public void InjectBroker(MessageBroker broker)
         {
             _MessageBroker = broker;
-            _ControlCenter.InjectBroker(_MessageBroker);
+            _AutomatedCharController.InjectBroker(_MessageBroker);
             _AutomatedSceneFlow.InjectBroker(_MessageBroker);
+            _AutomatedDataController.InjectBroker(_MessageBroker);
            // _SceneContext.Install();
             //Factory.Get<AutomatedTestService>().InjectBroker(_MessageBroker);
             _MessageBroker.Receive<AddCoin>().Subscribe(_ =>

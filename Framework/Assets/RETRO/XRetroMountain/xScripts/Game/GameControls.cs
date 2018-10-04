@@ -7,6 +7,7 @@ using UniRx;
 using Sirenix.OdinInspector;
 using Sandbox.Popup;
 using Framework;
+using System;
 
 public class GameControls : SerializedMonoBehaviour
 {
@@ -79,7 +80,7 @@ public class GameControls : SerializedMonoBehaviour
             {
                 //return;
             }
-            GameOverIT();
+            GameOverIT(_.KilledBy);
         }).AddTo(this);
         _Broker.Receive<LaunchGamePlay>().Subscribe(_ =>
         {
@@ -141,6 +142,8 @@ public class GameControls : SerializedMonoBehaviour
         UIHighScore2.text = "Best " + Factory.Get<DataManagerService>().GetHighScore();
 
         StartCoroutine(TimeBombStartDesign());
+
+        _Broker.Publish(new RegisterStats { TypeOfStatisticData = TypeOfStatisticData.InitRun });
     }
     //==========================================================================================================================================
     #region IN GAME BUTTONS
@@ -178,9 +181,10 @@ public class GameControls : SerializedMonoBehaviour
     #endregion
     //==========================================================================================================================================
     #region GAME OVER
-    void GameOverIT()
+    string cachedPlatformType;
+    void GameOverIT(string platformType)
     {
-
+        cachedPlatformType = platformType;
         //  Factory.Get<DataManagerService>().PlayerControls._deathAnim.SetActive(true);
         _Broker.Publish(new EnableRagdoll());
         StartCoroutine(GameOverDelay());
@@ -216,11 +220,22 @@ public class GameControls : SerializedMonoBehaviour
         Time.timeScale = 0;
 
         Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Show(PopupType.ResultsPopup);
-        _Broker.Publish(new AUTOMATED_UI_STATE { Scene = EScene.ResultRoot});
+        _Broker.Publish(new RegisterStats
+        {
+            TypeOfStatisticData = TypeOfStatisticData.ResultsData,
+            RawData = new ProcessResults
+            {
+                TotalScore = Score,
+                PlatformDeath = cachedPlatformType
+            }
+        });
+        _Broker.Publish(new AutomatedUIState
+        {
+            Scene = EScene.ResultRoot
+        });
 
         _Broker.Publish(new EndGame());
         _Broker.Publish(new ToggleCoins { IfActive = true });
-
     }
     #endregion
 }

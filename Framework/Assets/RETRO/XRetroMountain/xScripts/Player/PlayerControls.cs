@@ -474,6 +474,7 @@ namespace Retroman
             _activePlayerObject = true;
             _rigidbody.useGravity = true;
             _CameraControls._startFollow = true;
+            Debug.LogError(D.AUTOMATION + "Resumed Game");
         }
 
         #endregion

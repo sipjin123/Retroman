@@ -125,6 +125,7 @@ namespace Retroman
             _Broker.Publish(new ToggleCoins { IfActive = false });
             Debug.LogError("Toggle OFF!!");
             SoundControls.Instance._buttonClick.Play();
+            Debug.LogError(D.LOG + "Actual Press: " + Time.time);
             _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
         }
         void SetupButtons()

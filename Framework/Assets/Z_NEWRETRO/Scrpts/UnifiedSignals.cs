@@ -1,5 +1,6 @@
 ﻿using Framework;
 using Synergy88;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +21,8 @@ public class UnifiedSignals : MonoBehaviour {
 
 namespace Retroman
 {
-    public class AUTOMATED_UI_STATE
+    #region DATA AUTOMATION RELATED
+    public class AutomatedUIState
     {
         public EScene Scene;
     }
@@ -28,12 +30,38 @@ namespace Retroman
     {
         public AutomateType AutomateType;
     }
+    public class AutomationCommands
+    {
+        public TypeOfAutomationCommands TypeOfAutomationCommands;
+    }
+
+    public enum TypeOfAutomationCommands
+    {
+        WriteToData
+    }
+    public class RegisterStats
+    {
+        public TypeOfStatisticData TypeOfStatisticData;
+        public object RawData;
+    }
+    public enum TypeOfStatisticData
+    {
+        InitRun,
+        ResultsData,
+    }
+    public class ProcessResults
+    {
+        public string PlatformDeath;
+        public float TotalScore;
+    }
+    #endregion
 
     public class ChangeScene
     {
         public EScene Scene;
 
     }
+
     public class PauseGame
     {
         public bool IfPause;
@@ -110,7 +138,7 @@ namespace Retroman
     }
     public class GameOverSignal
     {
-
+        public string KilledBy;
     }
     public class UpdatePlayerAction
     {

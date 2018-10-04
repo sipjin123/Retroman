@@ -58,7 +58,7 @@ namespace RetroMountain
                 HiScore1.gameObject.SetActive(false);
                 HiScore2.gameObject.SetActive(false);
             }
-            if(score >= highScore)
+            if(score >= highScore && highScore != 0)
             {
                 ConfetiObject.SetActive(true);
             }

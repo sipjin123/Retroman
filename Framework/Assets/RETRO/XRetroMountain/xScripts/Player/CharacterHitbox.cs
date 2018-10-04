@@ -20,7 +20,10 @@ public class CharacterHitbox : MonoBehaviour
         {
             Debug.LogError("Game OVer");
             Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
+            if(hit.GetComponent<PlatformMinion>() != null)
+                Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal { KilledBy = "Platform" });
+            else
+                Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal {KilledBy = hit.gameObject.name });
         }
     }
     void OnTriggerEnter(Collider hit)
@@ -33,7 +36,10 @@ public class CharacterHitbox : MonoBehaviour
         {
             Debug.LogError("Game OVer");
             Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
-            Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
+            if (hit.GetComponent<PlatformMinion>() != null)
+                Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal { KilledBy = "Platform" });
+            else
+                Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal { KilledBy = hit.gameObject.name });
         }
     }
     void OnCollisionEnter(Collision hit)

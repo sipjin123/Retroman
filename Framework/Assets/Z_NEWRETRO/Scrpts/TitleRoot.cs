@@ -24,7 +24,6 @@ namespace Retroman
         public Canvas MainCanvas;
         public Canvas _TutorialCanvas;
         public Canvas _ExitGameCanvas;
-        public Canvas _SpamBlockerCanvas;
 
         MessageBroker _Broker;
         public CanvasGroup _InteractiveCanvas;
@@ -40,7 +39,7 @@ namespace Retroman
             _Broker = Factory.Get<DataManagerService>().MessageBroker;
             ButtonSetup();
             InitializeSignals();
-            _Broker.Publish(new AUTOMATED_UI_STATE { Scene = EScene.TitleRoot });
+            _Broker.Publish(new AutomatedUIState { Scene = EScene.TitleRoot });
         }
 
         protected override void OnEnable()

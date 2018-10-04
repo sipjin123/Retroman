@@ -54,7 +54,7 @@ namespace Retroman
                         }
                         break;
                     case TypeOfTrigger.SPIKE:
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal { KilledBy = "Spike"});
                         SoundControls.Instance._sfxSpikes.Play();
 
                         Factory.Get<VFXHandler>().RequestVFX(hit.transform.position, VFXHandler.VFXList.BumpVFX);
@@ -74,7 +74,7 @@ namespace Retroman
                         //Factory.Get<DataManagerService>().PlayerControls._splash.SetActive(true);
                         //Factory.Get<DataManagerService>().PlayerControls._splash.transform.position = Factory.Get<DataManagerService>().PlayerControls._deathAnim.transform.GetChild(0).transform.position;
                         //Factory.Get<DataManagerService>().GameControls.GameOverIT();
-                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal());
+                        Factory.Get<DataManagerService>().MessageBroker.Publish(new GameOverSignal { KilledBy = "Water"});
                         break;
                     case TypeOfTrigger.COUNTER:
                         Factory.Get<DataManagerService>().MessageBroker.Publish(new SpawnAPlatform());
