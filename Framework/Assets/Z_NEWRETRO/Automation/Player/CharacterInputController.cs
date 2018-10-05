@@ -10,8 +10,10 @@ using Zenject;
 public class CharacterInputController :  IController
 {
     MessageBroker _Broker;
-    public Transform _OwnerTransform;
+    [SerializeField]
+    private Transform _OwnerTransform;
     bool ifActive;
+
     public CharacterInputController(  Transform ownerTransform)
     {
         _OwnerTransform = ownerTransform;
@@ -20,7 +22,6 @@ public class CharacterInputController :  IController
 
     public bool CheckIfCanJump()
     {
-
         if (ifActive)
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0))

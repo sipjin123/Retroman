@@ -12,9 +12,9 @@ public class AutoRepeatUIFlow : IUIController
     const float timerCap = 2;
     bool startTimer;
     EScene _CachedEscene;
-
     MessageBroker _Broker;
-    PopupCollectionRoot popRoot;
+    PopupCollectionRoot _PopupRoot;
+
     public void InjectBroker(MessageBroker broker)
     {
         _Broker = broker;
@@ -30,7 +30,7 @@ public class AutoRepeatUIFlow : IUIController
             _CachedEscene = (_.Scene);
 
         }).AddTo(owner);
-        popRoot = Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection);
+        _PopupRoot = Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection);
 
     }
 
@@ -54,35 +54,16 @@ public class AutoRepeatUIFlow : IUIController
         {
             case EScene.TitleRoot:
                 {
-                    popRoot.Hide();
+                    _PopupRoot.Hide();
                     _Broker.Publish(new AUTOMATE_TRIGGER { AutomateType = AutomateType.GoToGame });
                 }
                 break;
 
             case EScene.ResultRoot:
                 {
-                    Debug.LogError("Publishing Reset Game");
                     _Broker.Publish(new AUTOMATE_TRIGGER { AutomateType = AutomateType.ResetGame });
                 }
                 break;
         }
-    }
-}
-
-public class DoNothingUI : IUIController
-{
-    public void InjectBroker(MessageBroker broker)
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    public void SetSignal(GameObject obj)
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    public void UpdateData()
-    {
-        //throw new System.NotImplementedException();
     }
 }

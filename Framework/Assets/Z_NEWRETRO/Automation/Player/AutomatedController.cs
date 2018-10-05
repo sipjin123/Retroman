@@ -11,11 +11,10 @@ using Sandbox.Popup;
 
 public class AutomatedController : SerializedMonoBehaviour
 {
-    [SerializeField]
     IController _IController;
-
     bool initialized;
     MessageBroker _Broker;
+
     public void InjectBroker(MessageBroker broker)
     {
         _Broker = broker;
@@ -35,14 +34,8 @@ public class AutomatedController : SerializedMonoBehaviour
         _IController = icont;
     }
 
-
-    //TEST
-    public GameObject _DetectorObject;
-    float RayLength = 100;
     private void FixedUpdate()
     {
-
-
         if (initialized)
         {
             if(_IController.CheckIfCanJump())
