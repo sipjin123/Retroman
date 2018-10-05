@@ -18,6 +18,7 @@ using Sandbox.ButtonSandbox;
 using Sandbox.Popup;
 using Sandbox.Background;
 using uPromise;
+using Sandbox.Preloader;
 
 namespace Retroman
 {
@@ -123,9 +124,7 @@ namespace Retroman
         {
             _Broker.Publish(new TriggerCanvasInteraction());
             _Broker.Publish(new ToggleCoins { IfActive = false });
-            Debug.LogError("Toggle OFF!!");
             SoundControls.Instance._buttonClick.Play();
-            Debug.LogError(D.LOG + "Actual Press: " + Time.time);
             _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
         }
         void SetupButtons()
@@ -133,7 +132,6 @@ namespace Retroman
             AddButtonHandler(ButtonType.GoToTitle, delegate (ButtonClickedSignal signal)
             {
 
-                Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
                         GoToTitlebutton();
             });
             AddButtonHandler(ButtonType.ResetGame, delegate (ButtonClickedSignal signal)
@@ -148,8 +146,7 @@ namespace Retroman
 
         void GoToGame()
         {
-
-            Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
+            
             _Broker.Publish(new TriggerCanvasInteraction());
 
             SoundControls.Instance._buttonClick.Play();
@@ -159,6 +156,7 @@ namespace Retroman
         }
         void GoToShop()
         {
+            _Broker.Publish(new ToggleCoins { IfActive = false });
             Scene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
             _Broker.Publish(new TriggerCanvasInteraction());
             SoundControls.Instance._buttonClick.Play();

@@ -245,8 +245,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _AutomatedController: {fileID: 909325826}
-  _ControlType: 1
-  _UIControlType: 1
+  _ControlType: 0
+  _UIControlType: 0
   _ShouldRecordStats: 1
 --- !u!4 &287353241
 Transform:

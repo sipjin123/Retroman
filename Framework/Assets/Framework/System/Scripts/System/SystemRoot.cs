@@ -42,7 +42,15 @@ namespace Framework
             get { return _SystemVersion; }
             private set { _SystemVersion = value; }
         }
-        
+
+        [SerializeField]
+        GameObject _BlackPanel;
+        public void DisableBlackPanel()
+        {
+            _BlackPanel.SetActive(false);
+            Debug.LogError("Panel Black Disabled");
+        }
+
         #region Unity Life Cycle
 
         protected override void Awake()
