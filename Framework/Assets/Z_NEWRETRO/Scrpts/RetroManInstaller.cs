@@ -252,7 +252,7 @@ namespace Retroman
                 Promise.All(Scene.LoadScenePromise<SplashMovieRoot>(splashMovieScene))//Scene.LoadScenePromise<BackgroundRoot>(EScene.Background))
 
 
-                    .Then(_ => FSceneObject.GetScene<SplashMovieRoot>(splashMovieScene).Wait(2))
+                    .Then(_ => FSceneObject.GetScene<SplashMovieRoot>(splashMovieScene).Wait(3))
 
                     .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Preloader = Scene.GetSceneRoot<PreloaderRoot>(EScene.Preloader))

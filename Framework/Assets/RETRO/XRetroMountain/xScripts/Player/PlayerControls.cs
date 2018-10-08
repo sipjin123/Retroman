@@ -135,8 +135,30 @@ namespace Retroman
         }
         #endregion
         //==========================================================================================================================================
+        bool bugfixFlagJumper;
         void FixedUpdate()
         {
+            RaycastHit bewhut;
+            Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 10, Color.blue);
+
+            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out bewhut))// ,GroundWaterMask))
+            {
+                Debug.LogError(D.CHECK + bewhut.collider.gameObject);
+                if(bewhut.collider.GetComponent<PlatformMinion>()!=null)
+                {
+                    bugfixFlagJumper = true;
+                }
+                else
+                {
+                    bugfixFlagJumper = false;
+                }
+            }
+
+
+
+
+
+
             if (Factory.Get<DataManagerService>().IFTestMode)
             {
                 transform.position = new Vector3(transform.position.x, 7, transform.position.z);
@@ -194,8 +216,12 @@ namespace Retroman
         #region JUMPING
         public void GenericJump()
         {
-            if(isJumping == false)
+            if (!_activePlayerObject)
+                return;
+            if (isJumping == false)
             {
+                if (bugfixFlagJumper == false)
+                    return;
 
                 _jumpDelaySwitch = true;
                 StartCoroutine(JumpDelayENUM());
@@ -392,7 +418,7 @@ namespace Retroman
 
             _Broker.Receive<CharJumpSignal>().Subscribe(_ =>
             {
-                GenericJump();
+                    GenericJump();
             }).AddTo(this);
 
             _Broker.Receive<SetupPlayerSplash>().Subscribe(_ =>

@@ -81,6 +81,7 @@ public class BasicDataGather : IDataController
         string sessionMilliSecGap = (_BasicDataClass.EndTime - _BasicDataClass.StartTime).Milliseconds.ToString();
         _BasicDataClass.TotalRunTime = sessionSecondsGap + "." + sessionMilliSecGap.Substring(0, 2);
 
+        _Broker.Publish(new UpdateAutomationData { BasicDataClass = _BasicDataClass });
         //WRITE TO DATA
         WriteToFile();
     }

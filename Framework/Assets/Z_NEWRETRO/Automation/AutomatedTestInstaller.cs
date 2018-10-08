@@ -1,6 +1,7 @@
 ﻿using Common.Utils;
 using Framework;
 using Retroman;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
@@ -20,7 +21,24 @@ public class AutomatedTestInstaller: MonoInstaller<AutomatedTestInstaller>
 
     [SerializeField]
     bool _ShouldRecordStats;
+    const string CachedControlType = "CachedControlType";
+    const string CachedUIType = "CachedUIType";
 
+    [SerializeField]
+    AutomationUI _AutomationUI;
+
+    public void SetControl(ControlType controlType)
+    {
+        _ControlType = controlType;
+        PlayerPrefs.SetString(CachedControlType, _ControlType.ToString());
+        Debug.LogError(D.AUTOMATION + "Updated Pref Control :: " + PlayerPrefs.GetString(CachedControlType));
+    }
+    public void SetUI(UIControlType automationUIType)
+    {
+        _UIControlType = automationUIType;
+        PlayerPrefs.SetString(CachedUIType, _UIControlType.ToString());
+        Debug.LogError(D.AUTOMATION + "Updated Pref UIFlow :: " + PlayerPrefs.GetString(CachedUIType));
+    }
     public override void InstallBindings()
     {
         //WORKING
@@ -28,14 +46,19 @@ public class AutomatedTestInstaller: MonoInstaller<AutomatedTestInstaller>
         //WORKING
         //var foo = Container.InstantiateComponent<ControlCenter>(PRefab);
 
-        switch(_ControlType)
+        _ControlType = (ControlType)Enum.Parse(typeof(ControlType), PlayerPrefs.GetString(CachedControlType, _ControlType.ToString()));
+        _UIControlType = (UIControlType)Enum.Parse(typeof(UIControlType), PlayerPrefs.GetString(CachedUIType, _UIControlType.ToString()));
+
+        _AutomationUI.InitUI(_ControlType.ToString(), _UIControlType.ToString());
+        
+        switch (_ControlType)
         {
             case ControlType.AIController:
                 {
                     Container.Bind<IController>().
                         To<AIInputController>().
                         FromInstance(new AIInputController(_AutomatedController)).
-                        AsSingle();
+                        AsTransient();
                 }
                 break;
             case ControlType.PlayerController:
@@ -43,7 +66,7 @@ public class AutomatedTestInstaller: MonoInstaller<AutomatedTestInstaller>
                     Container.Bind<IController>().
                         To<CharacterInputController>().
                         FromInstance(new CharacterInputController(_AutomatedController)).
-                        AsSingle();
+                        AsTransient();
                 }
                 break;
         }
@@ -55,7 +78,7 @@ public class AutomatedTestInstaller: MonoInstaller<AutomatedTestInstaller>
                     Container.Bind<IUIController>().
                         To<AutoRepeatUIFlow>().
                         FromInstance(new AutoRepeatUIFlow()).
-                        AsSingle();
+                        AsTransient();
                 }
                 break;
             default:
@@ -63,7 +86,7 @@ public class AutomatedTestInstaller: MonoInstaller<AutomatedTestInstaller>
                     Container.Bind<IUIController>().
                         To<DoNothingUI>().
                         FromInstance(new DoNothingUI()).
-                        AsSingle();
+                        AsTransient();
                 }
                 break;
         }

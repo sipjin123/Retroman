@@ -33,8 +33,10 @@ namespace Retroman
 
         [SerializeField]
         private DataAutomation _AutomatedDataController;
-        
 
+
+        [SerializeField]
+        AutomationUI _AutomationUI;
         private void Update()
         {
             if(Input.GetKeyDown(KeyCode.Escape))
@@ -82,6 +84,7 @@ namespace Retroman
             _AutomatedCharController.InjectBroker(_MessageBroker);
             _AutomatedSceneFlow.InjectBroker(_MessageBroker);
             _AutomatedDataController.InjectBroker(_MessageBroker);
+            _AutomationUI.InjectBroker(_MessageBroker);
            // _SceneContext.Install();
             //Factory.Get<AutomatedTestService>().InjectBroker(_MessageBroker);
             _MessageBroker.Receive<AddCoin>().Subscribe(_ =>
@@ -128,6 +131,7 @@ namespace Retroman
         public void SetHighScore(float highScore)
         {
             HighScore = highScore;
+            PlayerPrefs.SetInt(HighScore_Key, (int)highScore); 
         }
 
 

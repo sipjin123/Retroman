@@ -22,6 +22,10 @@ public class UnifiedSignals : MonoBehaviour {
 namespace Retroman
 {
     #region DATA AUTOMATION RELATED
+    public class UpdateAutomationData
+    {
+        public BasicDataClass BasicDataClass;
+    }
     public class AutomatedUIState
     {
         public EScene Scene;
