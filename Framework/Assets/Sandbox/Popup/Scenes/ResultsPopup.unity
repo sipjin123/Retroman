@@ -5134,7 +5134,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 208454990}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
@@ -5771,7 +5771,6 @@ GameObject:
   - component: {fileID: 585554821}
   - component: {fileID: 585554820}
   - component: {fileID: 585554819}
-  - component: {fileID: 585554818}
   m_Layer: 5
   m_Name: FGC (1)
   m_TagString: Untagged
@@ -5799,20 +5798,6 @@ RectTransform:
   m_AnchoredPosition: {x: 515, y: -1181.6666}
   m_SizeDelta: {x: 1010, y: 123.33333}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &585554818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 11420190, guid: 1b52e5eaf41384b50a9350a8db75530d,
-    type: 2}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 585554816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17fcff71e8e4d42cbb471cb928820016, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _Button: GetSynerytix
-  CachedButton: ResetGame
 --- !u!114 &585554819
 MonoBehaviour:
   m_ObjectHideFlags: 0
