@@ -16,6 +16,7 @@ using Framework;
 using Common.Utils;
 using System.Collections;
 using Sandbox.ButtonSandbox;
+using Sandbox.RGC;
 
 namespace Retroman
 {
@@ -40,6 +41,9 @@ namespace Retroman
             ButtonSetup();
             InitializeSignals();
             _Broker.Publish(new AutomatedUIState { Scene = EScene.TitleRoot });
+
+            OnConnectToFGCApp signal;
+            this.Publish(signal);
         }
 
         protected override void OnEnable()

@@ -86,4 +86,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/Background/Scenes/Background.unity
     guid: f0e44820e3c9640188a7e584f96f8dfe
+  - enabled: 1
+    path: Assets/Sandbox/Popup/Scenes/Spinner.unity
+    guid: 531e1a77078e00c4d8fdcc2d714e5f72
+  - enabled: 1
+    path: Assets/Sandbox/RGC/Scenes/ClaimStamps.unity
+    guid: 71ef023d3e2cf8744ae34997e36a18cd
   m_configObjects: {}

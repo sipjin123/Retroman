@@ -1,9 +1,11 @@
 ﻿using Common.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using Common.Query;
 using UnityEngine;
 using Retroman;
 using Framework;
+using Sandbox.Facebook;
 using UniRx;
 using UnityEngine.UI;
 
@@ -67,8 +69,11 @@ namespace RetroMountain
                 ConfetiObject.SetActive(false);
             }
 
-            this.Publish(new OnSendToFGCWalletSignal() { Value = (int)score, Event = RGCConst.GAME_END });
-            this.Publish(new OnFetchCurrenciesSignal());
+            if (QuerySystem.Query<bool>(FBID.HasLoggedInUser))
+            {
+                this.Publish(new OnSendToFGCWalletSignal() { Value = (int)score, Event = RGCConst.GAME_END });
+                this.Publish(new OnFetchCurrenciesSignal());
+            }
 
             int currChar = DataService.CurrentCharacterSelected - 1;
             CharImage.sprite = DataService.ShopItems[currChar].ItemImage.sprite;

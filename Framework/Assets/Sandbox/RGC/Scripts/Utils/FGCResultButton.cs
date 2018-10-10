@@ -65,10 +65,6 @@ namespace Sandbox.RGC
                         GetSynerTix.SetActive(!_IsSynertix);
                         GetRealPrizesButton.SetActive(_IsSynertix);
                     }
-
-                    OnCloseActivePopup signal;
-                    signal.All = true;
-                    this.Publish(signal);
                 }).AddTo(this);
         }
 
