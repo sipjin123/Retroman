@@ -22,7 +22,6 @@ using Common.Utils;
 using Framework;
 
 using Sandbox.Audio;
-using Sandbox.FGCAutomation;
 using Sandbox.Popup;
 using Sandbox.Preloader;
 using Sandbox.Services;
@@ -293,15 +292,13 @@ namespace Retroman
             {
                 
                 Promise.AllSequentially(Scene.EndFramePromise)
-                    .Then(_ => Scene.LoadScenePromise<BackgroundRoot>(EScene.Background))
+                    .Then(_ => Scene.LoadSceneAdditivePromise<BackgroundRoot>(EScene.Background))
                     .Then(_ => 
                     {
                         FScene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
                     })
-#if ENABLE_FGC_TRACKING
-                    .Then(_ => Scene.LoadSceneAdditivePromise<FGCAutomationRoot>(EScene.FGCAutomation))
-#endif
-                    .Then(_ => Scene.LoadSceneAdditivePromise<PreloaderRoot>(EScene.Preloader))
+           
+                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                     .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
                     //.Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
@@ -312,7 +309,6 @@ namespace Retroman
                         this._RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
                         this._RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                     })
-
                     .Then(_ => Scene.UnloadScenePromise(EScene.Background));
             }));
 
@@ -323,15 +319,19 @@ namespace Retroman
                 if (skipProcess == false)
                 {
                     Promise.AllSequentially(Scene.EndFramePromise)
-                        .Then(_ => Scene.LoadScenePromise<BackgroundRoot>(EScene.Background))
-                        .Then(_=> Scene.LoadSceneAdditivePromise<PreloaderRoot>(EScene.Preloader))
+                        .Then(_ => Scene.LoadSceneAdditivePromise<BackgroundRoot>(EScene.Background))
+                        .Then(_ =>
+                        {
+                            FScene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
+                        })
+                        .Then(_=> Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                         .Then(_ =>
                         {
                             Time.timeScale = 1;
                         })
                         .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).LoadLoadingScreenPromise(Preloaders.Preloader001))
                         .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).FadeInLoadingScreenPromise())
-                        .Then(_ => FScene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide() )
+                        //.Then(_ => FScene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide() )
                         //.Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).WaitPromise(1))
 
                         .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
@@ -353,17 +353,28 @@ namespace Retroman
             {
                 Promise.AllSequentially(Scene.EndFramePromise)
                         .Then(_ => Scene.LoadSceneAdditivePromise<BackgroundRoot>(EScene.Background))
+                        .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
+                        .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).LoadLoadingScreenPromise(Preloaders.Preloader001))
+                        .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).FadeInLoadingScreenPromise())
                         .Then(_ => Scene.LoadScenePromise<ShopRoot>(EScene.ShopRoot)).
-                        Then(_=> {
+                        Then(_=> 
+                        {
                             _RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
-                        });
-                
+                        })
+                        .Then(_ => Scene.UnloadScenePromise(EScene.Background))
+                        .Then(_ => Scene.UnloadScenePromise(EScene.Preloader));
+
             }));
             settings.AddAction(new FsmDelegateAction(settings, delegate (FsmState owner)
             {
                 Promise.AllSequentially(Scene.EndFramePromise)
                     .Then(_ => Scene.LoadSceneAdditivePromise<BackgroundRoot>(EScene.Background))
-                    .Then(_ => Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot));
+                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
+                    .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).LoadLoadingScreenPromise(Preloaders.Preloader001))
+                    .Then(_ => FScene.GetScene<PreloaderRoot>(EScene.Preloader).FadeInLoadingScreenPromise())
+                    .Then(_ => Scene.LoadScenePromise<SettingsRoot>(EScene.SettingsRoot))
+                    .Then(_ => Scene.UnloadScenePromise(EScene.Background))
+                    .Then(_ => Scene.UnloadScenePromise(EScene.Preloader));
             }));
 
 
@@ -395,6 +406,6 @@ namespace Retroman
             Fsm.Start(IDLE);
         }
 
-#endregion
+        #endregion
     }
 }

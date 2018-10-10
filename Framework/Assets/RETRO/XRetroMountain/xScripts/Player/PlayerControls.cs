@@ -143,7 +143,7 @@ namespace Retroman
 
             if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out bewhut))// ,GroundWaterMask))
             {
-                Debug.LogError(D.CHECK + bewhut.collider.gameObject);
+                //Debug.LogError(D.CHECK + bewhut.collider.gameObject);
                 if(bewhut.collider.GetComponent<PlatformMinion>()!=null)
                 {
                     bugfixFlagJumper = true;
@@ -268,8 +268,9 @@ namespace Retroman
             {
                 //Debug.LogError(Rayhit.collider.gameObject.name+ " : " +LayerMask.LayerToName(Rayhit.collider.gameObject.layer));
 
-
-                if ((Rayhit.collider.gameObject.layer) == GroundMaskLayerIndex )
+                const string HOLE_OBJ = "HOLE_OBJ";
+                bool ifHittingPlatform = (Rayhit.collider.GetComponent<PlatformMinion>()) != null;
+                if (ifHittingPlatform)//GroundMaskLayerIndex )
                 {
                   
                     _shadowObject.transform.position = new Vector3(_shadowObject.transform.position.x, Rayhit.point.y, _shadowObject.transform.position.z);
@@ -278,11 +279,11 @@ namespace Retroman
                 if (isJumping)
                 {
                   
-                    if (Rayhit.collider.gameObject.layer == FallStopperMaskLayerIndex)
+                    if (Rayhit.collider.gameObject.name == HOLE_OBJ)//FallStopperMaskLayerIndex)
                     {
                         _shadowObject.SetActive(false);
                     }
-                    else if (Rayhit.collider.gameObject.layer == GroundMaskLayerIndex)
+                    else if (ifHittingPlatform)//(Rayhit.collider.gameObject.layer == GroundMaskLayerIndex)
                     {
                         _shadowObject.SetActive(true);
                     }

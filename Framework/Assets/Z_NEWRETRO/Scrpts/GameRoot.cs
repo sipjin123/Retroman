@@ -121,19 +121,11 @@ namespace Retroman
         {
             base.OnDestroy();
         }
-        public void GoToTitlebutton()
-        {
-            _Broker.Publish(new TriggerCanvasInteraction());
-            _Broker.Publish(new ToggleCoins { IfActive = false });
-            SoundControls.Instance._buttonClick.Play();
-            _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
-        }
         void SetupButtons()
         {
             AddButtonHandler(ButtonType.GoToTitle, delegate (ButtonClickedSignal signal)
             {
-
-                        GoToTitlebutton();
+                GoToTitlebutton();
             });
             AddButtonHandler(ButtonType.ResetGame, delegate (ButtonClickedSignal signal)
             {
@@ -145,6 +137,13 @@ namespace Retroman
             });
         }
 
+        public void GoToTitlebutton()
+        {
+            _Broker.Publish(new TriggerCanvasInteraction());
+            _Broker.Publish(new ToggleCoins { IfActive = false });
+            SoundControls.Instance._buttonClick.Play();
+            _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+        }
         void GoToGame()
         {
             
@@ -153,6 +152,7 @@ namespace Retroman
             SoundControls.Instance._buttonClick.Play();
             if (PauseResetButton)
                 PauseResetButton.SetActive(false);
+
             _Broker.Publish(new ChangeScene { Scene = EScene.GameRoot });
 
             FGCTrackingMatchStart signal;

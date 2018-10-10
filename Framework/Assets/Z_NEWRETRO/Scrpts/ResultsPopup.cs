@@ -28,6 +28,9 @@ namespace RetroMountain
         private DataManagerService DataService;
         private MessageBroker DataServiceBroker;
         public GameObject ConfetiObject;
+
+        [SerializeField]
+        private GameObject _BlackBackground;
         private void Awake()
         {
             DataService = Factory.Get<DataManagerService>();
@@ -38,7 +41,12 @@ namespace RetroMountain
                 .AddTo(this);
 
             DataServiceBroker.Receive<TriggerCanvasInteraction>()
-                .Subscribe(_ => InteractiveCanvas.interactable = false)
+                .Subscribe(_ =>
+                {
+                    _BlackBackground.SetActive(true);
+                    InteractiveCanvas.interactable = false;
+                    ConfetiObject.SetActive(false);
+                })
                 .AddTo(this);
         }
 
