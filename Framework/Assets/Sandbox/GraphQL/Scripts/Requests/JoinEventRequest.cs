@@ -18,39 +18,39 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
     public struct JoinEventDataSignal : IRequestSignal, IJson
 	{
-		public string announcement_id;
-
-		public string ToJsonString()
-		{
-			return JsonUtility.ToJson(this);
-		}
+	    [JProp("announcement_id")] public string Id;
 	}
 
     [Serializable]
     public class JoinEventResultData : IJson
     {
-		public string id;
+        [JProp("id")] public string Id;
 	}
 
 	public class JoinEventRequest : UnitRequest
     {
-        public override void Initialze(GraphInfo info)
-		{
-			this.Receive<JoinEventDataSignal>()
+        public override void Initialze(GraphInfo info, GraphRequest request)
+        {
+            base.Initialze(info, request);
+
+            this.Receive<JoinEventDataSignal>()
 				.Subscribe(_ => JoinEvent(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
 				.AddTo(this);
 			
 		}
 
 		#region Request
-		public void JoinEvent(string token, JoinEventDataSignal data)
+		private void JoinEvent(string token, JoinEventDataSignal data)
 		{
 			Payload payload = new Payload();
 			payload.AddString("message", "Event Register");
-			payload.AddJsonString("body", data.ToJsonString());
+			payload.AddJsonString("body", data.ToJson());
 
 			Builder builder = Builder.Mutation();
 			Function function = builder.CreateFunction("event_trigger");
@@ -64,7 +64,7 @@ namespace Sandbox.GraphQL
 		#endregion
 
 		#region Parser
-		public void JoinEventResult(GraphResult result)
+		private void JoinEventResult(GraphResult result)
 		{
             if (result.Status == Status.ERROR)
             {
@@ -72,7 +72,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.EVENT_JOIN, Data = result.Result.data.event_join });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.EVENT_JOIN, Data = result.Result.Data.JoinEventResult });
             }
 		} 
 		#endregion

@@ -505,13 +505,15 @@ MonoBehaviour:
   _IsServiceRequired: 1
   _DebugEvents: 0
   ServiceState: 0
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
+  Request: {fileID: 1711653507}
   Requets:
   - {fileID: 2088678533}
   - {fileID: 2011489517}
   - {fileID: 1084538668}
   - {fileID: 1939932073}
   - {fileID: 2007996380}
+  - {fileID: 828241113}
 --- !u!4 &129574042
 Transform:
   m_ObjectHideFlags: 0
@@ -522,6 +524,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 1711653506}
+  - {fileID: 828241112}
   - {fileID: 2088678531}
   - {fileID: 2011489515}
   - {fileID: 1084538666}
@@ -1827,6 +1831,47 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 751497988}
   m_CullTransparentMesh: 0
+--- !u!1 &828241111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 828241112}
+  - component: {fileID: 828241113}
+  m_Layer: 0
+  m_Name: AnonymousRequest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &828241112
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828241111}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 129574042}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &828241113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 828241111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e30c5ddb414e86448ae61cd4c166107, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
 --- !u!1 &840103359
 GameObject:
   m_ObjectHideFlags: 0
@@ -1926,8 +1971,7 @@ MonoBehaviour:
   AllNewAds: []
   AdsToServe: []
   CurrAdPlayTransaction:
-    id: 
-    status: 
+    Id: 
   PendingTransactions: []
   FailedTransactions: []
   RecentTransactions: []
@@ -2780,7 +2824,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 129574042}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1084538667
 MonoBehaviour:
@@ -2804,10 +2848,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77bcbe5bf1fdfba43aee992baa034074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
   Wallet:
-    update_at: 
-    amount: 0
+    Timestamp: 
+    Amount: 0
   Currencies: []
 --- !u!1 &1098398277
 GameObject:
@@ -4264,6 +4308,7 @@ MonoBehaviour:
   ServiceState: 0
   Fsm:
     currentStateName: 
+  RequestQueue: []
 --- !u!4 &1476636479
 Transform:
   m_ObjectHideFlags: 0
@@ -4880,6 +4925,60 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!1 &1711653505
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1711653506}
+  - component: {fileID: 1711653507}
+  m_Layer: 0
+  m_Name: GraphRequest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1711653506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1711653505}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 129574042}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1711653507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1711653505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff9825b259444904bb3ad9694dd3f03a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: FilterMap
+      Entry: 6
+      Data: 
+  CanStack: 0
+  Requests: []
 --- !u!1 &1714771037
 GameObject:
   m_ObjectHideFlags: 0
@@ -5793,7 +5892,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 129574042}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1939932072
 MonoBehaviour:
@@ -5817,12 +5916,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0a0327fa59b84e40b35d2b4048294fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
   PlayerInfo:
-    id: 
-    device_id: 
-    facebook_id: 
-    gamesparks_id: 
+    Id: 
+    DeviceId: 
+    FbId: 
+    GSId: 
 --- !u!1 &1943559503
 GameObject:
   m_ObjectHideFlags: 0
@@ -6170,7 +6269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ef7766a531b9944bac885b1cc935a2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
   Configs: []
 --- !u!114 &2007996381
 MonoBehaviour:
@@ -6194,7 +6293,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 129574042}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2011489514
 GameObject:
@@ -6224,7 +6323,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 129574042}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2011489516
 MonoBehaviour:
@@ -6248,17 +6347,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2b3701361c352d44b3bc56be4d6d812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
   CurrAd:
-    id: 
-    status: 
-    advertisement:
-      id: 
-      name: 
-      url: 
-      type: 
-      is_premium: 0
-      updated_at: 
+    Id: 
+    Status: 
+    Ad:
+      Id: 
+      Name: 
+      Url: 
+      Type: 
+      IsPremium: 0
+      Timestamp: 
   AllAds: []
 --- !u!1 &2043172842
 GameObject:
@@ -6505,7 +6604,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 129574042}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2088678532
 MonoBehaviour:
@@ -6529,20 +6628,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae647f658f1a69f4a806aa633c59d9d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GraphInfo: {fileID: 11400000, guid: 78530cf5e5287e240af5dabc396e74a9, type: 2}
+  GraphInfo: {fileID: 11400000, guid: 6568e0fd63360c84baa4a7cee962ec73, type: 2}
   Token: 
   PlayerInfo:
-    id: 
-    address: 
-    birthdate: 
-    city: 
-    email: 
-    first_name: 
-    gender: 
-    last_name: 
-    middle_name: 
-    mobile_number: 
-    name: 
+    Id: 
+    Address: 
+    Birthdate: 
+    City: 
+    Email: 
+    FirstName: 
+    Gender: 
+    LastName: 
+    MiddleName: 
+    Mobile: 
+    Name: 
 --- !u!1 &2108349147
 GameObject:
   m_ObjectHideFlags: 0

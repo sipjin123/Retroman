@@ -17,22 +17,25 @@ using Common.Query;
 
 using Framework;
 
+// Alias
+using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
 #region Lobby and Socket Data
 namespace Sandbox.GraphQL
 {
     [Serializable]
     public class LobbyJoinReconnect : IJson
     {
-        public string id;
+        [JProp("id")] public string Id;
     }
 
     [Serializable]
     public class LobbyInfo : IJson
     {
-        public string id;
-        public string base_url;
-        public string port;
-        public string status;
+        [JProp("id")] public string Id;
+        [JProp("base_url")] public string Url;
+        [JProp("port")] public string Port;
+        [JProp("status")] public string Status;
 
         public override string ToString()
         {
@@ -43,8 +46,8 @@ namespace Sandbox.GraphQL
     [Serializable]
     public class LobbyActiveInstance : IJson
     {
-        public bool has_instance;
-        public LobbyInfo lobby;
+        [JProp("has_instance")] public bool HasInstance;
+        [JProp("lobby")] public LobbyInfo Lobby;
     }
 
     public enum LobbyError
@@ -176,9 +179,9 @@ namespace Sandbox.GraphQL
 
         //private List<ShotType> Shots;
 
-        public override void Initialze(GraphInfo info)
+        public override void Initialze(GraphInfo info, GraphRequest request)
         {
-            base.Initialze(info);
+            base.Initialze(info, request);
 
             ActiveLobby = null;
             Lobbies = new List<LobbyInfo>();
@@ -224,8 +227,7 @@ namespace Sandbox.GraphQL
         }
 
         #region Requests
-        //http://192.168.22.29/game-backend/knowledge-base/wikis/GNT-integration-guide#check-if-player-has-an-active-session
-        public void LobbyActiveInstance(string token)
+        private void LobbyActiveInstance(string token)
         {
             Builder builder = Builder.Query();
             Function func = builder.CreateFunction("lobby_activeInstance");
@@ -236,7 +238,7 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), OnLobbyActiveInstance);
         }
 
-        public void LobbyOpen(string token, string slug, string name)
+        private void LobbyOpen(string token, string slug, string name)
         {
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("lobby_open");
@@ -248,7 +250,7 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), OnLobbyOpen);
         }
 
-        public void JoinGameSessionLobby(string token, string lobbyId, string socketId)
+        private void JoinGameSessionLobby(string token, string lobbyId, string socketId)
         {
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("lobby_join");
@@ -259,8 +261,8 @@ namespace Sandbox.GraphQL
 
             ProcessRequest(GraphInfo, builder.ToString(), OnJoinGameSessionLobby);
         }
-        
-        public void ReconnectGameSessionLobby(string token, string lobbyId, string socketId)
+
+        private void ReconnectGameSessionLobby(string token, string lobbyId, string socketId)
         {
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("lobby_reconnect");
@@ -272,7 +274,7 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), OnReconnectToLobby);
         }
 
-        public void CloseLobbySession(string token, string lobbyId)
+        private void CloseLobbySession(string token, string lobbyId)
         {
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("lobby_close");
@@ -284,7 +286,7 @@ namespace Sandbox.GraphQL
         #endregion
 
         #region Parsers
-        public void OnLobbyActiveInstance(GraphResult result)
+        private void OnLobbyActiveInstance(GraphResult result)
         {
             if (result.Status == Status.ERROR)
             {
@@ -292,7 +294,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                ActiveLobby = result.Result.data.lobby_activeInstance;
+                ActiveLobby = result.Result.Data.ActiveLobby;
 
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_ACTIVE_INSTANCE, Data = ActiveLobby });
 
@@ -323,33 +325,31 @@ namespace Sandbox.GraphQL
             }
         }
 
-        // {"data":{"lobby_open":null},"errors":[{"message":"RTS007: Lobby not found","locations":[{"line":1,"column":10}],"path":["lobby_open"]}]}
-        // {"data":{"lobby_open":null},"errors":[{"message":"RTS001: Player already in lobby","locations":[{"line":1,"column":10}],"path":["lobby_open"]}]}
-        public void OnLobbyOpen(GraphResult result)
+        private void OnLobbyOpen(GraphResult result)
         {
             if (result.Status == Status.ERROR)
             {
                 this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.LOBBY_OPEN });
 
                 // Sample catch all errors
-                CatchError(result.Result.errors, delegate (string message, string request)
+                CatchError(result.Result.Errors, delegate (string message, string request)
                 {
                     Debug.LogErrorFormat(D.ERROR + "Lobby::OnLobbyOpen Request:{0} Message:{1}\n", request, message);
                 });
 
                 // Sample catch error with filters
-                CatchError(LobbyError.RTS001, result.Result.errors, delegate (string message, string request)
+                CatchError(LobbyError.RTS001, result.Result.Errors, delegate (string message, string request)
                 {
                     Debug.LogErrorFormat(D.ERROR + "Lobby::OnLobbyOpen Request:{0} Message:{1}\n", request, message);
                 });
             }
             else
             {
-                LobbyInfo lobby = result.Result.data.lobby_open;
+                LobbyInfo lobby = result.Result.Data.OpenedLobby;
                 Lobbies.Add(lobby);
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_OPEN, Data = lobby });
 
-                Debug.LogFormat(D.LOBBY + "Registering new Lobby! LobbyId:{0}\n", lobby.id);
+                Debug.LogFormat(D.LOBBY + "Registering new Lobby! LobbyId:{0}\n", lobby.Id);
 
                 /* TODO: +AS:20180625 Remove this snippet after the LobbyFlow setup.
                 this.Publish(new OnConnectToLobbySignal() { Lobby = lobby });
@@ -357,14 +357,12 @@ namespace Sandbox.GraphQL
             }
         }
 
-        public void OnCloseLobbySession(GraphResult result)
+        private void OnCloseLobbySession(GraphResult result)
         {
             this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_CLOSE });
         }
-
-        // {"data":{"lobby_join":{"id":"ddead560-7484-11e8-8610-e7f5777e7209"}}}
-        // {"data":{"lobby_join":{"id":"b202fa60-753b-11e8-9bf2-6bce97719484"}}}
-        public void OnJoinGameSessionLobby(GraphResult result)
+        
+        private void OnJoinGameSessionLobby(GraphResult result)
         {
             if (result.Status == Status.ERROR)
             {
@@ -375,16 +373,15 @@ namespace Sandbox.GraphQL
                 Assertion.AssertNotNull(JoinedLobbies, "JoinedLobbies");
                 Assertion.AssertNotNull(result, "result");
                 Assertion.AssertNotNull(result.Result, "result.Result");
-                Assertion.AssertNotNull(result.Result.data, "result.Result.data");
-                Assertion.AssertNotNull(result.Result.data.lobby_join, "result.Result.data.lobby_join");
-                Assertion.AssertNotNull(result.Result.data.lobby_join.id, "result.Result.data.lobby_join.id");
-                JoinedLobbies.Add(result.Result.data.lobby_join.id);
+                Assertion.AssertNotNull(result.Result.Data, "result.Result.data");
+                Assertion.AssertNotNull(result.Result.Data.JoinedLobby, "result.Result.data.lobby_join");
+                Assertion.AssertNotNull(result.Result.Data.JoinedLobby.Id, "result.Result.data.lobby_join.id");
+                JoinedLobbies.Add(result.Result.Data.JoinedLobby.Id);
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_JOIN, Data = JoinedLobbies.LastOrDefault() });
             }
         }
-
-        // {"data":{"lobby_reconnect":{"id":"34307fa0-785f-11e8-b46b-1f787b84fa26"}}}
-        public void OnReconnectToLobby(GraphResult result)
+        
+        private void OnReconnectToLobby(GraphResult result)
         {
             if (result.Status == Status.ERROR)
             {
@@ -395,29 +392,29 @@ namespace Sandbox.GraphQL
                 Assertion.AssertNotNull(JoinedLobbies, "JoinedLobbies");
                 Assertion.AssertNotNull(result, "result");
                 Assertion.AssertNotNull(result.Result, "result.Result");
-                Assertion.AssertNotNull(result.Result.data, "result.Result.data");
-                Assertion.AssertNotNull(result.Result.data.lobby_reconnect, "result.Result.data.lobby_reconnect");
-                Assertion.AssertNotNull(result.Result.data.lobby_reconnect.id, "result.Result.data.lobby_reconnect.id");
-                JoinedLobbies.Add(result.Result.data.lobby_reconnect.id);
+                Assertion.AssertNotNull(result.Result.Data, "result.Result.data");
+                Assertion.AssertNotNull(result.Result.Data.ReconnectedLobby, "result.Result.data.lobby_reconnect");
+                Assertion.AssertNotNull(result.Result.Data.ReconnectedLobby.Id, "result.Result.data.lobby_reconnect.id");
+                JoinedLobbies.Add(result.Result.Data.ReconnectedLobby.Id);
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOBBY_RECONNECT, Data = JoinedLobbies.LastOrDefault() });
             }
         }
         #endregion
 
         #region Debug
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestLobbyActiveInstance()
         {
             this.Publish(new OnLobbyActiveInstanceSignal() { Token = Token });
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestLobbyOpen()
         {
             this.Publish(new OnLobbyOpenSignal() { Token = Token, Slug = "session", Name = "Session" });
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestLobbyJoin()
         {
             /* Socket message
@@ -437,7 +434,7 @@ namespace Sandbox.GraphQL
             //this.Publish(new OnLobbyJoinSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestReconnectToLobby()
         {
             /* Socket message
@@ -457,21 +454,21 @@ namespace Sandbox.GraphQL
             //this.Publish(new OnLobbyReconnectSignal() { Token = Token, LobbyId = lobby.id, SocketId = socketId });
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestStartGame()
         {
             // emit "message": /start
             this.Publish(new OnStartGameSignal());
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestLobbyStatus()
         {
             // emit "message": /start
             this.Publish(new OnCheckLobbyStatus());
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestSetInitialTarget()
         {
             this.Publish(new OnSetInitialTargetSignal()
@@ -481,7 +478,7 @@ namespace Sandbox.GraphQL
             });
         }
         
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestSendScore()
         {
             // emit "message": + <timestamp> <data>
@@ -498,7 +495,7 @@ namespace Sandbox.GraphQL
             //});
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestSendMiss()
         {
             // emit "message": - <timestamp>
@@ -509,25 +506,25 @@ namespace Sandbox.GraphQL
             });
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestEndGame()
         {
             // emit "message": /end
             this.Publish(new OnEndGameSignal());
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestCloseSession()
         {
             // emit "message": /leave
             this.Publish(new OnCloseSessionSignal());
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestCloseLobbySession()
         {
             LobbyInfo lobby = Lobbies.LastOrDefault();
-            this.Publish(new OnCloseLobbySessionSignal() { Token = Token, LobbyId = lobby.id });
+            this.Publish(new OnCloseLobbySessionSignal() { Token = Token, LobbyId = lobby.Id });
         }
 
         // http://ec2-54-169-135-194.ap-southeast-1.compute.amazonaws.com:5000/_lobbies

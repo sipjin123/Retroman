@@ -157,8 +157,10 @@ namespace Sandbox.GraphQL
             });
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
             Screen.orientation = ScreenOrientation.Portrait;
 
             this.Publish(new AdFinishedPlayingSignal()
@@ -215,7 +217,7 @@ namespace Sandbox.GraphQL
             VideoPlayer.Play();
         }
         
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void PlayVideoDebug()
         {
             PlayVideoAd(DebugAdPath);

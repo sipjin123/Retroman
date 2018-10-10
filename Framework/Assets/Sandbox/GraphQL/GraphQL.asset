@@ -14,7 +14,7 @@ MonoBehaviour:
   PackageName: GraphQL Sandbox
   PackageVersion: 1.0.0
   PackageDescription: Sandbox for GraphQL requests
-  OutputDirectory: Assets\Sandbox\GraphQL
+  OutputDirectory: C:\Users\jerald.tapalla\Desktop\Unity Packages
   Options: 7
   Assets:
   - {fileID: 102900000, guid: 2c81c962cb5beab4b9f0cfdd95d2f3e2, type: 3}
@@ -102,20 +102,24 @@ MonoBehaviour:
   - Assets/Sandbox/GraphQL/Scripts/GraphQLDebugButton.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/GraphRequest.cs
   - Assets/Sandbox/GraphQL/Scripts/GraphRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphRequestItem.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphRequestItem.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/GraphResult.cs
+  - Assets/Sandbox/GraphQL/Scripts/GraphResult.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Installers.meta
   - Assets/Sandbox/GraphQL/Scripts/Popups.meta
   - Assets/Sandbox/GraphQL/Scripts/Requests.meta
   - Assets/Sandbox/GraphQL/Scripts/Tests.meta
   - Assets/Sandbox/GraphQL/Scripts/Builder/Builder.cs
   - Assets/Sandbox/GraphQL/Scripts/Builder/Builder.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphConfigs.cs
+  - Assets/Sandbox/GraphQL/Scripts/Data/GraphConfigs.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLAdData.cs
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLAdData.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLOfflineData.cs
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLOfflineData.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultData.cs
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultData.cs.meta
-  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultDataHandler.cs
-  - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLResultDataHandler.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLSetupData.cs
   - Assets/Sandbox/GraphQL/Scripts/Data/GraphQLSetupData.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Editor/GraphQLEditor.cs
@@ -128,6 +132,8 @@ MonoBehaviour:
   - Assets/Sandbox/GraphQL/Scripts/Popups/GraphQLAdsPopupVideo.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Requests/AdsRequest.cs
   - Assets/Sandbox/GraphQL/Scripts/Requests/AdsRequest.cs.meta
+  - Assets/Sandbox/GraphQL/Scripts/Requests/AnonymousRequest.cs
+  - Assets/Sandbox/GraphQL/Scripts/Requests/AnonymousRequest.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Requests/ConfigurationRequest.cs
   - Assets/Sandbox/GraphQL/Scripts/Requests/ConfigurationRequest.cs.meta
   - Assets/Sandbox/GraphQL/Scripts/Requests/EventsPlayerCount.cs
@@ -178,8 +184,12 @@ MonoBehaviour:
   - Assets/Sandbox/GraphQL/Textures/skip.png.meta
   - Assets/Sandbox/GraphQL/Textures/Video.png
   - Assets/Sandbox/GraphQL/Textures/Video.png.meta
-  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework).asset
-  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework).asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Chewy Chase LIVE).asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Chewy Chase LIVE).asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework DEV).asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework DEV).asset.meta
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework LIVE).asset
+  - Assets/Sandbox/GraphQL/UAssets/GraphInfo (Framework LIVE).asset.meta
   - Assets/Sandbox/GraphQL/UAssets/GraphQLData.asset
   - Assets/Sandbox/GraphQL/UAssets/GraphQLData.asset.meta
   - Assets/Sandbox/GraphQL/UAssets/GraphQLSetupData.asset

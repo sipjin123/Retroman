@@ -20,79 +20,79 @@ namespace Sandbox.GraphQL
         public bool IsUpdated;
     }
 
-    [Serializable]
-    public class GraphConfigs
-    {
-        public static readonly string ENVIRONMENT = "__env";
-        public static readonly string BUILD = "__build";
-        public static readonly string PUBSUB_ENDPOINT = "pubsub_endpoint";
-        public static readonly string PUBLIC_CHANNEL = "pubsub_public_channel";
-        public static readonly string PRIVATE_CHANNEL = "pubsub_private_channel";
-        public static readonly string SU = "su";
-        public static readonly string HOT_ENABLED = "hot_enabled";
-        public static readonly string HOT_START = "hot_start";
-        public static readonly string HOT_END = "hot_end";
-        public static readonly string HOT_MULTIPLIER = "terms_url";
-        public static readonly string TERMS_AND_CONDITION = "terms_url";
+    //[Serializable]
+    //public class GraphConfigs
+    //{
+    //    public static readonly string ENVIRONMENT = "__env";
+    //    public static readonly string BUILD = "__build";
+    //    public static readonly string PUBSUB_ENDPOINT = "pubsub_endpoint";
+    //    public static readonly string PUBLIC_CHANNEL = "pubsub_public_channel";
+    //    public static readonly string PRIVATE_CHANNEL = "pubsub_private_channel";
+    //    public static readonly string SU = "su";
+    //    public static readonly string HOT_ENABLED = "hot_enabled";
+    //    public static readonly string HOT_START = "hot_start";
+    //    public static readonly string HOT_END = "hot_end";
+    //    public static readonly string HOT_MULTIPLIER = "terms_url";
+    //    public static readonly string TERMS_AND_CONDITION = "terms_url";
 
-        private List<Config> Configs;
+    //    private List<Config> Configs;
 
-        public string Environment;
-        public string Build;
-        public string EndPoint;
-        public string PubChannel;
-        public string PrivateChannel;
-        public string Su;
-        public ReactiveProperty<bool> HEnabled = new ReactiveProperty<bool>(false);
-        public DateTime HStart;
-        public DateTime HEnd;
-        public string HMultiplier;
-        public string Terms;
+    //    public string Environment;
+    //    public string Build;
+    //    public string EndPoint;
+    //    public string PubChannel;
+    //    public string PrivateChannel;
+    //    public string Su;
+    //    public ReactiveProperty<bool> HEnabled = new ReactiveProperty<bool>(false);
+    //    public DateTime HStart;
+    //    public DateTime HEnd;
+    //    public string HMultiplier;
+    //    public string Terms;
 
-        public GraphConfigs(List<Config> configs)
-        {
-            Configs = configs;
+    //    public GraphConfigs(List<Config> configs)
+    //    {
+    //        Configs = configs;
 
-            Func<string, string> GetConfig = delegate (string key)
-            {
-                if (Configs.Exists(c => c.key.Equals(key)))
-                {
-                    return Configs.Find(c => c.key.Equals(key)).value;
-                }
+    //        Func<string, string> GetConfig = delegate (string key)
+    //        {
+    //            if (Configs.Exists(c => c.Key.Equals(key)))
+    //            {
+    //                return Configs.Find(c => c.Key.Equals(key)).Value;
+    //            }
 
-                return string.Empty;
-            };
+    //            return string.Empty;
+    //        };
 
-            Environment = GetConfig(ENVIRONMENT);
-            Build = GetConfig(BUILD);
-            EndPoint = GetConfig(PUBSUB_ENDPOINT);
-            PubChannel = GetConfig(PUBLIC_CHANNEL);
-            PrivateChannel = GetConfig(PRIVATE_CHANNEL);
-            HEnabled.Value = bool.Parse(GetConfig(HOT_ENABLED));
-            Su = GetConfig(SU);
-            HStart = ParseTime(GetConfig(HOT_START));
-            HEnd = ParseTime(GetConfig(HOT_END));
-            HMultiplier = GetConfig(HOT_MULTIPLIER);
-            Terms = GetConfig(TERMS_AND_CONDITION);
-        }
+    //        Environment = GetConfig(ENVIRONMENT);
+    //        Build = GetConfig(BUILD);
+    //        EndPoint = GetConfig(PUBSUB_ENDPOINT);
+    //        PubChannel = GetConfig(PUBLIC_CHANNEL);
+    //        PrivateChannel = GetConfig(PRIVATE_CHANNEL);
+    //        HEnabled.Value = bool.Parse(GetConfig(HOT_ENABLED));
+    //        Su = GetConfig(SU);
+    //        HStart = ParseTime(GetConfig(HOT_START));
+    //        HEnd = ParseTime(GetConfig(HOT_END));
+    //        HMultiplier = GetConfig(HOT_MULTIPLIER);
+    //        Terms = GetConfig(TERMS_AND_CONDITION);
+    //    }
 
-        public DateTime ParseTime(string time)
-        {
-            try
-            {
-                return DateTime.Parse(time);
-            }
-            catch
-            {
-                return DateTime.Now;
-            }
-        }
+    //    public DateTime ParseTime(string time)
+    //    {
+    //        try
+    //        {
+    //            return DateTime.Parse(time);
+    //        }
+    //        catch
+    //        {
+    //            return DateTime.Now;
+    //        }
+    //    }
 
-        public double GetSpan()
-        {
-            return (HEnd - HStart).TotalMilliseconds;
-        }
-    }
+    //    public double GetSpan()
+    //    {
+    //        return (HEnd - HStart).TotalMilliseconds;
+    //    }
+    //}
     public class GraphQLResultDataHandler : MonoBehaviour
     {
 
@@ -133,7 +133,7 @@ namespace Sandbox.GraphQL
 
         public string PlayerName
         {
-            get { return profile.first_name; }
+            get { return profile.FirstName; }
         }
         private GraphConfigs _GraphConfigs;
         private CompositeDisposable disp = new CompositeDisposable();
@@ -219,7 +219,7 @@ namespace Sandbox.GraphQL
         public void ConfigureSuccessResolver(GraphQLRequestSuccessfulSignal result)
         {
             Configs = result.GetData<List<Config>>();
-            _GraphConfigs = new GraphConfigs(Configs);
+            _GraphConfigs = new GraphConfigs();
         }
 
         public void AnnouncementSuccessResolver(GraphQLRequestSuccessfulSignal result)
@@ -228,24 +228,24 @@ namespace Sandbox.GraphQL
             foreach (EventAnnouncement announcement in Announcements)
             {
                 AnnouncementData data = new AnnouncementData();
-                this.Publish(new GetEventPlayersSignal() { announcement_id = announcement.id });
-                data = JsonUtility.FromJson<AnnouncementData>(announcement.data);
-                announcement.eventData = data;
+                this.Publish(new GetEventPlayersSignal() { announcement_id = announcement.Id });
+                data = JsonUtility.FromJson<AnnouncementData>(announcement.Data);
+                announcement.Announcement = data;
             }
         }
 
         public void EventStatusResolver(GraphQLRequestSuccessfulSignal result)
         {
-            string json = result.GetData<PlayerProfileContainer>().value;
+            string json = result.GetData<PlayerProfileContainer>().Value;
 
             json = "{ \"eventsList\": " + json + "}";
             EventsStatus status = JsonUtility.FromJson<EventsStatus>(json);
 
-            if (status.eventsList.Count > 0)
+            if (status.Events.Count > 0)
             {
-                status.eventsList.ForEach(_item =>
+                status.Events.ForEach(_item =>
                 {
-                    Announcements.Find(_event => _event.id == _item.id).code = _item.code;
+                    Announcements.Find(_event => _event.Id == _item.Id).Code = _item.Code;
                 });
             }
         }
@@ -261,9 +261,9 @@ namespace Sandbox.GraphQL
 
             foreach (LeaderboardStanding item in aroundList)
             {
-                if (!LeaderboardData.ContainsKey(item.standing))
+                if (!LeaderboardData.ContainsKey(item.Standing))
                 {
-                    LeaderboardData.Add(item.standing, item);
+                    LeaderboardData.Add(item.Standing, item);
                 }
 
             }
@@ -277,7 +277,7 @@ namespace Sandbox.GraphQL
             List<LeaderboardStanding> TopList = result.GetData<List<LeaderboardStanding>>();
             foreach (LeaderboardStanding item in TopList)
             {
-                LeaderboardData.Add(item.standing, item);
+                LeaderboardData.Add(item.Standing, item);
             }
         }
 
@@ -288,14 +288,14 @@ namespace Sandbox.GraphQL
 
         public void EventResolvePlayerID(GraphQLRequestSuccessfulSignal result)
         {
-            playerID = result.GetData<PlayerIDContainer>().id;
+            playerID = result.GetData<PlayerIDContainer>().Id;
         }
 
         public void GetPlayerProfileResolver(GraphQLRequestSuccessfulSignal result)
         {
             PlayerProfileContainer json = result.GetData<PlayerProfileContainer>();
             profile = new PlayerProfileData();
-            profile = JsonUtility.FromJson<PlayerProfileData>(json.value);
+            profile = JsonUtility.FromJson<PlayerProfileData>(json.Value);
             IsProfileUpdated.Value = profile != null;
 
             PREFS.SetInt("HasLoggedIn", _IsProfileUpdated.Value ? 0 : 1);

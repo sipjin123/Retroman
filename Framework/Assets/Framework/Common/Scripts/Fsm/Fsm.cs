@@ -170,6 +170,11 @@ namespace Common.Fsm
             return currentStateName.Equals(state);
         }
 
+        public bool HasTransition(string transition)
+        {
+            return ResolveTransition(transition) != null;
+        }
+
         /**
 		 * Sends an event which may cause state change.
 		 */

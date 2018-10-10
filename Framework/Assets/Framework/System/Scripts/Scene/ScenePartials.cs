@@ -27,7 +27,7 @@ namespace Framework
 
     #region Scene extension (Load, Unload, and Wait)
 
-    public partial class Scene : SerializedMonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour, IScene
     {
         public static ValueDropdownList<string> SceneList;
 
@@ -57,8 +57,9 @@ namespace Framework
         [TabGroup("Scene")]
         [DisableInEditorMode]
         private string CachedScene;
-        
-        public void PassDataToScene<T>(string scene, ISceneData data) where T : Scene
+
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public void PassDataToScene<T>(string scene, ISceneData data) where T : IScene
         {
             UScene loadedScene = SceneManager.GetSceneByName(scene);
             List<GameObject> objects = new List<GameObject>(loadedScene.GetRootGameObjects());
@@ -70,15 +71,16 @@ namespace Framework
             // pass the data 
             items.FirstOrDefault().SceneData = data;
         }
-        
+
         /// <summary>
         /// Loads the given scene.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene">The type/ID of the scene to be loaded</param>
         /// <returns></returns>
-        public Promise LoadScenePromise<T>(EScene scene) where T : Scene
+        public Promise LoadScenePromise<T>(EScene scene) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadSceneAsync<T>(def, scene));
@@ -87,8 +89,9 @@ namespace Framework
 
         /// <summary>
         /// Unloads everything except the SystemRoot then loads the target scene.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
-        public IEnumerator LoadSceneAsync<T>(Deferred def, EScene scene) where T : Scene
+        public IEnumerator LoadSceneAsync<T>(Deferred def, EScene scene) where T : IScene
         {
             Assertion.Assert(scene != EScene.System);
 
@@ -116,12 +119,13 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene">The type/ID of the scene to be loaded</param>
         /// <returns></returns>
-        public Promise LoadScenePromise<T>(string scene) where T : SceneObject
+        public Promise LoadScenePromise<T>(string scene) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadSceneAsync<T>(def, scene));
@@ -130,8 +134,9 @@ namespace Framework
 
         /// <summary>
         /// Unloads everything except the SystemRoot then loads the target scene.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
-        public IEnumerator LoadSceneAsync<T>(Deferred def, string scene) where T : SceneObject
+        public IEnumerator LoadSceneAsync<T>(Deferred def, string scene) where T : IScene
         {
             bool sceneIsLoaded = IsLoaded(scene) || HasScene(scene);
             if (sceneIsLoaded)
@@ -157,20 +162,22 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene with data.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene">The type/ID of the scene to be loaded</param>
         /// <param name="data">Data to be passed to the scene</param>
         /// <returns></returns>
-        public Promise LoadScenePromise<T>(EScene scene, ISceneData data) where T : Scene
+        public Promise LoadScenePromise<T>(EScene scene, ISceneData data) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadSceneAsync<T>(def, scene, data));
             return def.Promise;
         }
 
-        public IEnumerator LoadSceneAsync<T>(Deferred def, EScene scene, ISceneData data) where T : Scene
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public IEnumerator LoadSceneAsync<T>(Deferred def, EScene scene, ISceneData data) where T : IScene
         {
             Assertion.Assert(scene != EScene.System);
 
@@ -200,6 +207,7 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene additively.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <param name="scene"></param>
         /// <param name="sScenee"></param>
@@ -211,6 +219,7 @@ namespace Framework
             return def.Promise;
         }
 
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         public IEnumerator LoadAdditiveSceneAsync(Deferred def, string scene)
         {
             bool sceneIsLoaded = Scene.IsLoaded(scene);
@@ -232,19 +241,21 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene additively.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene"></param>
         /// <returns></returns>
-        public Promise LoadSceneAdditivePromise<T>(EScene eScene) where T : Scene
+        public Promise LoadSceneAdditivePromise<T>(EScene eScene) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadAdditiveSceneAsync<T>(def, eScene));
             return def.Promise;
         }
 
-        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, EScene scene) where T : Scene
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, EScene scene) where T : IScene
         {
             Assertion.Assert(scene != EScene.System);
 
@@ -263,22 +274,24 @@ namespace Framework
 
             this.Publish(new OnLoadSceneSignal(scene));
         }
-        
+
         /// <summary>
         /// Loads the given scene additively.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene"></param>
         /// <returns></returns>
-        public Promise LoadSceneAdditivePromise<T>(string scene) where T : Scene
+        public Promise LoadSceneAdditivePromise<T>(string scene) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadAdditiveSceneAsync<T>(def, scene));
             return def.Promise;
         }
 
-        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, string scene) where T : Scene
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, string scene) where T : IScene
         {
             bool sceneIsLoaded = Scene.IsLoaded(scene);
             if (sceneIsLoaded)
@@ -299,20 +312,22 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene additively with data.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Promise LoadSceneAdditivePromise<T>(EScene eScene, ISceneData data) where T : Scene
+        public Promise LoadSceneAdditivePromise<T>(EScene eScene, ISceneData data) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadAdditiveSceneAsync<T>(def, eScene, data));
             return def.Promise;
         }
 
-        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, EScene scene, ISceneData data) where T : Scene
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, EScene scene, ISceneData data) where T : IScene
         {
             AsyncOperation operation = SceneManager.LoadSceneAsync(scene.ToString(), LoadSceneMode.Additive);
             yield return operation;
@@ -325,20 +340,22 @@ namespace Framework
 
         /// <summary>
         /// Loads the given scene additively with data.
+        /// TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="scene"></param>
         /// <param name="eScene"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Promise LoadSceneAdditivePromise<T>(string scene, ISceneData data) where T : Scene
+        public Promise LoadSceneAdditivePromise<T>(string scene, ISceneData data) where T : IScene
         {
             Deferred def = new Deferred();
             StartCoroutine(LoadAdditiveSceneAsync<T>(def, scene, data));
             return def.Promise;
         }
 
-        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, string scene, ISceneData data) where T : Scene
+        // TODO: +AS:20181008 Change all the Scene and SceneObject generics to IScene
+        public IEnumerator LoadAdditiveSceneAsync<T>(Deferred def, string scene, ISceneData data) where T : IScene
         {
             bool sceneIsLoaded = Scene.IsLoaded(scene);
             if (sceneIsLoaded)
@@ -415,9 +432,13 @@ namespace Framework
             this.Publish(new OnUnloadSceneSignal(scene));
         }
 
+        /// <summary>
+        /// Unloads all non persistent scenes
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator UnloadAllScenes()
         {
-            List<SceneEntry> entries = Factory.Get<SceneReference>().FindScenes(false);
+            List<SceneEntry> entries = Factory.Get<SceneReference>().FindScenes(isPersistent: false);
             foreach (SceneEntry e in entries)
             {
                 AsyncOperation operation = SceneManager.UnloadSceneAsync(e.Scene);
@@ -491,6 +512,19 @@ namespace Framework
             def.Resolve();
         }
 
+        public Promise WaitPromise()
+        {
+            Deferred def = new Deferred();
+            StartCoroutine(Wait(def));
+            return def.Promise;
+        }
+
+        protected virtual IEnumerator Wait(Deferred def)
+        {
+            yield return null;
+            def.Resolve();
+        }
+
         public Promise WaitPromise(float seconds = 1.0f)
         {
             Deferred def = new Deferred();
@@ -508,7 +542,7 @@ namespace Framework
         public Promise Clean()
         {
             Deferred def = new Deferred();
-            StartCoroutine(this.Clean(def));
+            StartCoroutine(Clean(def));
             return def.Promise;
         }
 

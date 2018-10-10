@@ -952,8 +952,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1441.3008, y: -960.00006}
-  m_SizeDelta: {x: 2882.6016, y: 1920.0001}
+  m_AnchoredPosition: {x: 1706.6666, y: -960.00006}
+  m_SizeDelta: {x: 3413.3333, y: 1920.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &128098723
 GameObject:
@@ -1872,7 +1872,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
+  m_SortingLayerID: -942830819
   m_SortingOrder: 7
   m_TargetDisplay: 0
 --- !u!114 &987283047
@@ -1968,9 +1968,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _Canvas: {fileID: 987283046}
   _PopUp: ConvertOnline
-  Conversion: {fileID: 2069379402}
-  Coins: {fileID: 296022052}
-  CalcConveersion: {fileID: 2056242838}
+  Accumulated: {fileID: 0}
+  TextProgress: {fileID: 0}
+  TextStamp: {fileID: 0}
+  TextClaim: {fileID: 0}
+  ConvertButton: {fileID: 0}
+  ClaimButton: {fileID: 0}
+  Progress: {fileID: 0}
+  CurrencyId: 
+  Rate: 0
+  Stamp: 0
+  ClaimableStamp: 0
+  Score: 0
 --- !u!225 &987283053
 CanvasGroup:
   m_ObjectHideFlags: 0

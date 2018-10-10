@@ -13,6 +13,9 @@ using UniRx;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
 	public class GetEventPlayersSignal : IRequestSignal, IJson
     {
@@ -26,8 +29,10 @@ namespace Sandbox.GraphQL
 
 	public class EventsPlayerCount : UnitRequest 
 	{
-		public override void Initialze(GraphInfo info)
-		{
+		public override void Initialze(GraphInfo info, GraphRequest request)
+        {
+            base.Initialze(info, request);
+
 			this.Receive<GetEventPlayersSignal>()
 				.Subscribe(_ => GetEventPlayerCount(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
 				.AddTo(this);
@@ -56,7 +61,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                // Debug.LogError("Success");
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.EVENT_PLAYER_COUNT });
             }
 		}
 

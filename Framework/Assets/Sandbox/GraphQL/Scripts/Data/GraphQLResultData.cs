@@ -15,6 +15,9 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     #region GraphQL Requests
     public enum GraphQLRequestType
     {
@@ -27,6 +30,8 @@ namespace Sandbox.GraphQL
         LOBBY_JOIN,
         LOBBY_RECONNECT,
         LOBBY_CLOSE,
+        LOBBIES_QUERY,
+        LOBBY_LEAVE,
 
         PLAY_AD,
         GET_ALL_ADS,
@@ -52,63 +57,64 @@ namespace Sandbox.GraphQL
         SEND_CURRENCY,
         CONVERT_CURRENCY,
     }
+
+    public enum AdType
+    {
+        image,
+        video,
+    }
     #endregion
 
     #region Graph Result Data
     [Serializable]
     public class Data
     {
-        public PlayerLogin player_login;//player_login 
-        public PlayerUpdate player_update;//player_update
-        public List<Config> configuration;//configuration
-        public List<EventAnnouncement> announcements;//announcements
-        public LobbyActiveInstance lobby_activeInstance;//lobby_activeInstance 
-        public LobbyInfo lobby_open;//lobby_open
-        public LobbyJoinReconnect lobby_join;//lobby_join
-        public LobbyJoinReconnect lobby_reconnect;//lobby_reconnect
-        public List<Advertisement> advertisements;//advertisements
-        public AdvertisementRandom advertisement_random;//advertisement_random
-        public AdvertisementEnd advertisement_end;//advertisement_end
-        public AdvertisementPlay advertisement_play;//adverisement_play
-        public PlayerProfileContainer player_getStat;//player_profile
-        public GameEventStatus event_status;//event_status
-        public UpdateProfileResult update_profile; //update_profile
-        public PlayerIDContainer player; //update_profile
-        public List<LeaderboardStanding> leaderboard_standing; //around_leaderboard
-        public List<LeaderboardStanding> leaderboard_players; //around_leaderboard
-        public JoinEventResultData event_join; //join_event
-        public FGCWallet fgc_wallet; //
-        public GenericWallet genericWallet;
-        public FGCCurrency wallet; //wallet
-        public WalletConvert wallet_convert; //wallet_convert
+        [JProp("player_login")] public PlayerLogin PlayerLogin;//player_login 
+        [JProp("player_update")] public PlayerUpdate PlayerUpdate;//player_update
+        [JProp("configuration")] public List<Config> Configs;//configuration
+        [JProp("announcements")] public List<EventAnnouncement> Announcements;//announcements
+        [JProp("lobby_activeInstance")] public LobbyActiveInstance ActiveLobby;//lobby_activeInstance 
+        [JProp("lobby_open")] public LobbyInfo OpenedLobby;//lobby_open
+        [JProp("lobby_join")] public LobbyJoinReconnect JoinedLobby;//lobby_join
+        [JProp("lobby_reconnect")] public LobbyJoinReconnect ReconnectedLobby;//lobby_reconnect
+        [JProp("advertisements")] public List<Advertisement> Ads;//advertisements
+        [JProp("advertisement_random")] public AdvertisementRandom RandomAd;//advertisement_random
+        [JProp("advertisement_end")] public AdvertisementEnd EndAd;//advertisement_end
+        [JProp("advertisement_play")] public AdvertisementPlay PlayAd;//adverisement_play
+        [JProp("player_getStat")] public PlayerProfileContainer PlayerProfile;//player_profile
+        [JProp("event_status")] public GameEventStatus GameEventStatus;//event_status
+        [JProp("update_profile")] public UpdateProfileResult ProfileUpdate; //update_profile
+        [JProp("player")] public PlayerIDContainer PlayerInfo; //update_profile
+        [JProp("leaderboard_standing")] public List<LeaderboardStanding> LeaderboardStandings; //around_leaderboard
+        [JProp("leaderboard_players")] public List<LeaderboardStanding> LeadboardPlayers; //around_leaderboard
+        [JProp("event_join")] public JoinEventResultData JoinEventResult; //join_event
+        [JProp("fgc_wallet")] public FGCWallet FGCWallet; //
+        [JProp("genericWallet")] public GenericWallet Currencies;
+        [JProp("wallet")] public FGCCurrency Wallet; //wallet
+        [JProp("wallet_convert")] public WalletConvert Convert; //wallet_convert
     }
 
     [Serializable]
     public class Error
     {
-        public string message;
-        public List<Location> locations;
-        public List<string> path;
+        [JProp("message")] public string Message;
+        [JProp("locations")] public List<Location> Locations;
+        [JProp("path")] public List<string> Path;
     }
+
     [Serializable]
     public class Location
     {
-        public int line;
-        public int column;
+        [JProp("line")] public int Line;
+        [JProp("column")] public int Column;
     }
 
     [Serializable]
     public class ResultData
     {
-        public Data data;
-        public Error error;
-        public List<Error> errors;
-    }
-
-    public enum AdType
-    {
-        image,
-        video,
+        [JProp("data")] public Data Data;
+        [JProp("error")] public Error Error;
+        [JProp("errors")] public List<Error> Errors;
     }
     #endregion
 

@@ -18,45 +18,48 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
     public class PlayerProfileData : IJson
     {
-        public string first_name;
-        public string middle_name;
-        public string last_name;
-        public string birthdate;
-        public string gender;
-        public string address;
-        public string city;
-        public string mobile_number;
-        public string email;
+        [JProp("first_name")] public string FirstName;
+        [JProp("middle_name")] public string MiddleName;
+        [JProp("last_name")] public string LastName;
+        [JProp("birthdate")] public string Birthdate;
+        [JProp("gender")] public string Gender;
+        [JProp("address")] public string Address;
+        [JProp("city")] public string City;
+        [JProp("mobile_number")] public string Mobile;
+        [JProp("email")] public string Email;
     }
     
     [Serializable]
     public class PlayerProfileContainer : IJson
     {
-        public string value;
+        [JProp("value")] public string Value;
     }
 
     [Serializable]
     public class PlayerProfileRequestData : IJson
     {
-        public string id;
-        public string first_name;
-        public string middle_name;
-        public string last_name;
-        public string mobile_number;
-        public string gender;
-        public string email;
-        public string birthdate;
-        public string address;
+        [JProp("id")] public string Id;
+        [JProp("first_name")] public string FirstName;
+        [JProp("middle_name")] public string MiddleName;
+        [JProp("last_name")] public string LastName;
+        [JProp("mobile_number")] public string Mobile;
+        [JProp("gender")] public string Gender;
+        [JProp("email")] public string Email;
+        [JProp("birthdate")] public string Birthdate;
+        [JProp("address")] public string Address;
     }
 
     public class PlayerProfileRequest : UnitRequest
     {
-        public override void Initialze(GraphInfo info)
+        public override void Initialze(GraphInfo info, GraphRequest request)
         {
-            base.Initialze(info);
+            base.Initialze(info, request);
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
                  .Where(_ => _.Type == GraphQLRequestType.LOGIN)
@@ -111,7 +114,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_PROFILE, Data = result.Result.data.player_getStat });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_PROFILE, Data = result.Result.Data.PlayerProfile });
             }
         }
 
@@ -123,7 +126,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_PROFILE, Data = result.Result.data.player_getStat });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_PROFILE, Data = result.Result.Data.PlayerProfile });
             }
         }
 
@@ -135,15 +138,15 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                PlayerProfileContainer container = result.Result.data.player_getStat;
+                PlayerProfileContainer container = result.Result.Data.PlayerProfile;
                 
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_PLAYER_PROFILE, Data = container.value });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_PLAYER_PROFILE, Data = container.Value });
             }
         }
         #endregion
 
         #region Debug
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void GetPlayerProfile()
         {
             RetrievePlayerData(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));

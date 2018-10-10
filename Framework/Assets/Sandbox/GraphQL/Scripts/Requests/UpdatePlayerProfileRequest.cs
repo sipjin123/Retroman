@@ -18,16 +18,21 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
     public class UpdateProfileResult : IJson
 	{
-		public string id;
+	    [JProp("id")] public string Id;
 	}
 
 	public class UpdatePlayerProfileRequest : UnitRequest 
 	{
-		public override void Initialze(GraphInfo info)
-		{
+	    public override void Initialze(GraphInfo info, GraphRequest request)
+	    {
+	        base.Initialze(info, request);
+
             this.Receive<PlayerProfileData>()
                 .Subscribe(_ => UpdatePlayerProfile(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), _))
                 .AddTo(this);
@@ -58,25 +63,25 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.UPDATE_PROFILE, Data = result.Result.data.update_profile });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.UPDATE_PROFILE, Data = result.Result.Data.ProfileUpdate });
 
 
             }
 		}
 
-		[Button(25)]	
+		[Button(ButtonSizes.Medium)]	
 		public void TestJsonData()
 		{
 			PlayerProfileData data = new PlayerProfileData();
-			data.address = "8819 vkfg";
-			data.birthdate = "08261954";
-			data.city = "pasay";
-			data.email = "juan.delacruz@synergy88digital.com";
-			data.first_name = "juan";
-			data.gender = "Male";
-			data.last_name = "delacruz";
-			data.middle_name = "bonifacio";
-			data.mobile_number = "09968292812"; 	
+			data.Address = "8819 vkfg";
+			data.Birthdate = "08261954";
+			data.City = "pasay";
+			data.Email = "juan.delacruz@synergy88digital.com";
+			data.FirstName = "juan";
+			data.Gender = "Male";
+			data.LastName = "delacruz";
+			data.MiddleName = "bonifacio";
+			data.Mobile = "09968292812"; 	
 
 			UpdatePlayerProfile(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), data);	
 		}

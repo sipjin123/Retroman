@@ -33,7 +33,7 @@ public class CustomSwarmItemManager : SwarmItemManager
     public override void Initialize()
     {
         // warn the user if no prefabs were set up. There would be no need for a manager without SwarmItems
-        if (itemPrefabs.Length == 0)
+        if (itemPrefabs.Count == 0)
         {
             Debug.Log("WARNING! No Item Prefabs exists for " + gameObject.name + " -- Errors will occur.");
         }
@@ -46,7 +46,7 @@ public class CustomSwarmItemManager : SwarmItemManager
         }
 
         // initialize the prefab item lists
-        _prefabItemLists = new PrefabItemLists[itemPrefabs.Length];
+        _prefabItemLists = new PrefabItemLists[itemPrefabs.Count];
         for (int i = 0; i < _prefabItemLists.Length; i++)
         {
             _prefabItemLists[i] = new PrefabItemLists();

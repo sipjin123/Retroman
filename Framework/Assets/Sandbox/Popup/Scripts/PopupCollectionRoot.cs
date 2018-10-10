@@ -41,7 +41,10 @@ namespace Sandbox.Popup
         public PopupData PopupData;
     }
 
-    public struct OnCloseActivePopup { }
+    public struct OnCloseActivePopup
+    {
+        public bool All;
+    }
 
     public partial class PopupCollectionRoot : FScene
     {
@@ -76,19 +79,21 @@ namespace Sandbox.Popup
 
             Assertion.AssertNotNull(Blocker);
             Assertion.AssertNotNull(Popups);
-            
-            AddButtonHandler(ButtonType.Close, delegate (ButtonClickedSignal signal)
-            {
-                //Add Chronos 
-                CloseActivePopup();
-            });
 
+            AddButtonHandler(ButtonType.Close, (ButtonClickedSignal signal) => CloseActivePopup());
+            
             this.Receive<OnShowPopupSignal>()
                 .Subscribe(_ => Show(_.Popup, _.PopupData))
                 .AddTo(this);
 
             this.Receive<OnCloseActivePopup>()
-                .Subscribe(_ => this.CloseActivePopup())
+                .Where(_ => !_.All)
+                .Subscribe(_ => CloseActivePopup())
+                .AddTo(this);
+
+            this.Receive<OnCloseActivePopup>()
+                .Where(_ => _.All)
+                .Subscribe(_ => CloseAllActivePopup())
                 .AddTo(this);
         }
 
@@ -116,6 +121,26 @@ namespace Sandbox.Popup
             SortPopupCanvas();
         }
 
+        private void CloseAllActivePopup()
+        {
+            while (SystemCanvas.Count > 1)
+            {
+                Canvas canvas = SystemCanvas.CanvasList[1].Canvas;
+                Popups.Remove(canvas.GetComponent<PopupWindow>());
+                SystemCanvas.RemoveCanvas(canvas);
+
+                GameObject.Destroy(canvas.gameObject);
+
+                if (SystemCanvas.Count <= 1)
+                {
+                    Blocker.SetActive(false);
+                }
+            }
+
+            // Sort
+            SortPopupCanvas();
+        }
+
         /// <summary>
         /// NOTE: Temp fix for PopupCollection sort order bug
         /// TODO: Adjust SystemCanvas to handle the stack order of popups
@@ -123,8 +148,8 @@ namespace Sandbox.Popup
         private void SortPopupCanvas()
         {
             Camera camera = null;
-            bool hasCamera = true;
-            if (hasCamera = (SystemCanvas.IsUsingSystemCamera() && QuerySystem.HasResolver(QueryIds.SystemCamera)))
+            bool hasCamera = SystemCanvas.IsUsingSystemCamera() && QuerySystem.HasResolver(QueryIds.SystemCamera);
+            if (hasCamera)
             {
                 camera = QuerySystem.Query<Camera>(QueryIds.SystemCamera);
             }
@@ -165,7 +190,7 @@ namespace Sandbox.Popup
                 }
 
                 SystemCanvas.CanvasList[i] = canvas;
-                Debug.LogFormat(D.WARNING + " A I:{0} D:{1} N:{2}\n", i, canvas.PlaneDistance, canvas.Canvas.name);
+                Debug.LogFormat(D.POPUP + "PopupCollectionRoot::SortPopupCanvas A I:{0} D:{1} N:{2}\n", i, canvas.PlaneDistance, canvas.Canvas.name);
             }
         }
         
@@ -197,7 +222,7 @@ namespace Sandbox.Popup
 
             if (objects.Count != 1)
             {
-                rawObjects.ForEach(o => Debug.LogFormat(D.ERROR + "GameObject:{0} PopupWindow:{1}\n", o.name, o.GetComponent<PopupWindow>()));
+                rawObjects.ForEach(o => Debug.LogFormat(D.ERROR + "PopupCollectionRoot::Load GameObject:{0} PopupWindow:{1}\n", o.name, o.GetComponent<PopupWindow>()));
             }
 
             // make sure the scenes only has 1 root object
@@ -293,10 +318,17 @@ namespace Sandbox.Popup
         }
 
         [TabGroup("New Group", "Popup")]
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Hide()
         {
             CloseActivePopup();
+        }
+
+        [TabGroup("New Group", "Popup")]
+        [Button(ButtonSizes.Medium)]
+        public void HideAll()
+        {
+            CloseAllActivePopup();
         }
 
         /// <summary>
@@ -320,21 +352,21 @@ namespace Sandbox.Popup
         }
 
         [TabGroup("New Group", "Popup")]
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void ShowSamplePopup()
         {
             Show(PopupType.Popup001);
         }
 
         [TabGroup("New Group", "Popup")]
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void PlayRewardedAds()
         {
             this.Publish(new PlayAdRequestSignal() { IsSkippable = false, CustomAdType = CustomAdType.Reward, FallbackAdType = UnityAds.AdReward.FreeCoins });
         }
 
         [TabGroup("New Group", "Popup")]
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void PlayInterstitialsAds()
         {
             this.Publish(new PlayAdRequestSignal() { IsSkippable = true, CustomAdType = CustomAdType.Interstitial, FallbackAdType = UnityAds.AdReward.NoReward });

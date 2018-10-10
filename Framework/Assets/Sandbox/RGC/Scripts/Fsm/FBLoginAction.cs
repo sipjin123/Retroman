@@ -93,8 +93,6 @@ namespace Sandbox.RGC
             loginAsFb.AddAction(new FsmDelegateAction(loginAsFb,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "FBLoginAction::{0}\n", owner.GetName());
-
                     this.Receive<OnFacebookLoginSuccessSignal>()
                         .Subscribe(
                         _ =>
@@ -123,8 +121,6 @@ namespace Sandbox.RGC
             loginToFGC.AddAction(new FsmDelegateAction(loginToFGC,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "FBLoginAction::{0}\n", owner.GetName());
-                    
                     this.Receive<GraphQLRequestSuccessfulSignal>()
                         .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                         .Subscribe(_ =>
@@ -155,8 +151,6 @@ namespace Sandbox.RGC
             loginDone.AddAction(new FsmDelegateAction(loginDone,
                 owner =>
                 {
-                    Debug.LogFormat(D.FGC + "FBLoginAction::{0}\n", owner.GetName());
-
                     Fsm.SendEvent(FINISH);
                     
                     GetOwner().SendEvent(Evt);

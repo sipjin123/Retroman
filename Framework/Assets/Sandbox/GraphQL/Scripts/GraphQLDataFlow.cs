@@ -45,6 +45,7 @@ namespace Sandbox.GraphQL
         private readonly string ON_LOGIN_FB = "OnLoginFb";
         private readonly string ON_CONFIGURE = "OnConfigure";
         private readonly string ON_REQUEST = "OnRequest";
+        private readonly string FAILED = "OnRequest";
         #endregion
 
         #region Fsm States
@@ -97,6 +98,9 @@ namespace Sandbox.GraphQL
         }
         #endregion
 
+        [SerializeField]
+        private List<string> RequestQueue;
+
         #region Fsm
         private void PrepareFsm()
         {
@@ -109,22 +113,41 @@ namespace Sandbox.GraphQL
             FsmState requests = Fsm.AddState(REQUESTS);
             FsmState done = Fsm.AddState(DONE);
 
-            // DEBUG Actions
-            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.GRAPHQL + "GraphQLDataFlow::{0}\n", owner.GetName())));
-            FsmState[] states = Fsm.States;
-            states.ForEach(state => AddLogAction(state));
-
             // Fsm transitions
             idle.AddTransition(ON_LOGIN, login);
             idle.AddTransition(ON_LOGIN_FB, loginFb);
             idle.AddTransition(ON_REQUEST, requests);
 
             login.AddTransition(ON_CONFIGURE, configure);
+            login.AddTransition(FAILED, idle);
+
             loginFb.AddTransition(ON_CONFIGURE, configure);
+            loginFb.AddTransition(FAILED, idle);
+
             configure.AddTransition(CONTINUE, idle);
+            configure.AddTransition(FAILED, idle);
+
             requests.AddTransition(CONTINUE, done);
+            requests.AddTransition(FAILED, idle);
+
             done.AddTransition(CONTINUE, idle);
 
+            // DEBUG Actions
+            Action<FsmState> AddLogAction = state => state.AddAction(new EnterAction(state, owner => Debug.LogFormat(D.GRAPHQL + "GraphQLDataFlow::{0}\n", owner.GetName())));
+            FsmState[] states = Fsm.States;
+            states.ForEach(state => AddLogAction(state));
+
+            idle.AddAction(new UpdateAction(idle, owner =>
+            {
+                if (RequestQueue.Count > 0)
+                {
+                    string evt = RequestQueue.FirstOrDefault();
+                    RequestQueue.RemoveAt(0);
+                    Fsm.SendEvent(evt);
+                }
+            }));
+
+            // Actions
             login.AddAction(new FsmDelegateAction(login, delegate (FsmState owner)
             {
                 this.Publish(new GraphQLLoginRequestSignal() { UniqueId = Platform.DeviceId });
@@ -149,7 +172,7 @@ namespace Sandbox.GraphQL
 
             done.AddAction(new FsmDelegateAction(done, delegate (FsmState owner)
             {
-                Fsm.SendEvent(CONTINUE);
+                SendEvent(CONTINUE);
             }));
 
             Fsm.Start(IDLE);
@@ -162,6 +185,22 @@ namespace Sandbox.GraphQL
                 .Subscribe(_ => Fsm.Update())
                 .AddTo(this);
         }
+
+        private void SendEvent(string evt)
+        {
+            // Skip
+            if (Fsm.HasTransition(evt))
+            {
+                Fsm.SendEvent(evt);
+            }
+            // Queue
+            else
+            {
+                RequestQueue = RequestQueue ?? new List<string>();
+                RequestQueue.Add(evt);
+            }
+        }
+
         #endregion
 
         #region Signals
@@ -172,12 +211,6 @@ namespace Sandbox.GraphQL
                 Assertion.Assert(result, D.ERROR + "GraphDataFlow::PrepareSignals {0} should contain {1} resolver!\n", map, GraphQLRequestType.LOGIN);
             };
             
-            /*
-            SuccessActionMap[GraphQLRequestType.LOGIN].AddListener(LoginSuccessResolver);
-            SuccessActionMap[GraphQLRequestType.CONFIGURE].AddListener(ConfigureSuccessResolver);
-            SuccessActionMap[GraphQLRequestType.ANNOUNCEMENTS].AddListener(AnnouncementSuccessResolver);
-            //*/
-           
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.LOGIN), GraphQLRequestType.LOGIN, "SuccessActionMap");
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.CONFIGURE), GraphQLRequestType.CONFIGURE, "SuccessActionMap");
             Assert(SuccessActionMap.ContainsKey(GraphQLRequestType.ANNOUNCEMENTS), GraphQLRequestType.ANNOUNCEMENTS, "SuccessActionMap");
@@ -208,58 +241,65 @@ namespace Sandbox.GraphQL
 
             this.Receive<OnGraphLoginSignal>()
                 .Where(_ => _.IsGuest)
-                .Subscribe(_ => Fsm.SendEvent(ON_LOGIN))
+                .Subscribe(_ => SendEvent(ON_LOGIN))
                 .AddTo(this);
 
             this.Receive<OnGraphLoginSignal>()
-                .Where(_ => !_.IsGuest)
-                .Subscribe(_ => Fsm.SendEvent(ON_LOGIN_FB))
+                .Where(_ =>
+                {
+                    return !_.IsGuest;
+                })
+                .Subscribe(_ =>
+                {
+                    SendEvent(ON_LOGIN_FB);
+                })
                 .AddTo(this);
 
             this.Receive<OnGraphLoginSignal>()
                 .Subscribe(_ => Debug.LogFormat(D.FGC + "GraphQLDataFlow::OnGraphLoginSignal IsGuest:{0}\n", _.IsGuest))
                 .AddTo(this);
-
-
         }
         #endregion
 
         #region Success Resolvers
         public void LoginSuccessResolver(GraphQLRequestSuccessfulSignal result)
         {
-            Fsm.SendEvent(ON_CONFIGURE);
+            SendEvent(ON_CONFIGURE);
         }
 
         public void ConfigureSuccessResolver(GraphQLRequestSuccessfulSignal result)
         {
-            Fsm.SendEvent(CONTINUE);
+            SendEvent(CONTINUE);
         }
 
         public void AnnouncementSuccessResolver(GraphQLRequestSuccessfulSignal result)
         {
-            Fsm.SendEvent(CONTINUE);
+            SendEvent(CONTINUE);
         }
         #endregion
 
         #region Failed Resolvers
         public void LoginFailResolver(GraphQLRequestFailedSignal result)
         {
+            SendEvent(FAILED);
         }
 
         public void ConfigureFailResolver(GraphQLRequestFailedSignal result)
         {
+            SendEvent(FAILED);
         }
 
         public void AnnouncementFailResolver(GraphQLRequestFailedSignal result)
         {
+            SendEvent(FAILED);
         }
         #endregion
 
         #region Debug
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void TestLogin()
         {
-            this.Publish(new OnGraphLoginSignal());
+            this.Publish(new OnGraphLoginSignal() { IsGuest = true });
         }
         #endregion
     }

@@ -276,8 +276,10 @@ MonoBehaviour:
   - {fileID: 114803774169890872, guid: c0c0a191f0273354f9538c4f893e5b8d, type: 2}
   CachedScene: System
   _SystemCamera: {fileID: 1632790966}
-  _SystemVersion: {fileID: 481003345}
   _BlackPanel: {fileID: 695581330}
+  _SystemVersion: {fileID: 481003345}
+  Color: {r: 1, g: 1, b: 1, a: 1}
+  HexColor: '#C8C500'
 --- !u!4 &481003347
 Transform:
   m_ObjectHideFlags: 0

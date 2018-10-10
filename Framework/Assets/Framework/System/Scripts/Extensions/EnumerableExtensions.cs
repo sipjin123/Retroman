@@ -12,6 +12,18 @@ namespace Framework
     public static class EnumerableExtensions
     {
         public static readonly Random RANDOM = new Random();
+        
+        public static void SafeAdd<K, V>(this IDictionary<K, V> dict, K k, V v)
+        {
+            if (dict.ContainsKey(k))
+            {
+                dict[k] = v;
+            }
+            else
+            {
+                dict.Add(k, v);
+            }
+        }
 
         public static T RandomFromSource<T>(IEnumerable<T> source)
         {

@@ -26,7 +26,7 @@ namespace Framework
     // alias
     using UScene = UnityEngine.SceneManagement.Scene;
 
-    public partial class SceneObject : SerializedMonoBehaviour
+    public partial class SceneObject : SerializedMonoBehaviour, IScene
     {
         /// <summary>
         /// Data container passed upon loading this scene.
@@ -38,7 +38,26 @@ namespace Framework
         public ISceneData SceneData
         {
             get { return _SceneData; }
-            protected set { _SceneData = value; }
+            set { _SceneData = value; }
+        }
+
+        [TabGroup("Scene")]
+        private bool _IsPersistent = false;
+        public bool IsPersistent
+        {
+            get { return _IsPersistent; }
+            private set { _IsPersistent = value; }
+        }
+
+        /// <summary>
+        /// Data container passed upon loading this scene.
+        /// Note: 
+        ///     When there is no data passed, this value is set to null.
+        ///     Access this only after Awake and OnEnable.
+        /// </summary>
+        public T GetSceneData<T>() where T : ISceneData
+        {
+            return (T)SceneData;
         }
 
         /// <summary>
@@ -75,18 +94,7 @@ namespace Framework
         //[ShowInInspector]
         [TabGroup("New Group", "Buttons")]
         protected Dictionary<int, Action<ButtonReleasedSignal>> ButtonReleasaedMap = new Dictionary<int, Action<ButtonReleasedSignal>>();
-
-        /// <summary>
-        /// Data container passed upon loading this scene.
-        /// Note: 
-        ///     When there is no data passed, this value is set to null.
-        ///     Access this only after Awake and OnEnable.
-        /// </summary>
-        public T GetSceneData<T>() where T : ISceneData
-        {
-            return (T)SceneData;
-        }
-
+        
         /// <summary>
         /// Returns the name of the GameObject where the presenter is attached.
         /// </summary>

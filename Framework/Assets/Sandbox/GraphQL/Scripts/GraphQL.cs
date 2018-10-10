@@ -23,10 +23,11 @@ namespace Sandbox.GraphQL
         private GraphInfo GraphInfo;
 
         [SerializeField]
+        private GraphRequest Request;
+
+        [SerializeField]
         private List<UnitRequest> Requets = new List<UnitRequest>();
-
-        private GraphRequest Request = new GraphRequest();
-
+        
         #region Services
         public override void InitializeService()
         {
@@ -49,23 +50,26 @@ namespace Sandbox.GraphQL
         }
         #endregion
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void InitializeRequests()
         {
+            // Initialize request
+            Request.UpdateInfo(GraphInfo);
+
             // Initialize requets
             Requets = Requets ?? new List<UnitRequest>();
             Requets.Clear();
             Requets.AddRange(GetComponentsInChildren<UnitRequest>());
-            Requets.ForEach(r => r.Initialze(GraphInfo));
+            Requets.ForEach(r => r.Initialze(GraphInfo, Request));
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Clear()
         {
             Requets.Clear();
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Reload()
         {
             Requets.Clear();

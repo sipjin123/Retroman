@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 
 using Sirenix.OdinInspector;
 
@@ -10,9 +9,10 @@ namespace Sandbox.Popup
     [Serializable]
     public class PopupData : ISceneData
     {
-        public object Data;
+        [ShowInInspector]
+        private object Data;
         public T GetData<T>() { return (T)Data; }
-        
+
         public PopupData(object data)
         {
             Data = data;

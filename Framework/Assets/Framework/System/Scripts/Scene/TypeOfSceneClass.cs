@@ -32,7 +32,7 @@ namespace Framework
             SceneReference = temp;
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         private void Select()
         {
             //SceneReference.SceneTypeString = name;

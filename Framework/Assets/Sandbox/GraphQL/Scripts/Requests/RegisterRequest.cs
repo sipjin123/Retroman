@@ -20,6 +20,9 @@ namespace Sandbox.GraphQL
 {
     using Sandbox.RGC;
 
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     public struct GraphQLLoginRequestSignal : IRequestSignal
     {
         public string UniqueId;
@@ -45,17 +48,17 @@ namespace Sandbox.GraphQL
     [Serializable]
     public class PlayerUpdate : IJson
     {
-        public string id;
-        public string address;      //: String  Address (encrpyted)
-        public string birthdate;      //: String  Birthdate(encrpyted)
-        public string city;      //: String  City(encrpyted)
-        public string email;      //: String  Email address(encrpyted)
-        public string first_name;      //: String First name(encrpyted)
-        public string gender;      //: String Gender(encrpyted)
-        public string last_name;      //: String  Last name(encrpyted)
-        public string middle_name;      //: String  Middle name(encrpyted)
-        public string mobile_number;      //: String  Mobile phone number(encrpyted)
-        public string name;      //: String  Name(encrpyted)
+        [JProp("id")] public string Id;
+        [JProp("address")] public string Address;      //: String  Address (encrpyted)
+        [JProp("birthdate")] public string Birthdate;      //: String  Birthdate(encrpyted)
+        [JProp("city")] public string City;      //: String  City(encrpyted)
+        [JProp("email")] public string Email;      //: String  Email address(encrpyted)
+        [JProp("first_name")] public string FirstName;      //: String First name(encrpyted)
+        [JProp("gender")] public string Gender;      //: String Gender(encrpyted)
+        [JProp("last_name")] public string LastName;      //: String  Last name(encrpyted)
+        [JProp("middle_name")] public string MiddleName;      //: String  Middle name(encrpyted)
+        [JProp("mobile_number")] public string Mobile;      //: String  Mobile phone number(encrpyted)
+        [JProp("name")] public string Name;      //: String  Name(encrpyted)
         //public string blacklist;      //: Game(List) List of games the player is not allowed access to
         //public string created_at;      //: String  Registration timestamp in ISO8601 format
         //public string device_id;      //: String  Device ID(nullified when a persistent credential is set during login)
@@ -73,17 +76,17 @@ namespace Sandbox.GraphQL
         public PlayerUpdate Decrypt()
         {
             PlayerUpdate data = new PlayerUpdate();
-            data.id = id.Decrypt();
-            data.address = address.Decrypt();
-            data.birthdate = birthdate.Decrypt();
-            data.city = city.Decrypt();
-            data.email = email.Decrypt();
-            data.first_name = first_name.Decrypt();
-            data.gender = gender.Decrypt();
-            data.last_name = last_name.Decrypt();
-            data.middle_name = middle_name.Decrypt();
-            data.mobile_number = mobile_number.Decrypt();
-            data.name = name.Decrypt();
+            data.Id = Id.Decrypt();
+            data.Address = Address.Decrypt();
+            data.Birthdate = Birthdate.Decrypt();
+            data.City = City.Decrypt();
+            data.Email = Email.Decrypt();
+            data.FirstName = FirstName.Decrypt();
+            data.Gender = Gender.Decrypt();
+            data.LastName = LastName.Decrypt();
+            data.MiddleName = MiddleName.Decrypt();
+            data.Mobile = Mobile.Decrypt();
+            data.Name = Name.Decrypt();
 
             return data;
         }
@@ -159,9 +162,9 @@ namespace Sandbox.GraphQL
             QuerySystem.RemoveResolver(PLAYER_INFO);
         }
 
-        public override void Initialze(GraphInfo info)
+        public override void Initialze(GraphInfo info, GraphRequest request)
         {
-            base.Initialze(info);
+            base.Initialze(info, request);
 
             this.Receive<GraphQLLoginRequestSignal>()
                 .Subscribe(_ => Register(_.UniqueId))
@@ -212,7 +215,9 @@ namespace Sandbox.GraphQL
             Return ret = builder.CreateReturn(token);
             string args = builder.ToString();
 
-            ProcessRequest(GraphInfo, builder.ToString(), PlayerLogin);
+            Debug.LogFormat("RegisterRequest::Register Id:{0} Args:{1}\n", uniqueId, args);
+
+            ProcessRequest(GraphInfo, args, PlayerLogin);
         }
 
         public void RegisterFacebook(string facebookToken, string uniqueId)
@@ -324,7 +329,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                Token = result.Result.data.player_login.token;
+                Token = result.Result.Data.PlayerLogin.token;
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOGIN, Data = Token });
             }
         }
@@ -337,7 +342,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                Token = result.Result.data.player_login.token;
+                Token = result.Result.Data.PlayerLogin.token;
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LOGIN, Data = Token });
             }
         }
@@ -351,14 +356,14 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                PlayerInfo = result.Result.data.player_update.Decrypt();
+                PlayerInfo = result.Result.Data.PlayerUpdate.Decrypt();
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_UPDATE, Data = PlayerInfo });
             }
         }
         #endregion
 
         #region Debug
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Register()
         {
             Register(Platform.DeviceId);

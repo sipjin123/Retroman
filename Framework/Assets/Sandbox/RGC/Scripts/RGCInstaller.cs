@@ -40,6 +40,7 @@ namespace Sandbox.RGC
             string splashScene = "Splash";
             string splashMoveScene = "SplashMovie";
             string titleScene = "Title";
+            string automation = "FGCAutomator";
             Preloaders preloaders = Preloaders.Preloader001 | Preloaders.Preloader002 | Preloaders.Preloader003;
 
             Promise.All(Scene.LoadScenePromise<SplashRoot>(splashScene))
@@ -52,10 +53,13 @@ namespace Sandbox.RGC
                 .Then(_ => Preloader.FadeInLoadingScreenPromise())
                 .Then(_ => Scene.LoadScenePromise<PopupCollectionRoot>(EScene.PopupCollection))
                 .Then(_ => Scene.LoadScenePromise<ServicesRoot>(EScene.Services))
-                .Then(_ => Scene.LoadScenePromise<SceneObject>(titleScene))
-                .Then(_ => RegisterListeners())
-                .Then(_ => RegisterResolvers())
-                .Then(_ => Preloader.FadeOutLoadingScreenPromise());
+                .Then(_ => Scene.GetScene<ServicesRoot>(EScene.Services).WaitPromise())
+                .Then(_ => Scene.LoadScenePromise<TitleRoot>(titleScene)).Then(_ => RegisterListeners())
+                .Then(_ => RegisterResolvers()).Then(_ => Preloader.FadeOutLoadingScreenPromise())
+#if ENABLE_AUTOMATION
+                .Then(_ => Scene.LoadSceneAdditivePromise<FGCAutomator>(automation))
+#endif
+                .Finally(_ => Debug.LogFormat(D.FGC + "RGCInstaller::Install DONE.\n"));
         }
 
         private void RegisterListeners()

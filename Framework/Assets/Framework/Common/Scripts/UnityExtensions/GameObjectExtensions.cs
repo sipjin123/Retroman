@@ -49,7 +49,8 @@ namespace Common
             self.SetActive(true);
         }
 
-        public static List<T> ToArray<T>(this List<GameObject> self) where T : Component
+        public static List<T> ToArray<T>(this List<GameObject> self) 
+            //where T : Component
         {
             List<GameObject> rawResult = self.FindAll(g => g.GetComponent<T>() != null);
             List<T> result = new List<T>(rawResult.Count);

@@ -26,13 +26,7 @@ namespace Framework
     using Sandbox.ButtonSandbox;
 
     using UScene = UnityEngine.SceneManagement.Scene;
-
-    public interface IScene
-    {
-        ISceneData SceneData { get; set; }
-        T GetSceneData<T>() where T : ISceneData;
-    }
-
+    
     [Serializable]
     public class SceneEntry
     {
@@ -43,7 +37,7 @@ namespace Framework
     /// <summary>
     /// This is the base MVP Presenter class to be extended by each scene root.
     /// </summary>
-    public partial class Scene : SerializedMonoBehaviour
+    public partial class Scene : SerializedMonoBehaviour, IScene
     {
         /// <summary>
         /// String Dropdown representation of EScene enum in Editor
@@ -76,7 +70,7 @@ namespace Framework
         public ISceneData SceneData
         {
             get { return _SceneData; }
-            protected set { _SceneData = value; }
+            set { _SceneData = value; }
         }
 
         /// <summary>

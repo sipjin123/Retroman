@@ -35,20 +35,24 @@ namespace Sandbox.RGC
         [SerializeField]
         private TMP_InputField Conversion;
 
+        private string CurrencyId;
+        private int Amount;
+        private float Rate;
+
         protected override void Start()
         {
             base.Start();
 
             Assertion.AssertNotNull(Conversion, D.ERROR + "ConvertOfflinePopup::Awake Conversion text should never be null!\n");
             Assertion.AssertNotNull(HasPopupData(), D.ERROR + "ConvertOfflinePopup::Awake PopupData should never be null!\n");
-
+            
+            // TODO: +AS:09212018 Adjust result calculation
             GameResultInfo result = PopupData.GetData<GameResultInfo>();
-
-            IQueryRequest request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
-            request.AddParameter(WalletRequest.CURRENCY_PARAM, result.CurrencyId);
-            FGCCurrency currency = QuerySystem.Complete<FGCCurrency>();
-
-            Conversion.text = string.Format("{0}", Math.Max(0, currency.amount * currency.currency.exchange_rate));
+            CurrencyId = result.CurrencyId;
+            Amount = result.GameScore;
+            Rate = result.Rate;
+            
+            Conversion.text = string.Format("{0}", Math.Max(0, Amount * Rate));
         }
     }
 }

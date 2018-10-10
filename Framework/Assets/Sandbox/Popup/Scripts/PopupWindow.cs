@@ -24,7 +24,7 @@ using Framework;
 
 namespace Sandbox.Popup
 {
-    public partial class PopupWindow : MonoBehaviour, IPopupWindow
+    public partial class PopupWindow : MonoBehaviour, IPopupWindow 
     {
         /// <summary>
         /// Holder for subscriptions to be disposed when the service is terminated.
@@ -75,18 +75,36 @@ namespace Sandbox.Popup
             }
         }
 
-
+        private float PrevTimeScale;
+        
         protected virtual void Awake()
         {
+            PrevTimeScale = Time.timeScale;
+            Time.timeScale = 0f;
+            
             Canvas = gameObject.GetComponent<Canvas>();
             gameObject.name = string.Format("Popup Canvas ({0})", _PopUp.ToString());
         }
 
         protected virtual void Start()
         {
-            Assertion.Assert(!PopUp.Equals(PopupType.Invalid.Value), string.Format(D.POPUP + " PopupWindow::Awake Invalid Popup! Window:{0}", Name));
         }
 
+        protected virtual void OnDestroy()
+        {
+            Time.timeScale = PrevTimeScale;
+        }
+        
+        public virtual bool CanClose()
+        {
+            return true;
+        }
+
+        public virtual void OnClose()
+        {
+
+        }
+        
         #region Popup Transition
 
         public Promise In()

@@ -27,7 +27,7 @@ namespace Framework
 
         [DisableContextMenu]
         public string Scene;
-        
+
         private MessageBroker _Broker = new MessageBroker();
         public MessageBroker Broker
         {
@@ -45,7 +45,7 @@ namespace Framework
             Scene = scene;
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Select()
         {
             Broker = Broker ?? new MessageBroker();
@@ -109,7 +109,7 @@ namespace Framework
             Scene = string.Empty;
             SceneType = EScene.Invalid;
         }
-        
+
         public void UpdateScene(string scene)
         {
             Scene = scene;
@@ -117,7 +117,7 @@ namespace Framework
             HideDropDown();
         }
 
-        [Button(25), ShowIf("HideDrop")]
+        [Button(ButtonSizes.Medium), ShowIf("HideDrop")]
         public void ShowDropDown()
         {
             RecreateOptions();
@@ -126,14 +126,14 @@ namespace Framework
             HideDrop = true;
         }
 
-        [Button(25), HideIf("HideDrop")]
+        [Button(ButtonSizes.Medium), HideIf("HideDrop")]
         public void HideDropDown()
         {
             ShowDrop = false;
             HideDrop = false;
         }
 
-        [Button(25), HideIf("Edit")]
+        [Button(ButtonSizes.Medium), HideIf("Edit")]
         public void Refresh()
         {
             Options = null;

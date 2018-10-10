@@ -7,7 +7,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using Framework;
 using System;
 using System.Collections.Generic;
 
@@ -50,8 +49,7 @@ namespace Common.Query {
 		 * Registers a query resolver
 		 */
 		public void RegisterResolver(string queryId, QueryResultResolver resolver) {
-		    // system should not contains the specified resolver yet
-            Assertion.Assert(!this.ResolverMap.ContainsKey(queryId), D.ERROR + "System should not contains the specified resolver yet. QueryId:{0}\n", queryId); 
+			Assertion.Assert(!this.ResolverMap.ContainsKey(queryId)); // system should not contains the specified resolver yet
 			this.ResolverMap[queryId] = resolver;
 		}
 
@@ -59,18 +57,17 @@ namespace Common.Query {
 		 * Removes the specified resolver
 		 */
 		public void RemoveResolver(string queryId) {
-			Assertion.Assert(this.ResolverMap.ContainsKey(queryId), D.ERROR + "ResolverMap should contains the specified QueryId:{0}\n", queryId);
-            this.ResolverMap.Remove(queryId);
+			Assertion.Assert(this.ResolverMap.ContainsKey(queryId));
+			this.ResolverMap.Remove(queryId);
 		}
 
 		/**
 		 * Requests for a query
 		 */
 		public T Query<T>(string queryId) {
-		    // system should not contains the specified resolver yet
-            Assertion.Assert(this.ResolverMap.ContainsKey(queryId), D.ERROR + "System should contains the specified resolver. QueryId:{0}\n", queryId);
+			Assertion.Assert(this.ResolverMap.ContainsKey(queryId)); // system should contain a resolver for the specified id
 
-            try {
+			try {
 				CurrentResult.Clear();
 				this.ResolverMap[queryId](CurrentRequest, CurrentResult);
 				return CurrentResult.Get<T>();
@@ -83,8 +80,8 @@ namespace Common.Query {
 		 * Starts a query.
 		 */
 		public IQueryRequest Start(string queryId) {
-			Assertion.Assert(!this.IsLocked, D.ERROR + "Can't start query if a previous query is still ongoing");
-			Assertion.Assert(this.ResolverMap.ContainsKey(queryId), D.ERROR + "System should contain a resolver for the specified Id:{0}\n", queryId);
+			Assertion.Assert(!this.IsLocked); // can't start query if a previous query is still ongoing
+			Assertion.Assert(this.ResolverMap.ContainsKey(queryId)); // system should contain a resolver for the specified id
 
 			this.CurrentRequest.QueryId = queryId;
 			this.IsLocked = true;
@@ -95,7 +92,7 @@ namespace Common.Query {
 		 * Completes the query returning the result
 		 */
 		public T Complete<T>() {
-			Assertion.Assert(this.IsLocked, D.ERROR + "It should be locked at this point");
+			Assertion.Assert(this.IsLocked); // it should be locked at this point
 
 			try {
 				CurrentResult.Clear();

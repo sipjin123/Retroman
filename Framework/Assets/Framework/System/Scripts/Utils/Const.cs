@@ -67,8 +67,8 @@ namespace Framework
 
         //public const string UNITY_GAME_ID = "1021194";
         //public const string UNITY_GAME_ID = "1017925";
-        public const string UNITY_GAME_ID_ANDROID = "1569230";
-        public const string UNITY_GAME_ID_IOS = "1569229";
+        public const string UNITY_GAME_ID_ANDROID = "";
+        public const string UNITY_GAME_ID_IOS = "";
 
         #endregion
 

@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: GraphInfo (Framework)
   m_EditorClassIdentifier: 
   _Build: 0.0.1
-  _GraphURL: https://hu94g063b1.execute-api.ap-southeast-1.amazonaws.com/dev/graph
-  _GameSlug: retroman
+  _GraphURL: https://2p0n9sgjn1.execute-api.ap-southeast-2.amazonaws.com/dev/graph
+  _GameSlug: framework

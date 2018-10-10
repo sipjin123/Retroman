@@ -18,6 +18,9 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     public struct LeaderboardDataUpdateRequestSignal : IRequestSignal
     {
 
@@ -26,23 +29,25 @@ namespace Sandbox.GraphQL
     [Serializable]
 	public class LeaderboardPlayerDetail : IJson
     {
-		public string id;
-		public PlayerProfileRequestData data;
+		[JProp("id")] public string Id;
+        [JProp("data")] public PlayerProfileRequestData Profile;
 	}
 
 	[Serializable]
 	public class LeaderboardStanding : IJson
     {
-		public string value;
-        public string standing;
-        public LeaderboardPlayerDetail player;
+		[JProp("value")] public string Value;
+        [JProp("standing")] public string Standing;
+        [JProp("player")] public LeaderboardPlayerDetail Player;
 	}
     
 	public class GetLeaderboardStanding : UnitRequest
     {
-        public override void Initialze(GraphInfo info)
-		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
+        public override void Initialze(GraphInfo info, GraphRequest request)
+        {
+            base.Initialze(info, request);
+
+            this.Receive<GraphQLRequestSuccessfulSignal>()
 				.Where(_ => _.Type == GraphQLRequestType.LEADERBOARD_TOP)
 				.Subscribe(_ => GetLeaderboardAround(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
 				.AddTo(this);
@@ -52,8 +57,8 @@ namespace Sandbox.GraphQL
 				.AddTo(this);
 		}
 
-		#region Request
-		public void GetLeaderboardAround(string token, int margin = 1)
+        #region Request
+        private void GetLeaderboardAround(string token, int margin = 1)
 		{
 			Builder builder = Builder.Query();
 			Function function = builder.CreateFunction("leaderboard_standing");
@@ -65,10 +70,10 @@ namespace Sandbox.GraphQL
 
 			ProcessRequest(GraphInfo, builder.ToString(), UpdateLeaderboardStanding);
 		}
-		#endregion
+        #endregion
 
-		#region Parser
-		public void UpdateLeaderboardStanding(GraphResult result)
+        #region Parser
+        private void UpdateLeaderboardStanding(GraphResult result)
 		{
             if (result.Status == Status.ERROR)
             {
@@ -76,7 +81,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_AROUND, Data = result.Result.data.leaderboard_standing });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_AROUND, Data = result.Result.Data.LeaderboardStandings });
             }
 		} 
 		#endregion

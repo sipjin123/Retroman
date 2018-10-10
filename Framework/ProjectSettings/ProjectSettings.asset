@@ -731,7 +731,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: CROSS_PLATFORM_INPUT;ODIN_INSPECTOR
     4: CROSS_PLATFORM_INPUT;MOBILE_INPUT
-    7: CROSS_PLATFORM_INPUT;MOBILE_INPUT;ODIN_INSPECTOR;UNITY_CCU;USING_UNIRX
+    7: CROSS_PLATFORM_INPUT;MOBILE_INPUT;ODIN_INSPECTOR;UNITY_CCU;USING_UNIRX;USING_ZENJECT
     14: MOBILE_INPUT
     17: MOBILE_INPUT
   platformArchitecture:
@@ -828,9 +828,9 @@ PlayerSettings:
     Unity_Ads: 0
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 3
-  cloudProjectId: 3ac8b927-4ed3-49d9-b7d6-d878c919ba75
-  projectName: Framework
-  organizationId: b0ntakun
+  cloudProjectId: 
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

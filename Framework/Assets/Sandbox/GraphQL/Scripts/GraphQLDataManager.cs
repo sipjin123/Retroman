@@ -22,6 +22,7 @@ namespace Sandbox.GraphQL
     using Sandbox.Services;
     using Sandbox.UnityAds;
 
+    [Flags]
     public enum CustomAdType
     {
         Interstitial,
@@ -115,15 +116,15 @@ namespace Sandbox.GraphQL
         private int RewardAdsServed;
         private bool SendEndAdEvent;
         
-        #region IService
+#region IService
         public override void InitializeService()
         {
-            #region Init Fields
+#region Init Fields
             SendEndAdEvent = false;
             CurrAd = 0;
-            #endregion
+#endregion
 
-            #region Setup
+#region Setup
             GraphQLOfflineData.Initialize();
             FailedTransactions = new List<PendingTransactions>(GraphQLOfflineData.GetPendingTransactionList());
 
@@ -139,9 +140,9 @@ namespace Sandbox.GraphQL
             }
             SetupResolversForSignals();
             SetupFsm();
-            #endregion
+#endregion
 
-            #region Receivers
+#region Receivers
             this.Receive<PlayAdRequestSignal>().Subscribe(_ =>
             {
                 if (DebugUseUnityAds)
@@ -160,7 +161,7 @@ namespace Sandbox.GraphQL
                    )
                 {
                     //check if chosen ad to play is already cached
-                    if (GraphQLAdDownloader.AdDownloaded(AdsToServe[CurrAd].id))
+                    if (GraphQLAdDownloader.AdDownloaded(AdsToServe[CurrAd].Id))
                     {
                         bool ServeCustomAd = false;
                         if (_.IsSkippable && InterstitialAdsServed < GraphQLSetupData.MaxInterstitialAdsPerDay)
@@ -178,8 +179,8 @@ namespace Sandbox.GraphQL
                         {
                             GraphQLAdData AdData = new GraphQLAdData();
                             //check if curradd is within ads to serve count
-                            AdData.AdId = AdsToServe[CurrAd].id;
-                            AdData.AdPath = GraphQLAdDownloader.GetAdLocalPath(AdsToServe[CurrAd].id);
+                            AdData.AdId = AdsToServe[CurrAd].Id;
+                            AdData.AdPath = GraphQLAdDownloader.GetAdLocalPath(AdsToServe[CurrAd].Id);
                             AdData.IsSkippable = _.IsSkippable;
                             AdData.AdType = _.CustomAdType;
                             switch (AdsToServe[CurrAd].GetAdType())
@@ -198,7 +199,7 @@ namespace Sandbox.GraphQL
                                     Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupVideo\n");
                                     break;
                             }
-                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].id });
+                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].Id });
                             CurrAd = (CurrAd + 1) % AdsToServe.Count;
                             GraphQLOfflineData.SaveServicedAds(InterstitialAdsServed, RewardAdsServed, DateTime.Now);
                         }
@@ -275,7 +276,7 @@ namespace Sandbox.GraphQL
                         AdsToServe.Count > 0
                     );
                 }).AddTo(this);
-            #endregion
+#endregion
 
             Observable
                 .FromCoroutine(FlushFailedTransaction)
@@ -288,12 +289,12 @@ namespace Sandbox.GraphQL
 
         public override IEnumerator InitializeServiceSequentially()
         {
-            #region Init Fields
+#region Init Fields
             SendEndAdEvent = false;
             CurrAd = 0;
-            #endregion
+#endregion
 
-            #region Setup
+#region Setup
             GraphQLOfflineData.Initialize();
             FailedTransactions = new List<PendingTransactions>(GraphQLOfflineData.GetPendingTransactionList());
 
@@ -309,9 +310,9 @@ namespace Sandbox.GraphQL
             }
             SetupResolversForSignals();
             SetupFsm();
-            #endregion
+#endregion
 
-            #region Receivers
+#region Receivers
             this.Receive<PlayAdRequestSignal>().Subscribe(_ =>
             {
                 if (DebugUseUnityAds)
@@ -330,7 +331,7 @@ namespace Sandbox.GraphQL
                    )
                 {
                     //check if chosen ad to play is already cached
-                    if (GraphQLAdDownloader.AdDownloaded(AdsToServe[CurrAd].id))
+                    if (GraphQLAdDownloader.AdDownloaded(AdsToServe[CurrAd].Id))
                     {
                         bool ServeCustomAd = false;
                         if (_.IsSkippable && InterstitialAdsServed < GraphQLSetupData.MaxInterstitialAdsPerDay)
@@ -348,8 +349,8 @@ namespace Sandbox.GraphQL
                         {
                             GraphQLAdData AdData = new GraphQLAdData();
                             //check if curradd is within ads to serve count
-                            AdData.AdId = AdsToServe[CurrAd].id;
-                            AdData.AdPath = GraphQLAdDownloader.GetAdLocalPath(AdsToServe[CurrAd].id);
+                            AdData.AdId = AdsToServe[CurrAd].Id;
+                            AdData.AdPath = GraphQLAdDownloader.GetAdLocalPath(AdsToServe[CurrAd].Id);
                             AdData.IsSkippable = _.IsSkippable;
                             AdData.AdType = _.CustomAdType;
                             switch (AdsToServe[CurrAd].GetAdType())
@@ -368,7 +369,7 @@ namespace Sandbox.GraphQL
                                     Debug.LogFormat(D.L("[ADS]") + "GraphQLDataManager::OnShowPopupSignal CustomAdPopupVideo\n");
                                     break;
                             }
-                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].id });
+                            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AdsToServe[CurrAd].Id });
                             CurrAd = (CurrAd + 1) % AdsToServe.Count;
                             GraphQLOfflineData.SaveServicedAds(InterstitialAdsServed, RewardAdsServed, DateTime.Now);
                         }
@@ -445,7 +446,7 @@ namespace Sandbox.GraphQL
                         AdsToServe.Count > 0
                     );
                 }).AddTo(this);
-            #endregion
+#endregion
 
             Observable
                 .FromCoroutine(FlushFailedTransaction)
@@ -461,23 +462,23 @@ namespace Sandbox.GraphQL
         public override void TerminateService()
         {
         }
-        #endregion
+#endregion
 
-        #region Setup
+#region Setup
         private void SetupFsm()
         {
             AdManagerFsm = new Fsm(GraphQLAdsFsmStates.FSM_NAME);
 
-            #region FSM States
+#region FSM States
             FsmState Login = AdManagerFsm.AddState(GraphQLAdsFsmStates.LOGIN);
             FsmState LoginFailed = AdManagerFsm.AddState(GraphQLAdsFsmStates.LOGIN_FAILED);
             FsmState FetchAdsList = AdManagerFsm.AddState(GraphQLAdsFsmStates.FETCH_ADS_LIST);
             FsmState FetchAdsFailed = AdManagerFsm.AddState(GraphQLAdsFsmStates.FETCH_ADS_FAILED);
             FsmState CacheAds = AdManagerFsm.AddState(GraphQLAdsFsmStates.CACHE_ADS);
             FsmState AdsReady = AdManagerFsm.AddState(GraphQLAdsFsmStates.ADS_READY);
-            #endregion
+#endregion
             
-            #region FSM Actions
+#region FSM Actions
             Login.AddAction(new FsmDelegateAction(Login, _ => 
             {
             }));
@@ -518,9 +519,9 @@ namespace Sandbox.GraphQL
                 //this state ensures you can play any of the ads
                 //HasCashedAllAds = true;
             }));
-            #endregion
+#endregion
 
-            #region FSM Transitions
+#region FSM Transitions
             Login.AddTransition(GraphQLAdsFsmTransitions.LOGIN_SUCCESSFUL, FetchAdsList);
             Login.AddTransition(GraphQLAdsFsmTransitions.LOGIN_FAILED, LoginFailed);
 
@@ -533,15 +534,15 @@ namespace Sandbox.GraphQL
             FetchAdsFailed.AddTransition(GraphQLAdsFsmTransitions.ATTEMPT_FETECH_AD_DATA, FetchAdsList);
 
             CacheAds.AddTransition(GraphQLAdsFsmTransitions.CACHE_DATA_COMPLETE, AdsReady);
-            #endregion
+#endregion
 
-            #region FSM Start
+#region FSM Start
             AdManagerFsm.Start(GraphQLAdsFsmStates.LOGIN);
 
             this.UpdateAsObservable()
                 .Subscribe(_ => AdManagerFsm.Update())
                 .AddTo(this);
-            #endregion
+#endregion
 
         }
 
@@ -567,9 +568,9 @@ namespace Sandbox.GraphQL
                 .Where(_ => FailedActionMap.ContainsKey(_.Type))
                 .Subscribe(_ => FailedActionMap[_.Type](_)).AddTo(this);
         }
-        #endregion
+#endregion
 
-        #region Failed Resolvers
+#region Failed Resolvers
         private void LoginFailedResolver(GraphQLRequestFailedSignal sig)
         {
             AdManagerFsm.SendEvent(GraphQLAdsFsmTransitions.LOGIN_FAILED);
@@ -612,7 +613,7 @@ namespace Sandbox.GraphQL
             {
                 if (sig.HasData)
                 {
-                    PendingTransactions ResolvedFromFailed = RecentTransactions.Find(_ => _.Advertisment.id == sig.GetData<AdvertisementPlay>().id);
+                    PendingTransactions ResolvedFromFailed = RecentTransactions.Find(_ => _.Advertisment.Id == sig.GetData<AdvertisementPlay>().Id);
                     if (ResolvedFromFailed != null)
                     {
                         RecentTransactions.Remove(ResolvedFromFailed);
@@ -626,9 +627,9 @@ namespace Sandbox.GraphQL
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region Success Resolvers
+#region Success Resolvers
         private void LoginSuccessResolver(GraphQLRequestSuccessfulSignal sig)
         {
             AdManagerFsm.SendEvent(GraphQLAdsFsmTransitions.LOGIN_SUCCESSFUL);
@@ -643,7 +644,7 @@ namespace Sandbox.GraphQL
                 List<Advertisement> DeleteAds = new List<Advertisement>();
                 AllOldAds.ForEach(old_ad => 
                 {
-                    if (AllNewAds.Any(new_ad => old_ad.id.Equals(new_ad.id)))
+                    if (AllNewAds.Any(new_ad => old_ad.Id.Equals(new_ad.Id)))
                     {
                         //delete
                     }
@@ -671,9 +672,9 @@ namespace Sandbox.GraphQL
 
         private void AdEndSuccessResolver(GraphQLRequestSuccessfulSignal sig)
         {
-            PendingTransactions ResolvedFromPending = PendingTransactions.Find(_ => _.Advertisment.id == sig.GetData<AdvertisementEnd>().id);
-            PendingTransactions ResolvedFromRecent = RecentTransactions.Find(_ => _.Advertisment.id == sig.GetData<AdvertisementEnd>().id);
-            PendingTransactions ResolvedFromFailed = FailedTransactions.Find(_ => _.Advertisment.id == sig.GetData<AdvertisementEnd>().id);
+            PendingTransactions ResolvedFromPending = PendingTransactions.Find(_ => _.Advertisment.Id == sig.GetData<AdvertisementEnd>().Id);
+            PendingTransactions ResolvedFromRecent = RecentTransactions.Find(_ => _.Advertisment.Id == sig.GetData<AdvertisementEnd>().Id);
+            PendingTransactions ResolvedFromFailed = FailedTransactions.Find(_ => _.Advertisment.Id == sig.GetData<AdvertisementEnd>().Id);
             if (ResolvedFromPending != null)
             {
                 PendingTransactions.Remove(ResolvedFromPending);
@@ -690,9 +691,9 @@ namespace Sandbox.GraphQL
                 GraphQLOfflineData.SaveFailedTransactions(FailedTransactions);
             }
         }
-        #endregion
+#endregion
 
-        #region Coroutines and Streams
+#region Coroutines and Streams
         private IEnumerator WaitBeforeSendEvent(float seconds, string fsm_event)
         {
             yield return new WaitForSeconds(seconds);
@@ -719,9 +720,9 @@ namespace Sandbox.GraphQL
             }
             yield return new WaitForSeconds(GraphQLSetupData.FlushRequestsTimer);
         }
-        #endregion
+#endregion
 
-        #region Debug
+#region Debug
 
         [SerializeField, ShowInInspector]
         bool DebugUseUnityAds = false;
@@ -729,7 +730,7 @@ namespace Sandbox.GraphQL
         [SerializeField, ShowInInspector]
         bool DebugIsSkipable = false;
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void ShowCustomAdPopup()
         {
             this.Publish(new PlayAdRequestSignal()
@@ -739,14 +740,14 @@ namespace Sandbox.GraphQL
         }
 
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void RequestAd()
         {
-            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AllNewAds[CurrAd].id });
+            this.Publish(new GraphQLPlayAdRequestSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), ad_id = AllNewAds[CurrAd].Id });
             CurrAd = (CurrAd + 1) % AllNewAds.Count;
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void EndAd()
         {
             this.Publish(new GraphQLEndAdSignal() { token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN), AdRequest = CurrAdPlayTransaction, was_skipped = false, timemark = 2.4f });
@@ -767,7 +768,7 @@ namespace Sandbox.GraphQL
                 }
             }
         }
-        #endregion
+#endregion
 
     }
 

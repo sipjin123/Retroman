@@ -165,7 +165,7 @@ public class SwarmItemManager : MonoBehaviour
     /// <summary>
     /// the array of prefabs with their maximum item counts. This is set in the editor
     /// </summary>
-    public PrefabItem[] itemPrefabs;
+    public List<PrefabItem> itemPrefabs = new List<PrefabItem>();
 
     /// <summary>
     /// Sets up the lists for each SwarmItem type. Also creates the parent transform for the active and inactive objects 
@@ -173,7 +173,7 @@ public class SwarmItemManager : MonoBehaviour
     public virtual void Initialize()
     {
         // warn the user if no prefabs were set up. There would be no need for a manager without SwarmItems
-        if (itemPrefabs.Length == 0)
+        if (itemPrefabs.Count == 0)
         {
             Debug.Log("WARNING! No Item Prefabs exists for " + gameObject.name + " -- Errors will occur.");
         }
@@ -186,7 +186,7 @@ public class SwarmItemManager : MonoBehaviour
         }
 
         // initialize the prefab item lists
-        _prefabItemLists = new PrefabItemLists[itemPrefabs.Length];
+        _prefabItemLists = new PrefabItemLists[itemPrefabs.Count];
         for (int i = 0; i < _prefabItemLists.Length; i++)
         {
             _prefabItemLists[i] = new PrefabItemLists();

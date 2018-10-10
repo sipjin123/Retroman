@@ -1,13 +1,12 @@
-﻿using System;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
 using Sirenix.OdinInspector;
-using Sirenix.Serialization;
 
 using uPromise;
 
@@ -17,10 +16,10 @@ using Common;
 using Common.Fsm;
 using Common.Query;
 using Common.Signal;
+using Sandbox.ButtonSandbox;
 
 namespace Framework
 {
-    using Sandbox.ButtonSandbox;
     using Sandbox.Services;
     
     public class SystemRoot : Scene
@@ -30,26 +29,36 @@ namespace Framework
         private Camera _SystemCamera;
         public Camera SystemCamera
         {
-            get { return _SystemCamera; }
-            private set { _SystemCamera = value; }
+            get
+            {
+                return _SystemCamera;
+            }
+            private set
+            {
+                _SystemCamera = value;
+            }
         }
 
         [SerializeField]
         [TabGroup("New Group", "System")]
+        private GameObject _BlackPanel;
+
+        [SerializeField]
         private SystemVersion _SystemVersion;
         public SystemVersion SystemVersion
         {
-            get { return _SystemVersion; }
-            private set { _SystemVersion = value; }
+            
+            get
+            {
+                return _SystemVersion;
+            }
+            private set
+            {
+                _SystemVersion = value;
+            }
         }
 
-        [SerializeField]
-        GameObject _BlackPanel;
-        public void DisableBlackPanel()
-        {
-            _BlackPanel.SetActive(false);
-            Debug.LogError("Panel Black Disabled");
-        }
+        
 
         #region Unity Life Cycle
 
@@ -70,30 +79,8 @@ namespace Framework
             
             Install();
 
-            AddButtonHandler(ButtonType.Close, delegate(ButtonClickedSignal signal)
-            {
 
-            });
 
-            AddButtonHandler(ButtonType.Close, delegate (ButtonHoveredSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(ButtonType.Close, delegate (ButtonUnhoveredSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(ButtonType.Close, delegate (ButtonPressedSignal signal)
-            {
-
-            });
-
-            AddButtonHandler(ButtonType.Close, delegate (ButtonReleasedSignal signal)
-            {
-
-            });
         }
 
         protected override void OnDestroy()
@@ -103,37 +90,58 @@ namespace Framework
 
         #endregion
 
+        public void DisableBlackPanel()
+        {
+            _BlackPanel.SetActive(false);
+            Debug.LogError("Panel Black Disabled");
+        }
+
         #region Test
-        [Button(25)]
-        [TabGroup("New Group", "System")]
+        [SerializeField]
+        [TabGroup("New Group", "Test")]
+        private Color Color = Color.white;
+
+        [SerializeField]
+        [TabGroup("New Group", "Test")]
+        private string HexColor = "#C8C500";
+
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
+        public void UpdateColor()
+        {
+            ColorUtility.TryParseHtmlString(HexColor, out Color);
+        }
+
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
         public void LoadScene()
         {
             LoadSceneAdditivePromise("Shooting");
         }
 
-        [Button(25)]
-        [TabGroup("New Group", "System")]
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
         public void LoadFrameworkScene()
         {
             LoadSceneAdditivePromise<ServicesRoot>(EScene.Services);
         }
-
-        [Button(25)]
-        [TabGroup("New Group", "System")]
-        public void Unloadcene()
+        
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
+        public void UnloadScene()
         {
-            UnloadScenePromise("Shooting");
+            UnloadScenePromise("Map");
         }
 
-        [Button(25)]
-        [TabGroup("New Group", "System")]
-        public void UnloadFrameworkcene()
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
+        public void UnloadFrameworkScene()
         {
             UnloadScenePromise(EScene.Services);
         }
 
-        [Button(25)]
-        [TabGroup("New Group", "System")]
+        [Button(ButtonSizes.Medium)]
+        [TabGroup("New Group", "Test")]
         public void UnloadScenes()
         {
             StartCoroutine(UnloadAllScenes());

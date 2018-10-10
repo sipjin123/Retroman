@@ -21,7 +21,17 @@ namespace Framework
         public static readonly string DOUBLE_QOUTE = @"""";
         public static readonly string QOUTE = @"\""";
         public static readonly AESEncyrption Encryption = AESEncryptionFactory.CreateDefaultEncryption();
-        public static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo; 
+        public static readonly TextInfo TextInfo = new CultureInfo("en-US", false).TextInfo;
+
+        public static string IsNullOrEmpty(this string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return "*";
+            }
+
+            return str;
+        }
 
         public static string ToTitleCase(this string str)
         {
@@ -95,6 +105,19 @@ namespace Framework
             long result = -1L;
 
             long.TryParse(str, out result);
+
+            return result;
+        }
+
+        public static bool ToBool(this string str)
+        {
+            bool result = false;
+
+            if (!bool.TryParse(str, out result))
+            {
+                Debug.LogWarningFormat(D.WARNING + "StringExtensions::ToBool Invalid string! Str:{0}\n", str);
+            }
+            
 
             return result;
         }

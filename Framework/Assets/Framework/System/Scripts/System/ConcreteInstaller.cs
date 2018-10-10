@@ -10,8 +10,6 @@ using uPromise;
 
 using UniRx;
 
-using Sirenix.OdinInspector;
-
 using Common;
 using Common.Fsm;
 using Common.Query;
@@ -21,7 +19,7 @@ namespace Framework
 {
     public class ConcreteInstaller : MonoBehaviour, IInstaller
     {
-        [ShowInInspector]
+        [SerializeField]
         protected Scene Scene;
 
         public virtual void Add()

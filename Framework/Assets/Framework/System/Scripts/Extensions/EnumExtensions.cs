@@ -61,6 +61,16 @@ namespace Framework
             }
         }
 
+        public static T Random<T>(this Enum types)
+        {
+            var matches = Enum.GetValues(typeof(T))
+                .Cast<T>()
+                .Where(i => types.Has(i))
+                .ToList();
+
+            return matches.Random();
+        }
+
         public static IEnumerable<Enum> GetFlags(this Enum p_value)
         {
             return GetFlags(p_value, Enum.GetValues(p_value.GetType()).Cast<Enum>().ToArray());
@@ -101,9 +111,10 @@ namespace Framework
             }
 
             if (bits == Convert.ToUInt64(p_value)
-            &&  p_values.Length > 0
-            &&  Convert.ToUInt64(p_values[0]) == 0L
-            ) {
+            && p_values.Length > 0
+            && Convert.ToUInt64(p_values[0]) == 0L
+            )
+            {
                 return p_values.Take(1);
             }
 

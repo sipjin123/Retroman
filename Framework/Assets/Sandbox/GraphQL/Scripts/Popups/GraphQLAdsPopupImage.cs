@@ -125,8 +125,10 @@ namespace Sandbox.GraphQL
             IsApplicationPause = pauseStatus;
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
             if (UpdateStream != null)
             {
                 UpdateStream.Dispose();

@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: AsyncAwaitUtilPackager
+  m_EditorClassIdentifier: 
+  PackageName: AsyncAwaitUtil
+  PackageVersion: 0.0.1
+  PackageDescription: Version from Asset store as of October 8 2018
+  OutputDirectory: C:\Users\jerald.tapalla\Desktop\Unity Packages
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 9864d05e08c7dd049b1f789e03587bcc, type: 3}
+  ToExport:
+  - Assets/Plugins/AsyncAwaitUtil/AsyncAwaitUtilPackager.asset
+  - Assets/Plugins/AsyncAwaitUtil/AsyncAwaitUtilPackager.asset.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source.meta
+  - Assets/Plugins/AsyncAwaitUtil/Tests.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe.html
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe.html.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/22d474190b1889d3373fa4f9334e979c
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/22d474190b1889d3373fa4f9334e979c.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/a276129472f6ad4719e01704016e6f73
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/a276129472f6ad4719e01704016e6f73.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/cmdline_frame.html
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/cmdline_frame.html.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/comment-reply.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/comment-reply.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/default.min.css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/default.min.css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/font-awesome.min(1).css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/font-awesome.min(1).css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/font-awesome.min.css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/font-awesome.min.css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/jquery-migrate.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/jquery-migrate.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/jquery.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/jquery.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shBrushCSharp.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shBrushCSharp.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shCore.css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shCore.css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shCore.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shCore.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shThemeDefault.css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/shThemeDefault.css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/style.min.css
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/style.min.css.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/style.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/style.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-embed.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-embed.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-emoji-release.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-emoji-release.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-slimstat.min.js.download
+  - Assets/Plugins/AsyncAwaitUtil/Documentation/ReadMe_files/wp-slimstat.min.js.download.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/Awaiters.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/Awaiters.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/AwaitExtensions.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/AwaitExtensions.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/IEnumeratorAwaitExtensions.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/IEnumeratorAwaitExtensions.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/Internal.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/TaskExtensions.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/TaskExtensions.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/WaitForBackgroundThread.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/WaitForBackgroundThread.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/WaitForUpdate.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/WaitForUpdate.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/Internal/AsyncCoroutineRunner.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/Internal/AsyncCoroutineRunner.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Source/Internal/SyncContextUtil.cs
+  - Assets/Plugins/AsyncAwaitUtil/Source/Internal/SyncContextUtil.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Tests/AsyncTests.unity
+  - Assets/Plugins/AsyncAwaitUtil/Tests/AsyncTests.unity.meta
+  - Assets/Plugins/AsyncAwaitUtil/Tests/AsyncUtilTests.cs
+  - Assets/Plugins/AsyncAwaitUtil/Tests/AsyncUtilTests.cs.meta
+  - Assets/Plugins/AsyncAwaitUtil/Tests/Util.meta
+  - Assets/Plugins/AsyncAwaitUtil/Tests/Util/TestButtonHandler.cs
+  - Assets/Plugins/AsyncAwaitUtil/Tests/Util/TestButtonHandler.cs.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

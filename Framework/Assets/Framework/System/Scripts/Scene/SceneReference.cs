@@ -115,26 +115,14 @@ namespace Framework
         {
             return Scenes.FindAll(s => s.Scene.Equals(scene)).FirstOrDefault();
         }
-
-        // TEMP: +AS:20180907 Remove this
+        
         public List<SceneEntry> FindScenes(bool isPersistent)
         {
-            if (isPersistent)
-            {
-                return Scenes
-                    .FindAll(e =>
-                    {
-                        Scene s = e.RootObject.GetComponent<Scene>();
-                        return s != null && s.IsPersistent;
-                    })
-                    .ToList();
-            }
-
             return Scenes
                 .FindAll(e =>
                 {
-                    Scene s = e.RootObject.GetComponent<Scene>();
-                    return s == null || !s.IsPersistent;
+                    IScene s = e.RootObject.GetComponent<IScene>();
+                    return s != null && s.IsPersistent == isPersistent;
                 })
                 .ToList();
         }

@@ -10,6 +10,8 @@ using UniRx.Triggers;
 
 using Sirenix.OdinInspector;
 
+using Newtonsoft.Json;
+
 using Common;
 using Common.Query;
 
@@ -26,7 +28,19 @@ namespace Sandbox.RGC
 
     using TMPro;
 
+    // Alias
     using Color = UnityEngine.Color;
+    using Currency = Sandbox.GraphQL.WalletRequest.CurrencyUpdate<Sandbox.GraphQL.WalletRequest.ScoreCurrency>;
+
+    public struct Id
+    {
+        public string id;
+    }
+
+    public struct Error
+    {
+        public string message;
+    }
 
     public class TitleRoot : SceneObject
     {
@@ -41,9 +55,9 @@ namespace Sandbox.RGC
 
         [SerializeField]
         private TextMeshProUGUI GSId;
-
+        
         [SerializeField]
-        private TextMeshProUGUI FGCWallet;
+        private TextMeshProUGUI Tickets;
 
         [SerializeField]
         private TextMeshProUGUI CurrencyId;
@@ -65,7 +79,7 @@ namespace Sandbox.RGC
             Assertion.AssertNotNull(DeviceId);
             Assertion.AssertNotNull(FBId);
             Assertion.AssertNotNull(GSId);
-            Assertion.AssertNotNull(FGCWallet);
+            Assertion.AssertNotNull(Tickets);
             Assertion.AssertNotNull(CurrencyId);
             Assertion.AssertNotNull(CurrencyName);
             Assertion.AssertNotNull(CurrencyValue);
@@ -93,7 +107,6 @@ namespace Sandbox.RGC
 
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type.Equals(GraphQLRequestType.GET_CURRENCY))
-                .Where(_ => _.GetData<FGCCurrency>().currency.id.Equals(RGCConst.POINT_ID))
                 .Subscribe(_ => ShowCurrencyDetails(_.GetData<FGCCurrency>()))
                 .AddTo(this);
 
@@ -103,54 +116,78 @@ namespace Sandbox.RGC
                 .AddTo(this);
 
             IQueryRequest request = QuerySystem.Start(WalletRequest.HAS_CURRENCY_KEY);
-            request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.POINT_ID);
+            request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.SCORE_SLUG);
 
             if (QuerySystem.Complete<bool>())
             {
-                request = QuerySystem.Start(WalletRequest.CONVERSION_RATE_KEY);
-                request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.POINT_ID);
+                request = QuerySystem.Start(WalletRequest.CURRENCY_KEY);
+                request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.SCORE_SLUG);
                 ShowCurrencyDetails(QuerySystem.Complete<FGCCurrency>());
             }
         }
 
         private void ShowFGCWallet(FGCWallet wallet)
         {
-            FGCWallet.text = string.Format("FGCWallet value (tickets): {0}", wallet.amount.ToString().RichTextColorize(Color.green));
+            this.Tickets.text = string.Format("Tickets: {0}", wallet.Amount.ToString().RichTextColorize(Color.green));
         }
 
         private void ShowCurrencyDetails(FGCCurrency wallet)
         {
-            CurrencyId.text = string.Format("Currency Id (jolens): {0}", wallet.currency.id.RichTextColorize(Color.green));
-            CurrencyName.text = string.Format("Currency Name (jolens): {0}", wallet.currency.slug.RichTextColorize(Color.green));
-            CurrencyValue.text = string.Format("Currency Value (jolens): {0}", wallet.amount.ToString().RichTextColorize(Color.green));
-            CurrencyRate.text = string.Format("Currency Rate: {0}", wallet.currency.exchange_rate.ToString().RichTextColorize(Color.green));
+            CurrencyValue.text = string.Format("Submitted Score: {0}", wallet.Amount.ToString().RichTextColorize(Color.green));
+            CurrencyId.text = string.Format("Currency Id: {0}", wallet.CurrencyInfo.Id.RichTextColorize(Color.green));
+            CurrencyName.text = string.Format("Currency Name: {0}", wallet.CurrencyInfo.CurrencySlug.RichTextColorize(Color.green));
+            CurrencyRate.text = string.Format("Currency Rate: {0}", wallet.CurrencyInfo.Rate.ToString().RichTextColorize(Color.green));
         }
 
         private void ShowPlayerInfo(PlayerIDContainer info)
         {
-            Id.text = string.Format("Id: {0}", info.id.RichTextColorize(Color.green));
-            DeviceId.text = string.Format("Device Id: {0}", info.device_id.RichTextColorize(Color.green));
-            FBId.text = string.Format("FB Id: {0}", info.facebook_id.RichTextColorize(Color.green));
-            GSId.text = string.Format("GS Id: {0}", info.gamesparks_id.RichTextColorize(Color.green));
+            Id.text = string.Format("Id: {0}", info.Id.RichTextColorize(Color.green));
+            DeviceId.text = string.Format("Device Id: {0}", info.DeviceId.RichTextColorize(Color.green));
+            FBId.text = string.Format("FB Id: {0}", info.FbId.RichTextColorize(Color.green));
+            GSId.text = string.Format("GS Id: {0}", info.GSId.RichTextColorize(Color.green));
         }
 
         public void OnClickedOnline()
         {
-            GameResultInfo data = GameResultFactory.CreateDefault();
+            IQueryRequest request = QuerySystem.Start(WalletRequest.CURRENCY_KEY);
+            request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.SCORE_SLUG);
+            FGCCurrency currency = QuerySystem.Complete<FGCCurrency>();
+
+            GameResultInfo data = GameResultFactory.Create(
+                currency.CurrencyInfo.CurrencySlug,
+                currency.Amount,
+                currency.CurrencyInfo.Rate);
 
             this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOnline, PopupData = new PopupData(data) });
         }
 
         public void OnClickedOffline()
         {
-            GameResultInfo data = GameResultFactory.CreateDefault();
+            IQueryRequest request = QuerySystem.Start(WalletRequest.CURRENCY_KEY);
+            request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.SCORE_SLUG);
+            FGCCurrency currency = QuerySystem.Complete<FGCCurrency>();
+
+            GameResultInfo data = GameResultFactory.Create(
+                currency.CurrencyInfo.CurrencySlug,
+                currency.Amount,
+                currency.CurrencyInfo.Rate);
 
             this.Publish(new OnShowPopupSignal() { Popup = PopupType.ConvertOffline, PopupData = new PopupData(data) });
         }
 
         public void OnClickedSend()
         {
-            this.Publish(new OnSendToFGCWalletSignal() { Value = 100, Event  = RGCConst.GAME_END });
+            this.Publish(new OnTestSendScore() { Score = 2 });
+        }
+
+        public void OnClickedConnectGuest()
+        {
+            this.Publish(new OnAutoConnectToFGC() { Type = AccountType.Guest });
+        }
+
+        public void OnClickedConnectFacebook()
+        {
+            this.Publish(new OnAutoConnectToFGC() { Type = AccountType.Facebook });
         }
     }
 }

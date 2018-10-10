@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 7470186}
   - component: {fileID: 7470185}
   - component: {fileID: 7470184}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: UnMute
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 46965907}
   - component: {fileID: 46965906}
   - component: {fileID: 46965905}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: SkipAd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +379,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 62729950}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Progress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -420,7 +420,7 @@ GameObject:
   - component: {fileID: 186719683}
   - component: {fileID: 186719685}
   - component: {fileID: 186719684}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: ProgressRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 450496048}
   - component: {fileID: 450496050}
   - component: {fileID: 450496049}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Video (Source)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -712,7 +712,7 @@ GameObject:
   - component: {fileID: 512332872}
   - component: {fileID: 512332874}
   - component: {fileID: 512332873}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: ProgressText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -786,7 +786,7 @@ GameObject:
   m_Component:
   - component: {fileID: 734745362}
   - component: {fileID: 734745361}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -821,7 +821,7 @@ Camera:
   m_Depth: 10
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 532480
+    m_Bits: 32800
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -856,7 +856,7 @@ GameObject:
   - component: {fileID: 749556268}
   - component: {fileID: 749556270}
   - component: {fileID: 749556269}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: EnableContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -929,7 +929,7 @@ GameObject:
   - component: {fileID: 832546409}
   - component: {fileID: 832546411}
   - component: {fileID: 832546406}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: 'Popup Canvas (GraphQL Ad Video) '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1065,7 +1065,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1053297887}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Mute
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1105,7 +1105,7 @@ GameObject:
   - component: {fileID: 1268940557}
   - component: {fileID: 1268940559}
   - component: {fileID: 1268940558}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: DisableContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1214,7 +1214,7 @@ GameObject:
   - component: {fileID: 1422639696}
   - component: {fileID: 1422639698}
   - component: {fileID: 1422639697}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Video (Render Texture)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1283,7 +1283,7 @@ GameObject:
   - component: {fileID: 1492363645}
   - component: {fileID: 1492363644}
   - component: {fileID: 1492363643}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Mute
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1404,7 +1404,7 @@ GameObject:
   - component: {fileID: 1542651255}
   - component: {fileID: 1542651259}
   - component: {fileID: 1542651257}
-  m_Layer: 13
+  m_Layer: 15
   m_Name: AdProgress
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1464,7 +1464,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: 1313869497
+  m_SortingLayerID: 1591955295
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!1 &1795961557
@@ -1477,7 +1477,7 @@ GameObject:
   - component: {fileID: 1795961558}
   - component: {fileID: 1795961560}
   - component: {fileID: 1795961559}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: Panel (Blocker)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1546,7 +1546,7 @@ GameObject:
   - component: {fileID: 1948818062}
   - component: {fileID: 1948818064}
   - component: {fileID: 1948818063}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: DisableContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1615,7 +1615,7 @@ GameObject:
   - component: {fileID: 2026565286}
   - component: {fileID: 2026565288}
   - component: {fileID: 2026565287}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: ProgressText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1690,7 +1690,7 @@ GameObject:
   - component: {fileID: 2075513530}
   - component: {fileID: 2075513532}
   - component: {fileID: 2075513531}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: EnableContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1761,7 +1761,7 @@ GameObject:
   - component: {fileID: 2076668046}
   - component: {fileID: 2076668045}
   - component: {fileID: 2076668044}
-  m_Layer: 13
+  m_Layer: 5
   m_Name: QuitAd
   m_TagString: Untagged
   m_Icon: {fileID: 0}

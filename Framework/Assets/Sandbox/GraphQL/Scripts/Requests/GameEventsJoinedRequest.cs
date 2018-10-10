@@ -18,26 +18,31 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
 	public class GameEventStatus : IJson
     {
-		public string id;
-		public string code;
+		[JProp("id")] public string Id;
+        [JProp("code")] public string Code;
 	}
 
 	[Serializable]
 	public class EventsStatus : IJson
     {
-		public List<GameEventStatus> eventsList;
+        [JProp("eventsList")] public List<GameEventStatus> Events;
 	}
 	
 	public class GameEventsJoinedRequest : UnitRequest
     {
         private bool IsJoining = false;
 
-		public override void Initialze(GraphInfo info)
-		{
-			this.Receive<GraphQLRequestSuccessfulSignal>()
+        public override void Initialze(GraphInfo info, GraphRequest request)
+        {
+            base.Initialze(info, request);
+
+            this.Receive<GraphQLRequestSuccessfulSignal>()
 				.Where(_ => _.Type == GraphQLRequestType.ANNOUNCEMENTS)
 				.Subscribe(_ => CheckGameEventStatus(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
 				.AddTo(this);
@@ -71,7 +76,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.ANNOUNCEMENTS_STATUS, Data = result.Result.data.player_getStat });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.ANNOUNCEMENTS_STATUS, Data = result.Result.Data.PlayerProfile });
             }
         }
 #endregion

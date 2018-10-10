@@ -12,6 +12,8 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 
+using Newtonsoft.Json;
+
 using MiniJSON;
 
 using Common.Fsm;
@@ -24,6 +26,9 @@ using Sirenix.Serialization;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     public struct OnSendToFGCWalletSignal : IRequestSignal
     {
         /// <summary>
@@ -31,6 +36,9 @@ namespace Sandbox.GraphQL
         /// </summary>
         public int Value;
 
+        /// <summary>
+        /// GMC event of the request
+        /// </summary>
         public string Event;
     }
 
@@ -77,57 +85,70 @@ namespace Sandbox.GraphQL
         /// </summary>
         public int Amount;
     }
-    
-    // TODO: +AS:09172018 Updated field name
+
+    public struct OnUpdateFGCWallet : IRequestSignal
+    {
+        public string Result;
+    }
+
+    public struct OnUpdateFGCCurrency : IRequestSignal
+    {
+        public string Result;
+    }
+
     [Serializable]
     public class FGCWallet : IJson
     {
-        public string update_at;
-        
-        public int amount;
-    }
+        [JProp("update_at")] public string Timestamp;
 
-    // TODO: +AS:09172018 Updated field name
+        [JProp("amount")] public float Amount;
+    }
+    
     [Serializable]
     public class GenericWallet : IJson
     {
-        public int amount;
+        [JProp("amount")] public int Amount;
     }
-
-    // TODO: +AS:09172018 Updated field name
+    
     [Serializable]
     public class FGCCurrency : IJson
     {
         [Serializable]
         public class Currency
         {
-            public string id;
-            
-            public string slug;
-            
-            public int exchange_rate;
-        }
-        
-        public int amount;
-        
-        public string updated_at;
-        
-        public Currency currency;
-    }
+            [JProp("id")] public string Id;
 
-    // TODO: +AS:09172018 Updated field name
+            [JProp("slug")] public string CurrencySlug;
+
+            [JProp("exchange_rate")] public float Rate;
+        }
+
+        [JProp("amount")] public int Amount;
+
+        [JProp("updated_at")] public string Timestamp;
+
+        [JProp("currency")] public Currency CurrencyInfo;
+    }
+    
     [Serializable]
     public class WalletConvert : IJson
     {
-        public string created_at;
-        
-        public string id;
-        
-        public int value;
+        [JProp("created_at")] public string Timestamp;
+
+        [JProp("id")] public string Id;
+
+        [JProp("value")] public float Value;
     }
 
     public class WalletRequest : UnitRequest
     {
+        #region Serializable Classes
+        [Serializable]
+        public struct GMCError
+        {
+            public string Message;
+        }
+
         [Serializable]
         public class Currency : IJson
         {
@@ -180,33 +201,41 @@ namespace Sandbox.GraphQL
         }
 
         [Serializable]
-        private class CurrencyUpdate<T> : IJson
+        public class CurrencyUpdate<T> : IJson
             where T : Currency
         {
             public T currencies;
         }
+        #endregion
 
+        #region Constants
         public static readonly string FGC_WALLET_KEY = "FGCWalletKey";
-        public static readonly string CONVERSION_RATE_KEY = "ConversionRateKey";
+        public static readonly string CURRENCY_KEY = "CurrencyKey";
         public static readonly string HAS_CURRENCY_KEY = "HasCurrencyKey";
         public static readonly string CURRENCY_PARAM = "CurrencyParam";
+        #endregion
 
+        #region Fields
         [SerializeField]
         private FGCWallet Wallet;
 
         [SerializeField]
         private List<FGCCurrency> Currencies;
+        #endregion
 
+        #region Unity Life Cycle
         private void OnDestroy()
         {
             QuerySystem.RemoveResolver(FGC_WALLET_KEY);
-            QuerySystem.RemoveResolver(CONVERSION_RATE_KEY);
+            QuerySystem.RemoveResolver(CURRENCY_KEY);
             QuerySystem.RemoveResolver(HAS_CURRENCY_KEY);
         }
+        #endregion
 
-        public override void Initialze(GraphInfo info)
+        #region Initialization
+        public override void Initialze(GraphInfo info, GraphRequest request)
         {
-            base.Initialze(info);
+            base.Initialze(info, request);
 
             RegisterReceivers();
             RegisterResolvers();
@@ -218,12 +247,12 @@ namespace Sandbox.GraphQL
                 .Subscribe(_ => FetchFGCWallet(_.Token))
                 .AddTo(this);
 
-            this.Receive<OnFetchCurrenciesSignal>()
-                .Subscribe(_ => FetchCurrencies())
-                .AddTo(this);
-            
             this.Receive<OnFetchCurrencySignal>()
                 .Subscribe(_ => FetchCurrencies(_.Token, _.Slug))
+                .AddTo(this);
+
+            this.Receive<OnFetchCurrenciesSignal>()
+                .Subscribe(_ => FetchWalletAndCurrencies())
                 .AddTo(this);
 
             this.Receive<OnSendToFGCWalletSignal>()
@@ -233,10 +262,80 @@ namespace Sandbox.GraphQL
             this.Receive<OnConvertCurrencySignal>()
                 .Subscribe(_ => Convert(_.Token, _.Slug, _.Amount))
                 .AddTo(this);
-            
+
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
-                .Subscribe(_ => FetchCurrencies())
+                .Subscribe(_ => FetchWalletAndCurrencies())
+                .AddTo(this);
+
+            this.Receive<OnUpdateFGCWallet>()
+                .Subscribe(_ =>
+                {
+                    Debug.LogFormat(D.FGC + "WalletRequest::OnUpdateFGCWallet Result:{0}\n", _.Result);
+                    //Result:{"data":{"fgc_wallet":{"amount":0,"updated_at":"2018-10-08T06:11:23.020Z"}
+
+                    var result = new
+                    {
+                        data = new { fgc_wallet = new FGCWallet() },
+                        errors = new[] { new GMCError() }
+                    };
+
+                    try
+                    {
+                        result = JsonConvert.DeserializeAnonymousType(_.Result, result);
+                    }
+                    catch (JsonReaderException e)
+                    {
+                        result = null;
+                        Debug.LogErrorFormat(D.ERROR + "WalletRequest::OnUpdateFGCWallet Error:{0}\n", e.Message);
+                    }
+                    finally
+                    {
+                        if (result != null)
+                        {
+                            Wallet = result?.data?.fgc_wallet;
+                            this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_FGC_WALLET, Data = Wallet });
+                        }
+                    }
+                })
+                .AddTo(this);
+
+            this.Receive<OnUpdateFGCCurrency>()
+                .Subscribe(_ =>
+                {
+                    Debug.LogFormat(D.FGC + "WalletRequest::OnUpdateFGCCurrency Result:{0}\n", _.Result);
+                    //Result:{"data":{"wallet":{"amount":123,"updated_at":"2018-10-08T06:57:56.546Z","currency":{"id":"a1796450-c14d-11e8-b61d-07d71a29b111","slug":"score","exchange_rate":0.05}}}}
+
+                    FGCCurrency wallet = null;
+                    string id = null;
+                    var result = new
+                    {
+                        data = new { wallet = new FGCCurrency() },
+                        errors = new[] { new GMCError() }
+                    };
+
+                    try
+                    {
+                        result = JsonConvert.DeserializeAnonymousType(_.Result, result);
+                    }
+                    catch (JsonReaderException e)
+                    {
+                        result = null;
+                        wallet = null;
+                        id = null;
+                        Debug.LogErrorFormat(D.ERROR + "WalletRequest::OnUpdateFGCCurrency Error:{0}\n", e.Message);
+                    }
+                    finally
+                    {
+                        wallet = result?.data?.wallet;
+                        id = wallet?.CurrencyInfo?.Id;
+                        if (!string.IsNullOrEmpty(id))
+                        {
+                            Currencies.ReplaceOrAdd<FGCCurrency>(wallet, r => r.CurrencyInfo.Id.Equals(id));
+                            this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_CURRENCY, Data = wallet });
+                        }
+                    }
+                })
                 .AddTo(this);
         }
 
@@ -245,15 +344,15 @@ namespace Sandbox.GraphQL
             QuerySystem.RegisterResolver(FGC_WALLET_KEY, delegate (IQueryRequest request, IMutableQueryResult result)
             {
                 Assertion.AssertNotNull(Wallet, D.ERROR + "WalletRequest::FGCWallet wallet shoud never be null!\n");
-                result.Set(Wallet.amount);
+                result.Set(Wallet.Amount);
             });
 
-            QuerySystem.RegisterResolver(CONVERSION_RATE_KEY, delegate (IQueryRequest request, IMutableQueryResult result)
+            QuerySystem.RegisterResolver(CURRENCY_KEY, delegate (IQueryRequest request, IMutableQueryResult result)
             {
-                Assertion.Assert(request.HasParameter(CURRENCY_PARAM), D.ERROR + "WalletRequest::Currencies Invalid query! query should contain param! Query:{0} Param:{1}\n", CONVERSION_RATE_KEY, CURRENCY_PARAM);
+                Assertion.Assert(request.HasParameter(CURRENCY_PARAM), D.ERROR + "WalletRequest::Currencies Invalid query! query should contain param! Query:{0} Param:{1}\n", CURRENCY_KEY, CURRENCY_PARAM);
                 string id = request.GetParameter<string>(CURRENCY_PARAM);
 
-                FGCCurrency currency = Currencies.Find(c => c.currency.id.Equals(id));
+                FGCCurrency currency = Currencies.Find(c => c.CurrencyInfo.CurrencySlug.Equals(id));
                 Assertion.AssertNotNull(currency, D.ERROR + "WalletRequest::Currencies Invalid query param! Currencies does not contain Currency:{0}\n", id);
 
                 result.Set(currency);
@@ -263,11 +362,28 @@ namespace Sandbox.GraphQL
             {
                 Assertion.Assert(request.HasParameter(CURRENCY_PARAM), D.ERROR + "WalletRequest::Currency Invalid query! query should contain param! Query:{0} Param:{1}\n", HAS_CURRENCY_KEY, CURRENCY_PARAM);
                 string id = request.GetParameter<string>(CURRENCY_PARAM);
-                result.Set(Currencies.Exists(c => c.currency.id.Equals(id)));
+                result.Set(Currencies.Exists(c => c.CurrencyInfo.Id.Equals(id)));
             });
         }
+        #endregion
+
+        #region Helpers methods
+        private void UpdateWallet(string result)
+        {
+            //Wallet = wallet;
+        }
+
+        private void UpdateCurrencies(string result)
+        {
+            //currencies.ForEach(c => Currencies.ReplaceOrAdd(c, i => i.CurrencyInfo.Id.Equals(c.CurrencyInfo.Id)));
+        }
+        #endregion
 
         #region Requests
+        /// <summary>
+        /// Fetches the user's Ticket/Stamp wallet from the GMC server
+        /// </summary>
+        /// <param name="token">user token</param>
         private void FetchFGCWallet(string token)
         {
             Builder builder = Builder.Query();
@@ -279,6 +395,11 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), FetchFGCWalletResult);
         }
 
+        /// <summary>
+        /// Fetches the user's currency wallet from the GMC server
+        /// </summary>
+        /// <param name="token">user token</param>
+        /// <param name="currencySlug">slug of the currency</param>
         private void FetchCurrencies(string token, string currencySlug)
         {
             Builder builder = Builder.Query();
@@ -292,7 +413,7 @@ namespace Sandbox.GraphQL
         }
         
         /// <summary>
-        /// 
+        /// Sends the GameScore to FGC's currency
         /// </summary>
         /// <typeparam name="T">Currency Type</typeparam>
         /// <param name="currency">Amount to Convert</param>
@@ -305,6 +426,7 @@ namespace Sandbox.GraphQL
         }
 
         /// <summary>
+        /// Sends the GameScore to FGC's currency
         /// </summary>
         /// <param name="token">User Token</param>
         /// <param name="slug">Event slug</param>
@@ -313,8 +435,9 @@ namespace Sandbox.GraphQL
         {
             SendToFGCWallet(token, slug, payload.ToJson());
         }
-        
+
         /// <summary>
+        /// Sends the GameScore to FGC's currency
         /// </summary>
         /// <param name="token">User Token</param>
         /// <param name="slug">Event slug</param>
@@ -336,8 +459,16 @@ namespace Sandbox.GraphQL
             ProcessRequest(GraphInfo, builder.ToString(), ConvertCurrencyResult);
         }
 
+        /// <summary>
+        /// Converts user currency to Token/Stamp
+        /// </summary>
+        /// <param name="token">user token</param>
+        /// <param name="currencySlug">slug of the currency to be converted</param>
+        /// <param name="amount">the amount of currency to be converted</param>
         private void Convert(string token, string currencySlug, int amount)
         {
+            Debug.LogErrorFormat("WalletRequest::Convert wallet_convert Slug:{0} Amount:{1}\n", currencySlug, amount);
+
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("wallet_convert");
             func.AddString("token", token);
@@ -359,7 +490,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                Wallet = result.Result.data.fgc_wallet;
+                Wallet = result.Result.Data.FGCWallet;
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_FGC_WALLET, Data = Wallet });
             }
         }
@@ -372,8 +503,8 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                FGCCurrency wallet = result.Result.data.wallet;
-                Currencies.ReplaceOrAdd<FGCCurrency>(wallet, r => r.currency.id.Equals(wallet.currency.id));
+                FGCCurrency wallet = result.Result.Data.Wallet;
+                Currencies.ReplaceOrAdd<FGCCurrency>(wallet, r => r.CurrencyInfo.Id.Equals(wallet.CurrencyInfo.Id));
 
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_CURRENCY, Data = wallet });
             }
@@ -389,13 +520,13 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                FGCCurrency wallet = result.Result.data.wallet;
-                Currencies.ReplaceOrAdd<FGCCurrency>(wallet, r => r.currency.id.Equals(wallet.currency.id));
+                FGCCurrency wallet = result.Result.Data.Wallet;
+                Currencies.ReplaceOrAdd<FGCCurrency>(wallet, r => r.CurrencyInfo.Id.Equals(wallet.CurrencyInfo.Id));
 
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.SEND_CURRENCY, Data = wallet });
 
-                // NOTE: +AS:20180906 TEST Fetch calculated currencies
-                FetchCurrencies();
+                // NOTE: +AS:20180906 TEST Fetch re-calculated currencies
+                FetchWalletAndCurrencies();
             }
         }
 
@@ -407,19 +538,18 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                WalletConvert wallet = result.Result.data.wallet_convert;
+                WalletConvert wallet = result.Result.Data.Convert;
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.CONVERT_CURRENCY, Data = wallet });
 
                 // NOTE: +AS:20180906 TEST Fetch calculated currencies
-                FetchCurrencies();
+                FetchWalletAndCurrencies();
             }
         }
         #endregion
 
         #region DEBUG
-
         [Button(ButtonSizes.Medium)]
-        public void FetchCurrencies()
+        public void FetchWalletAndCurrencies()
         {
             string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
 
@@ -428,25 +558,25 @@ namespace Sandbox.GraphQL
             this.Publish(new OnFetchCurrencySignal()
             {
                 Token = token,
-                Slug = RGCConst.POINT_SLUG,
+                Slug = RGCConst.SCORE_SLUG,
             });
         }
-        
+
+        /*
         [Button(ButtonSizes.Medium)]
         public void SendToFGCWallet()
         {
             //ConvertCurrency<Currency1>(100, RGCConst.TEST_EVENT);
             //ConvertCurrency<Currency2>(100, RGCConst.TEST_EVENT);
             //ConvertCurrency<PointCurrency>(100, RGCConst.TEST_EVENT);
-            SendToFGCWallet<ScoreCurrency>(100, RGCConst.GAME_END);
+            //SendToFGCWallet<ScoreCurrency>(100, RGCConst.GAME_END);
         }
-
+        
         [Button(ButtonSizes.Medium)]
         public void ConvertCurrency()
         {
             string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
-
-            /*
+            
             this.Publish(new OnConvertCurrencySignal()
             {
                 Token = token,
@@ -460,16 +590,15 @@ namespace Sandbox.GraphQL
                 Slug = RGCConst.CURRENCY_2_SLUG,
                 Amount = 100,
             });
-            */
 
             this.Publish(new OnConvertCurrencySignal()
             {
                 Token = token,
-                Slug = RGCConst.POINT_SLUG,
+                Slug = RGCConst.SCORE_SLUG,
                 Amount = 100,
             });
         }
-
+        //*/
         #endregion
     }
 }

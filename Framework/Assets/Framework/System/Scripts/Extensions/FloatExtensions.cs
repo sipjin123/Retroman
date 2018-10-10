@@ -22,5 +22,20 @@ namespace Framework
         {
             return f1 >= f2 - Mathf.Epsilon && f1 <= f2 + Mathf.Epsilon;
         }
+
+        public static int ToInt(this float f)
+        {
+            return Mathf.CeilToInt(f);
+        }
+
+        public static float Floor(this float f)
+        {
+            return Mathf.Floor(f);
+        }
+
+        public static float Ceil(this float f)
+        {
+            return Mathf.Ceil(f);
+        }
     }
 }

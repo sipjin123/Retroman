@@ -18,6 +18,9 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     public struct GraphQLLeaderboardRequestSignal : IRequestSignal
     {
 
@@ -25,15 +28,17 @@ namespace Sandbox.GraphQL
 
 	public class GetLeaderboardTop : UnitRequest
 	 {
-		public override void Initialze(GraphInfo info)
-		{
-			this.Receive<GraphQLLeaderboardRequestSignal>()
+	     public override void Initialze(GraphInfo info, GraphRequest request)
+	     {
+	         base.Initialze(info, request);
+
+            this.Receive<GraphQLLeaderboardRequestSignal>()
 				.Subscribe(_ => GetLeaderboardTopRank(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN)))
 				.AddTo(this);
 		}
 
 		#region Request 
-		public void GetLeaderboardTopRank(string token)
+		private void GetLeaderboardTopRank(string token)
 		{
 			Builder builder = Builder.Query();
 			Function function = builder.CreateFunction("leaderboard_players");
@@ -45,10 +50,10 @@ namespace Sandbox.GraphQL
 
 			ProcessRequest(GraphInfo, builder.ToString(), UpdateLeaderboardTopRanking);
 		}
-		#endregion
+        #endregion
 
-		#region Parser
-		public void UpdateLeaderboardTopRanking(GraphResult result)
+        #region Parser
+	     private void UpdateLeaderboardTopRanking(GraphResult result)
 		{
             if (result.Status == Status.ERROR)
             {
@@ -56,7 +61,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_TOP, Data = result.Result.data.leaderboard_players });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.LEADERBOARD_TOP, Data = result.Result.Data.LeadboardPlayers });
             }
 		} 
 		#endregion

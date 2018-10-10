@@ -36,7 +36,8 @@ namespace Sandbox.GraphQL
         private void Awake()
         {
             this.Receive<AssetDownloadedSignal>()
-                //.Where(_ => Ads.Any(Ad => _.AssetID.Equals(Ad.id) && !CompletedAds.Contains(_.AssetID)))
+                // Changes
+                .Where(_ => Ads.Any(Ad => _.AssetID.Equals(Ad.Id) && !CompletedAds.Exists(a => a.AssetId.Equals(_.AssetID))))
                 .Subscribe(_ => 
                 {
                     int index = CompletedAds.FindIndex(a => a.AssetId.Equals(_.AssetID));
@@ -62,9 +63,9 @@ namespace Sandbox.GraphQL
             {
                 this.Publish(new DownloadAssetSignal()
                 {
-                    AssetID = ad.id,         
-                    Url = ad.url,            
-                    Timestamp = ad.updated_at
+                    AssetID = ad.Id,         
+                    Url = ad.Url,            
+                    Timestamp = ad.Timestamp
                 });
             });
         }

@@ -7,6 +7,8 @@ using System.Text;
 
 using UnityEngine;
 
+using Sirenix.OdinInspector;
+
 using UniRx;
 using UniRx.Triggers;
 
@@ -14,63 +16,50 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
-
-    public enum Status
-    {
-        SUCCESS,
-        ERROR,
-    }
-
-    public struct GraphResult
-    {
-        public Status Status;
-        public string RawResult;
-        public ResultData Result;
-        public object Data;
-        public T GetData<T>()
-        {
-            return (T)Data;
-        }
-
-        public GraphResult(string result)
-        {
-            RawResult = result;
-            Result = JsonUtility.FromJson<ResultData>(RawResult);
-            Data = (object)Result;
-            //Debug.LogErrorFormat("[DEBUG] Parse:{0}\n", JsonUtility.ToJson(data));
-
-            if (Result.errors != null && Result.errors.Count > 0)
-            {
-                Status = Status.ERROR;
-
-                CatchError(Result.errors, delegate (string message, string request)
-                {
-                    Debug.LogErrorFormat(D.ERROR + "Request:{0} Message:{1}\n", request, message);
-                });
-            }
-            else
-            {
-                Status = Status.SUCCESS;
-            }
-        }
-
-        private void CatchError(List<Error> errors, Action<string, string> visit)
-        {
-            errors.ForEach(e => visit(e.message, e.path.FirstOrDefault()));
-        }
-    }
-
-    public class GraphRequest
+    public sealed class GraphRequest : SerializedMonoBehaviour
     {
         public GraphInfo Info { get; private set; }
 
-        public GraphRequest() : this(null)
+        [SerializeField]
+        private bool CanStack = false;
+
+        [SerializeField]
+        private Dictionary<string, bool> FilterMap;
+
+        [SerializeField]
+        private List<GraphRequestItem> Requests;
+
+        private void Start()
         {
+            FilterMap = FilterMap ?? new Dictionary<string, bool>();
         }
 
-        public GraphRequest(GraphInfo info)
+        private void Update()
         {
-            UpdateInfo(info);
+            if (Requests.Count <= 0)
+            {
+                return;
+            }
+
+            GraphRequestItem request = Requests.FirstOrDefault();
+            if (request == null)
+            {
+                Requests.RemoveAll(r => r == null);
+                return;
+            }
+
+            if (!request.HasPosted)
+            {
+                request.Post();
+                return;
+            }
+
+            if (request.Progress >= 1f)
+            {
+                FilterMap.Remove(request.Args);
+                request.Dispose();
+                Requests.RemoveAt(0);
+            }
         }
 
         public void UpdateInfo(GraphInfo info)
@@ -78,9 +67,25 @@ namespace Sandbox.GraphQL
             Info = info;
         }
 
-        public virtual void Request(string graphArgs, Action<GraphResult> parser, object graphData = null)
+        public void Request(string graphArgs, Action<GraphResult> parser, object graphData = null)
         {
-            Debug.LogFormat(D.L("[REQUEST]") + " GraphInfo::Request Args:{0}\n", graphArgs);
+            // TODO: Add filter here.
+            if (CanStack || !FilterMap.ContainsKey(graphArgs))
+            {
+                FilterMap.SafeAdd(graphArgs, true);
+                Requests.Add(new GraphRequestItem(Info.GraphURL, graphArgs, parser, graphData));
+            }
+        }
+
+        /// <summary>
+        /// Note: Request with string parser is currenntly excluded to request queueing
+        /// </summary>
+        /// <param name="graphArgs"></param>
+        /// <param name="parser"></param>
+        /// <param name="graphData"></param>
+        public void Request(string graphArgs, Action<string> parser, object graphData = null)
+        {
+            Debug.LogFormat(D.L("[REQUEST]") + " GraphInfo::Request<string> Args:{0}\n", graphArgs);
 
             // Convert arguments to bytes
             byte[] bytes = Encoding.UTF8.GetBytes(graphArgs);
@@ -90,15 +95,13 @@ namespace Sandbox.GraphQL
                 .Subscribe(_ =>
                 {
                     Debug.LogFormat(D.L("[REQUEST]") + " GraphInfo::Request Result:{0}\n", _);
-                    GraphResult result = new GraphResult(_);
-                    result.Data = graphData;
-                    parser(result);
+                    parser(_);
                 },
                 _ =>
                 {
                     Debug.LogErrorFormat(D.E("[REQUEST]") + " GraphInfo::Request Result:{0}:{1}\n", _, _.InnerException);
-                    GraphResult result = new GraphResult() { Status = Status.ERROR, Result = null, RawResult = _.Message, Data = graphData };
-                    parser(result);
+                    //GraphResult result = new GraphResult() { Status = Status.ERROR, Result = null, RawResult = _.Message, Data = graphData };
+                    parser(_.Message);
                 });
         }
     }

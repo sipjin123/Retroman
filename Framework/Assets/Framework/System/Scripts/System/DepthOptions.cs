@@ -44,7 +44,7 @@ namespace Framework
             Depth = depth;
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Select()
         {
             Broker = Broker ?? new MessageBroker();
@@ -108,7 +108,7 @@ namespace Framework
             Depth = string.Empty;
             SceneDepth = ESceneDepth.Invalid;
         }
-        
+
         public void UpdateDepth(string depth)
         {
             Depth = depth;

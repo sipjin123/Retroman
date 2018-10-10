@@ -66,7 +66,7 @@ namespace Framework
             return UseSystemCamera;
         }
         
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void SetupSceneCanvas()
         {
             if (UseSystemCamera && QuerySystem.HasResolver(QueryIds.SystemCamera))

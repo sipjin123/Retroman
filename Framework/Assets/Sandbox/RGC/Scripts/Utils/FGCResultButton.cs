@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 using Common.Query;
-
+using Framework;
 using Sandbox.GraphQL;
+using Sandbox.Facebook;
+using Sandbox.Popup;
+using UniRx;
+using OnCloseActivePopup = Sandbox.Popup.OnCloseActivePopup;
 
 namespace Sandbox.RGC
 {
@@ -26,19 +30,53 @@ namespace Sandbox.RGC
         [SerializeField]
         private GameObject GetSynerTix;
 
+        [SerializeField]
+        private bool _IsSynertix;
+
         private void Start()
         {
             Assertion.AssertNotNull(GetRealPrizesButton);
             Assertion.AssertNotNull(GetSynerTix);
 
             CheckButtons();
+
+            this.Receive<OnFacebookLoginSuccessSignal>()
+                .Where(_ => _IsSynertix)
+                .Subscribe(_ =>
+                {
+                    OnShowPopupSignal signal;
+                    signal.Popup = PopupType.Spinner;
+                    signal.PopupData = null;
+
+                    this.Publish(signal);
+                });
+
+            this.Receive<GraphQLRequestSuccessfulSignal>()
+                .Where(_ => _.Type == GraphQLRequestType.CONFIGURE)
+                .Subscribe(_ =>
+                {
+                    if (_IsSynertix)
+                    {
+                        GetSynerTix.SetActive(_IsSynertix);
+                        GetRealPrizesButton.SetActive(!_IsSynertix);
+                    }
+                    else
+                    {
+                        GetSynerTix.SetActive(!_IsSynertix);
+                        GetRealPrizesButton.SetActive(_IsSynertix);
+                    }
+
+                    OnCloseActivePopup signal;
+                    signal.All = true;
+                    this.Publish(signal);
+                }).AddTo(this);
         }
 
         public void CheckButtons()
         {
-            string token = QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN);
+            bool hasFBLogin = QuerySystem.Query<bool>(FBID.HasLoggedInUser);
 
-            if (string.IsNullOrEmpty(token) || string.IsNullOrWhiteSpace(token))
+            if (!hasFBLogin)
             {
                 GetRealPrizesButton.SetActive(true);
                 GetSynerTix.SetActive(false);

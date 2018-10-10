@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cef9ff945c2471446a308cfaf185b130, type: 3}
+  m_Name: Popup
+  m_EditorClassIdentifier: 
+  PackageName: Popup
+  PackageVersion: 1.0.0
+  PackageDescription: 
+  OutputDirectory: Assets\Sandbox\Popup
+  Options: 7
+  Assets:
+  - {fileID: 102900000, guid: 691ecd43cec5ecf4487a736cf9a756fc, type: 3}
+  ToExport:
+  - Assets/Sandbox/Popup/Popup.asset
+  - Assets/Sandbox/Popup/Popup.asset.meta
+  - Assets/Sandbox/Popup/README.md
+  - Assets/Sandbox/Popup/README.md.meta
+  - Assets/Sandbox/Popup/Scenes.meta
+  - Assets/Sandbox/Popup/Scripts.meta
+  - Assets/Sandbox/Popup/Scenes/Popup001.unity
+  - Assets/Sandbox/Popup/Scenes/Popup001.unity.meta
+  - Assets/Sandbox/Popup/Scenes/Popup002.unity
+  - Assets/Sandbox/Popup/Scenes/Popup002.unity.meta
+  - Assets/Sandbox/Popup/Scenes/Popup003.unity
+  - Assets/Sandbox/Popup/Scenes/Popup003.unity.meta
+  - Assets/Sandbox/Popup/Scenes/PopupCollection.unity
+  - Assets/Sandbox/Popup/Scenes/PopupCollection.unity.meta
+  - Assets/Sandbox/Popup/Scripts/Editor.meta
+  - Assets/Sandbox/Popup/Scripts/IPopupWindow.cs
+  - Assets/Sandbox/Popup/Scripts/IPopupWindow.cs.meta
+  - Assets/Sandbox/Popup/Scripts/OpenPopupSignal.cs
+  - Assets/Sandbox/Popup/Scripts/OpenPopupSignal.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupCollectionRoot.cs
+  - Assets/Sandbox/Popup/Scripts/PopupCollectionRoot.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupCollectionRootPartials.cs
+  - Assets/Sandbox/Popup/Scripts/PopupCollectionRootPartials.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupData.cs
+  - Assets/Sandbox/Popup/Scripts/PopupData.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupExtensions.cs
+  - Assets/Sandbox/Popup/Scripts/PopupExtensions.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupType.cs
+  - Assets/Sandbox/Popup/Scripts/PopupType.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupTypePartials.cs
+  - Assets/Sandbox/Popup/Scripts/PopupTypePartials.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupWindow.cs
+  - Assets/Sandbox/Popup/Scripts/PopupWindow.cs.meta
+  - Assets/Sandbox/Popup/Scripts/PopupWindowPartials.cs
+  - Assets/Sandbox/Popup/Scripts/PopupWindowPartials.cs.meta
+  - Assets/Sandbox/Popup/Scripts/Editor/PopupTypeEditor.cs
+  - Assets/Sandbox/Popup/Scripts/Editor/PopupTypeEditor.cs.meta
+  ExcludeStartsWith:
+  - Assets/Experimental
+  - Assets/Plugins
+  ExcludeEndsWith:
+  - .unitypackage
+  - .unitypackage.meta

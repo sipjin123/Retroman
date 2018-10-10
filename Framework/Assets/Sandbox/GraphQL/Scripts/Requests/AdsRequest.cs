@@ -18,6 +18,9 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     public enum AdError
     {
         ADD01,
@@ -52,31 +55,32 @@ namespace Sandbox.GraphQL
     [Serializable]
     public class Advertisement : IJson
     {
-        public string id;
-        public string name;
-        public string url;
-        public string type;
-        public bool is_premium;
-        public string updated_at;
+        [JProp("id")] public string Id;
+        [JProp("name")] public string Name;
+        [JProp("url")] public string Url;
+        [JProp("type")] public string Type;
+        [JProp("is_premium")] public bool IsPremium;
+        [JProp("updated_at")] public string Timestamp;
 
         public AdType GetAdType()
         {
-            return type.ToEnum<AdType>();
+            return this.Type.ToEnum<AdType>();
         }
     }
 
     [Serializable]
     public class AdvertisementEnd : IJson
     {
-        public string id;
-        public string status;
+        [JProp("id")] public string Id;
+        [JProp("status")] public string Status;
     }
 
     [Serializable]
     public class AdvertisementPlay : IJson
     {
-        public string id;//transaction id of ad
-        public string status;
+        //transaction id of ad
+        [JProp("id")] public string Id;
+        //[JProp("status")] public string Status;
 
         public AdvertisementPlay ShallowCopy()
         {
@@ -87,9 +91,9 @@ namespace Sandbox.GraphQL
     [Serializable]
     public class AdvertisementRandom : IJson
     {
-        public string id;
-        public string status;
-        public Advertisement advertisement;
+        [JProp("id")] public string Id;
+        [JProp("status")] public string Status;
+        [JProp("advertisement")] public Advertisement Ad;
     }
 
     public class AdsRequest : UnitRequest
@@ -99,9 +103,9 @@ namespace Sandbox.GraphQL
         public List<Advertisement> AllAds;
         #endregion
 
-        public override void Initialze(GraphInfo info)
+        public override void Initialze(GraphInfo info, GraphRequest request)
         {
-            base.Initialze(info);
+            base.Initialze(info, request);
             //also cache user data
             #region GraphQL Requests
             this.Receive<GraphQLGetAllAdsRequestSignal>()
@@ -135,149 +139,60 @@ namespace Sandbox.GraphQL
         }
 
         #region Requests
-        public void GetAllAds(string token)
+        private void GetAllAds(string token)
         {
-            /*
-            string graphArgs =
-                        "{\"query\":\"query{" +
-                            "advertisements(" +
-                                "token:\\\"" + token + "\\\"" +
-                            ")" +
-                            "{" +
-                                "id " +
-                                "name " +
-                                "url " +
-                                "type " +
-                                "is_premium " +
-                                "updated_at " +
-                            "}" +
-                        "}\"}";
-
-            ProcessRequest(GraphInfo, graphArgs, GetAllAds);
-            //*/
-            
             Builder builder = Builder.Query();
             Function func = builder.CreateFunction("advertisements");
             func.AddString("token", token);
-            Return ret = builder.CreateReturn("id", "name", "url", "type", "is_premium", "updated_at");
+            //builder.CreateReturn("id", "name", "url", "type", "is_premium", "updated_at");
+            builder.CreateReturn("id", "name", "url", "type");
 
             ProcessRequest(GraphInfo, builder.ToString(), GetAllAds);
         }
 
-        public void GetRandomAd(string token)
+        private void GetRandomAd(string token)
         {
-            /*
-            string graphArgs =
-            "{\"query\":\"query{" +
-                "advertisement_random(" +
-                    "token:\\\"" + token + "\\\"" +
-                ")" +
-                "{ " +
-                    "id " +
-                    "status " +
-                    "advertisement " +
-                        "{ " +
-                            "id " +
-                            "name " +
-                            "url " +
-                            "type " +
-                            "is_premium " +
-                        "}" +
-
-                "}" +
-            "}\"}";
-
-            ProcessRequest(GraphInfo, graphArgs, GetRandomAd);
-            //*/
-
-            /* Sample 001
-            Builder builder = Builder.Query();
-            Function func = builder.CreateFunction("advertisement_random");
-            func.AddQuoted("token", token);
-            Return ads = new Return();
-            ads.Name = "advertisement";
-            ads.Add("id");
-            ads.Add("name");
-            ads.Add("url");
-            ads.Add("type");
-            ads.Add("is_premium");
-
-            Return ret = builder.CreateReturn("id", "status");
-            ret.Add(ads);
-            //*/
-
-            //* Sample 002
             Builder builder = Builder.Query();
             Function func = builder.CreateFunction("advertisement_random");
             func.AddString("token", token);
-            Return ret = builder.CreateReturn("id", "status");
-            ret.Add("advertisement", new Return("id", "name", "url", "type", "is_premium"));
-            //*/
+            //Return ret = builder.CreateReturn("id", "status");
+            Return ret = builder.CreateReturn("id");
+            //ret.Add("advertisement", new Return("id", "name", "url", "type", "is_premium"));
+            ret.Add("advertisement", new Return("id", "name", "url", "type"));
 
             ProcessRequest(GraphInfo, builder.ToString(), GetRandomAd);
         }
 
-        public void EndAd(string token, AdvertisementPlay ad_transaction, bool was_skipped, float timemark)
+        private void EndAd(string token, AdvertisementPlay ad_transaction, bool was_skipped, float timemark)
         {
-            /*
-            string graphArgs =
-                    "{\"query\":\"mutation{" +
-                        "advertisement_end(" +
-                            "token:\\\"" + token + "\\\" " +
-                            "id:\\\"" + ad_transaction.id + "\\\" " +
-                            "skipped: " + was_skipped.ToString().ToLower() + " " +
-                            "timemark: " + timemark + " " +
-                        ")" +
-                        "{" +
-                            "id " +
-                            "status " +
-                        "}" +
-                    "}\"}";
-
-            ProcessRequest(GraphInfo, graphArgs, EndAd, ad_transaction);
-            //*/
-            
             Builder builder = Builder.Mutation();
             Function func = builder.CreateFunction("advertisement_end");
             func.AddString("token", token);
-            func.AddString("id", ad_transaction.id);
+            func.AddString("id", ad_transaction.Id);
             func.Add("skipped", was_skipped.ToString().ToLower());
             func.Add("timemark", timemark);
-            Return ret = builder.CreateReturn("id", "status");
-            
+            //builder.CreateReturn("id", "status");
+            builder.CreateReturn("id");
+
             ProcessRequest(GraphInfo, builder.ToString(), EndAd, ad_transaction);
         }
 
-        public void PlayAd(string token, string ad_id)
+        private void PlayAd(string token, string ad_id)
         {
-            /*
-            string graphArgs =
-            "{\"query\":\"query {" +
-                "advertisement_play(" +
-                    "token:\\\"" + token + "\\\", " +
-                    "id:\\\"" + ad_id + "\\\", " +
-                ")" +
-                "{id status}" +
-            "}\"}";
-
-            ProcessRequest(GraphInfo, graphArgs, PlayAd);
-            //*/
-
             Builder builder = Builder.Query();
             Function func = builder.CreateFunction("advertisement_play");
             func.AddString("token", token);
             func.AddString("id", ad_id);
-            Return ret = builder.CreateReturn("id", "status");
+            //builder.CreateReturn("id", "status");
+            builder.CreateReturn("id");
 
             ProcessRequest(GraphInfo, builder.ToString(), PlayAd);
         }
         #endregion
 
         #region Parsers
-        public void GetAllAds(GraphResult result)
+        private void GetAllAds(GraphResult result)
         {
-            //Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
-
             if (result.Status == Status.ERROR)
             {
                 this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.GET_ALL_ADS });
@@ -285,33 +200,12 @@ namespace Sandbox.GraphQL
             else
             {
                 ResultData data = result.Result;
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_ALL_ADS, Data = data.data.advertisements });
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_ALL_ADS, Data = data.Data.Ads });
             }
         }
 
-        /// <summary>
-        /// Sample Result
-        ///{
-        ///  "data": {
-        ///    "advertisement_random": {
-        ///      "id": "d4f82d60-36f2-11e8-b3bb-77b436031119",
-        ///      "status": "SERVED",
-        ///      "advertisement": {
-        ///        "id": "c6a0ec10-1df8-11e8-9a22-7d072d18e9eb",
-        ///        "name": "Ad2",
-        ///        "url": "https://s3-ap-southeast-1.amazonaws.com/gmc-uploads/c6a0ec10-1df8-11e8-9a22-7d072d18e9eb.jpg",
-        ///        "type": "image",
-        ///        "is_premium": false
-        ///      }
-        ///    }
-        ///  }
-        ///}                                                                                                                                                                                                   
-        /// </summary>
-        /// <param name="result"></param>
-        public void GetRandomAd(GraphResult result)
+        private void GetRandomAd(GraphResult result)
         {
-            //Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
-
             if (result.Status == Status.ERROR)
             {
                 this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.GET_RANDOM_AD });
@@ -319,33 +213,24 @@ namespace Sandbox.GraphQL
             else
             {
                 ResultData data = result.Result;
-
-                if (data.data.advertisement_random == null || !string.IsNullOrEmpty(data.error.message))
-                {
-                    Debug.LogError(data.error.message);
-                    this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.GET_RANDOM_AD });
-                }
-                else
-                {
-                    this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_RANDOM_AD, Data = data.data.advertisement_random });
-                }
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.GET_RANDOM_AD, Data = data.Data.RandomAd });
             }
         }
 
-        public void EndAd(GraphResult result)
+        private void EndAd(GraphResult result)
         {
-            //Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
             if (result.Status == Status.ERROR)
             {
-                bool CaughtAD003 = CatchError(AdError.AD003,result.Result.errors,delegate(string errormessage, string path)
+                bool CaughtAD003 = CatchError(AdError.AD003, result.Result.Errors, delegate(string errormessage, string path)
                 {
-                        this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.END_AD, Data = 
-                        new AdvertisementEnd()
-                        {
-                            id = ((AdvertisementPlay)result.Data).id,
-                            status = "ENDED"
-                        } });      
+                    this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.END_AD, Data = 
+                    new AdvertisementEnd()
+                    {
+                        Id = ((AdvertisementPlay)result.Data).Id,
+                        Status = "ENDED"
+                    } });      
                 });
+
                 if(!CaughtAD003)
                 {
                     this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.END_AD, Data = result.Data });                
@@ -355,23 +240,12 @@ namespace Sandbox.GraphQL
             else
             {
                 ResultData data = result.Result;
-                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.END_AD, Data = data.data.advertisement_end });
-                // if (data.data.advertisement_end == null || !string.IsNullOrEmpty(data.error.message))
-                // {
-                //     Debug.LogError(data.error.message);
-                //     this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.END_AD, Data = result.Data });
-                // }
-                // else
-                // {
-                //     this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.END_AD, Data = data.data.advertisement_end });                
-                // }
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.END_AD, Data = data.Data.EndAd });
             }
         }
 
-        public void PlayAd(GraphResult result)
+        private void PlayAd(GraphResult result)
         {
-            // Assertion.Assert(result.Status == Status.SUCCESS, result.Result);
-
             if (result.Status == Status.ERROR)
             {
                 this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.PLAY_AD });
@@ -379,29 +253,20 @@ namespace Sandbox.GraphQL
             else
             {
                 ResultData data = result.Result;
-
-                if (data.data.advertisement_play.id == null || !string.IsNullOrEmpty(data.error.message))
-                {
-                    Debug.LogError(data.error.message);
-                    this.Publish(new GraphQLRequestFailedSignal() { Type = GraphQLRequestType.PLAY_AD });
-                }
-                else
-                {
-                    this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAY_AD, Data = data.data.advertisement_play });
-                }
+                this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAY_AD, Data = data.Data.PlayAd });
             }
 
         }
         #endregion
 
         #region Debug
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void GetRandomAd()
         {
             GetRandomAd(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void GetAllAds()
         {
             GetAllAds(QuerySystem.Query<string>(RegisterRequest.PLAYER_TOKEN));

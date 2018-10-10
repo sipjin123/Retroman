@@ -13,4 +13,5 @@ namespace Sandbox.GraphQL
         public float EndTime;
         public CustomAdType AdType;
     }
+
 }

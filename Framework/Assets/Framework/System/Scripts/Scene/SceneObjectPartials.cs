@@ -24,7 +24,7 @@ namespace Framework
 
     #region Scene extension (Load, Unload, and Wait)
 
-    public partial class SceneObject : SerializedMonoBehaviour
+    public partial class SceneObject : SerializedMonoBehaviour, IScene
     {
         public void PassDataToScene<T>(string scene, ISceneData data) where T : SceneObject
         {
@@ -79,16 +79,30 @@ namespace Framework
             def.Resolve();
         }
 
-        protected IEnumerator Wait(Deferred def, float seconds = 1.0f)
+        public Promise WaitPromise()
         {
-            yield return null;
-            yield return new WaitForSeconds(seconds);
-            def.Resolve();
+            Deferred def = new Deferred();
+            StartCoroutine(Wait(def));
+            return def.Promise;
         }
 
         protected virtual IEnumerator Wait(Deferred def)
         {
             yield return null;
+            def.Resolve();
+        }
+
+        public Promise WaitPromise(float seconds = 1.0f)
+        {
+            Deferred def = new Deferred();
+            StartCoroutine(Wait(def, seconds));
+            return def.Promise;
+        }
+
+        protected IEnumerator Wait(Deferred def, float seconds = 1.0f)
+        {
+            yield return null;
+            yield return new WaitForSeconds(seconds);
             def.Resolve();
         }
 

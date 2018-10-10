@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
-using System.IO;
 
 using UnityEngine;
 using UnityEditor;
@@ -9,9 +8,11 @@ using UnityEditor.SceneManagement;
 
 // alias
 using UDebug = UnityEngine.Debug;
+using System.IO;
 
 namespace Framework
 {
+
     [InitializeOnLoad]
     public static class FrameworkEditor
     {
@@ -119,12 +120,6 @@ namespace Framework
         public static void ClearPrefs()
         {
             PlayerPrefs.DeleteAll();
-
-            if (Directory.Exists(Application.persistentDataPath))
-            {
-                Directory.Delete(Application.persistentDataPath, true);
-            }
-            
         }
         
         // cmd + shift + x

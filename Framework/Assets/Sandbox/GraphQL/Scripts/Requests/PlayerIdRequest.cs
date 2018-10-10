@@ -18,22 +18,41 @@ using Framework;
 
 namespace Sandbox.GraphQL
 {
+    // Alias
+    using JProp = Newtonsoft.Json.JsonPropertyAttribute;
+
     [Serializable]
     public class PlayerIDContainer : IJson
     {
-        public string id;
-        public string device_id;
-        public string facebook_id;
-        public string gamesparks_id;
+        [JProp("id")] public string Id;
+        [JProp("device_id")] public string DeviceId;
+        [JProp("facebook_id")] public string FbId;
+        [JProp("gamesparks_id")] public string GSId;
     }
 
     public class PlayerIdRequest : UnitRequest
     {
+        public static readonly string PLAYER_SERVER_DATA = "PlayerServerData";
+
         [SerializeField]
         private PlayerIDContainer PlayerInfo;
 
-        public override void Initialze(GraphInfo info)
+        private void Awake()
         {
+            QuerySystem.RegisterResolver(PLAYER_SERVER_DATA, delegate (IQueryRequest request, IMutableQueryResult result) {
+                result.Set(PlayerInfo);
+            });
+        }
+
+        private void OnDestroy()
+        {
+            QuerySystem.RemoveResolver(PLAYER_SERVER_DATA);
+        }
+
+        public override void Initialze(GraphInfo info, GraphRequest request)
+        {
+            base.Initialze(info, request);
+
             this.Receive<GraphQLRequestSuccessfulSignal>()
                 .Where(_ => _.Type == GraphQLRequestType.LOGIN)
                .Subscribe(_ => RequestPlayerID(_.GetData<string>()))
@@ -63,7 +82,7 @@ namespace Sandbox.GraphQL
             }
             else
             {
-                PlayerInfo = result.Result.data.player;
+                PlayerInfo = result.Result.Data.PlayerInfo;
                 this.Publish(new GraphQLRequestSuccessfulSignal() { Type = GraphQLRequestType.PLAYER_DATA, Data = PlayerInfo });
             }
         }

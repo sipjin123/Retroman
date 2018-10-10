@@ -25,48 +25,54 @@ namespace Sandbox.GraphQL
     {
         [SerializeField]
         protected GraphInfo GraphInfo;
-        
-        protected GraphRequest Request = new GraphRequest();
 
-        public virtual void Initialze(GraphInfo info)
+        protected GraphRequest Request;
+
+        public virtual void Initialze(GraphInfo info, GraphRequest request)
         {
-            Debug.LogFormat(D.L("[GRAPHQL]") + " Initializing unit graph:{0} Info:{0}\n", gameObject.name, info);
+            Debug.LogFormat(D.GRAPHQL + " Initializing unit graph:{0} Info:{0}\n", gameObject.name, info);
 
             GraphInfo = info;
+            Request = request;
         }
 
         protected virtual void ProcessRequest(GraphInfo info, string arguments, Action<GraphResult> parser, object graphdata = null)
         {
-            Request = Request ?? new GraphRequest(info);
-            Request.UpdateInfo(info);
+            Request.Request(arguments, parser, graphdata);
+        }
+
+        protected virtual void ProcessStringRequest(GraphInfo info, string arguments, Action<string> parser, object graphdata = null)
+        {
             Request.Request(arguments, parser, graphdata);
         }
 
         protected virtual void CatchError(List<Error> errors, Action<string, string> visit)
         {
-            errors.ForEach(e => visit(e.message, e.path.FirstOrDefault()));
+            errors.ForEach(e => visit(e.Message, e.Path.FirstOrDefault()));
         }
 
-        // protected virtual void CatchError<T>(T filter, List<Error> errors, Action<string, string> visit) where T : struct, IConvertible
-        // {
-        //     Error error = errors.Find(e => e.message.Contains(filter.ToString()));
-        //     visit(error.message, error.path.FirstOrDefault());
-        // }
-
-        protected virtual bool CatchError<T>(T filter, List<Error> errors, Action<string, string> visit) where T : struct, IConvertible
+        /*
+        protected virtual void CatchError<T>(T filter, List<Error> errors, Action<string, string> visit) 
+            where T : struct, IConvertible
         {
             Error error = errors.Find(e => e.message.Contains(filter.ToString()));
-            if(error != null)
+            visit(error.message, error.path.FirstOrDefault());
+        }
+        //*/
+
+        protected virtual bool CatchError<T>(T filter, List<Error> errors, Action<string, string> visit) 
+            where T : struct, IConvertible
+        {
+            Error error = errors.Find(e => e.Message.Contains(filter.ToString()));
+            if (error != null)
             {
-                //error exists in the result
-                visit(error.message, error.path.FirstOrDefault());
+                // Error exists in the result
+                visit(error.Message, error.Path.FirstOrDefault());
                 return true;
             }
-            else
-            {
-                //error does not exist in the result
-                return false;
-            }
+
+            // Error does not exist in the result
+            return false;
         }
     }
 }

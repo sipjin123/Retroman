@@ -23,13 +23,13 @@ namespace Framework
         [SerializeField, ShowInInspector]
         private List<GameObject> PoolItems;
         
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Spawn()
         {
             PoolItems.Add(PoolRequest.Request<SwarmItem>(Key, Parent).gameObject);
         }
 
-        [Button(25)]
+        [Button(ButtonSizes.Medium)]
         public void Kill()
         {
             PoolItems.FirstOrDefault().GetComponent<SwarmItem>().Kill();

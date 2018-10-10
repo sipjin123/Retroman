@@ -32,7 +32,7 @@ public class PrefabManager : MonoBehaviour
     {
         // populate moduleMapping
         nameToIndexMapping = new Dictionary<string, int>();
-        for (int i = 0; i < itemManager.itemPrefabs.Length; ++i)
+        for (int i = 0; i < itemManager.itemPrefabs.Count; ++i)
         {
             SwarmItemManager.PrefabItem current = itemManager.itemPrefabs[i];
             nameToIndexMapping[current.prefab.name] = i;
@@ -256,7 +256,7 @@ public class PrefabManager : MonoBehaviour
     {
         get
         {
-            return itemManager.itemPrefabs.Length;
+            return itemManager.itemPrefabs.Count;
         }
     }
 
@@ -268,7 +268,7 @@ public class PrefabManager : MonoBehaviour
     [SerializeField, ShowInInspector]
     private int preloadCount = 0;
 
-    [Button(25)]
+    [Button(ButtonSizes.Medium)]
     public void PopulatePruneData()
     {
         // clamp
@@ -277,8 +277,8 @@ public class PrefabManager : MonoBehaviour
             inactiveCount = 0;
         }
 
-        PrefabManager.PruneData[] dataList = new PrefabManager.PruneData[ItemManager.itemPrefabs.Length];
-        for (int i = 0; i < ItemManager.itemPrefabs.Length; ++i)
+        PrefabManager.PruneData[] dataList = new PrefabManager.PruneData[ItemManager.itemPrefabs.Count];
+        for (int i = 0; i < ItemManager.itemPrefabs.Count; ++i)
         {
             SwarmItemManager.PrefabItem current = ItemManager.itemPrefabs[i];
             dataList[i] = new PrefabManager.PruneData();
@@ -289,7 +289,7 @@ public class PrefabManager : MonoBehaviour
     }
 
     // "Populate Preload Data"
-    [Button(25)]
+    [Button(ButtonSizes.Medium)]
     public void PopulatePreloadData()
     {
         // clamp
@@ -298,7 +298,7 @@ public class PrefabManager : MonoBehaviour
             preloadCount = 0;
         }
 
-        int prefabCount = ItemManager.itemPrefabs.Length;
+        int prefabCount = ItemManager.itemPrefabs.Count;
         PrefabManager.PreloadData[] dataList = new PrefabManager.PreloadData[prefabCount];
         for (int i = 0; i < prefabCount; ++i)
         {

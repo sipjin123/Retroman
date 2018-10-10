@@ -1,11 +1,9 @@
-﻿using UnityEngine;
-
-using Framework.ExtensionMethods;
+﻿using  UnityEngine;
 
 namespace Framework
 {
     using Framework.ExtensionMethods;
-    
+
     public static class D
     {
         public static Color Randome()
@@ -19,16 +17,18 @@ namespace Framework
         public static readonly string CHECK = Color.white.LogHeader("[CHECK]");
         public static readonly string F = Color.green.LogHeader("[Framework]");
         public static readonly string B = Color.cyan.LogHeader("[BURLIN]");
+        public static readonly string A = Color.blue.LogHeader("[ARIES]");
         public static readonly string SOCKETS = Color.white.LogHeader("[SOCKETS]");
         public static readonly string LOBBY = Color.green.LogHeader("[LOBBY]");
         public static readonly string GAME = Color.blue.LogHeader("[GAME]");
         public static readonly string FB = Color.blue.LogHeader("[FB]");
         public static readonly string POPUP = Color.green.LogHeader("[Popup]");
         public static readonly string FGC = Color.cyan.LogHeader("[FGC]");
-        public static readonly string SERVICE = Color.gray.LogHeader("[SERVICE]");
         public static readonly string GRAPHQL = Color.cyan.LogHeader("[GRAPHQL]");
         public static readonly string AUTOMATION = Color.cyan.LogHeader("[AUTOMATION]");
 
+        public static readonly string SERVICE = Color.white.LogHeader("[SERVICE]");
+        
         public static string L(string header)
         {
             return Color.green.LogHeader(header);
@@ -42,6 +42,14 @@ namespace Framework
         public static string E(string header)
         {
             return Color.red.LogHeader(header);
+        }
+
+        public static void Log(bool flag, string format, params object[] args)
+        {
+            if (flag)
+            {
+                Debug.LogFormat(format, args);
+            }
         }
     }
 
