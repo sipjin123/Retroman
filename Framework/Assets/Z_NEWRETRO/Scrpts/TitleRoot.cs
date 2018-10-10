@@ -16,6 +16,7 @@ using Framework;
 using Common.Utils;
 using System.Collections;
 using Sandbox.ButtonSandbox;
+using Sandbox.FGCAutomation;
 using Sandbox.RGC;
 
 namespace Retroman
@@ -109,6 +110,9 @@ namespace Retroman
             _InteractiveCanvas.interactable = false;
             SoundControls.Instance._buttonClick.Play();
             _Broker.Publish(new LaunchGamePlay());
+
+            FGCTrackingMatchStart signal;
+            this.Publish(signal);
         }
         void GoToSettings()
         {

@@ -92,4 +92,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sandbox/RGC/Scenes/ClaimStamps.unity
     guid: 71ef023d3e2cf8744ae34997e36a18cd
+  - enabled: 1
+    path: Assets/Sandbox/FGCAutomation/Scenes/FGCAutomation.unity
+    guid: 2f2d3b94b4788304ab7fee06bab542f0
   m_configObjects: {}

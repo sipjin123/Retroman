@@ -22,6 +22,7 @@ using Common.Utils;
 using Framework;
 
 using Sandbox.Audio;
+using Sandbox.FGCAutomation;
 using Sandbox.Popup;
 using Sandbox.Preloader;
 using Sandbox.Services;
@@ -297,7 +298,9 @@ namespace Retroman
                     {
                         FScene.GetScene<PopupCollectionRoot>(EScene.PopupCollection).Hide();
                     })
-           
+#if ENABLE_FGC_TRACKING
+                    .Then(_ => Scene.LoadSceneAdditivePromise<FGCAutomationRoot>(EScene.FGCAutomation))
+#endif
                     .Then(_ => Scene.LoadSceneAdditivePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                     .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
@@ -309,6 +312,7 @@ namespace Retroman
                         this._RetroMessageBroker.Publish(new ShowVersion { IfActive = true });
                         this._RetroMessageBroker.Publish(new ToggleCoins { IfActive = true });
                     })
+
                     .Then(_ => Scene.UnloadScenePromise(EScene.Background));
             }));
 
@@ -391,6 +395,6 @@ namespace Retroman
             Fsm.Start(IDLE);
         }
 
-        #endregion
+#endregion
     }
 }

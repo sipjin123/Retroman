@@ -6,6 +6,8 @@ using UnityEngine;
 using Retroman;
 using Framework;
 using Sandbox.Facebook;
+using Sandbox.FGCAutomation;
+using Sandbox.FGCAutomation.Data;
 using UniRx;
 using UnityEngine.UI;
 
@@ -73,6 +75,27 @@ namespace RetroMountain
             {
                 this.Publish(new OnSendToFGCWalletSignal() { Value = (int)score, Event = RGCConst.GAME_END });
                 this.Publish(new OnFetchCurrenciesSignal());
+
+
+                TrackCurrency signal;
+                signal.Currency = CurrencyEnum.Score;
+                signal.MatchNumber = -1;
+
+                IQueryRequest request = QuerySystem.Start(WalletRequest.CURRENCY_KEY);
+                request.AddParameter(WalletRequest.CURRENCY_PARAM, RGCConst.SCORE_SLUG);
+                float currencyRate = QuerySystem.Complete<FGCCurrency>().CurrencyInfo.Rate;
+
+                TrackedData data = new TrackedData()
+                {
+                    Score = (int)score,
+                    StampsFloat = ((int)score) * currencyRate
+                };
+                data.StampsInt = (int) data.StampsFloat;
+                data.IsAverage = false;
+                signal.Value = data;
+
+                this.Publish(signal);
+
             }
 
             int currChar = DataService.CurrentCharacterSelected - 1;

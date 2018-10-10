@@ -17,6 +17,7 @@ using Common.Utils;
 using Sandbox.ButtonSandbox;
 using Sandbox.Popup;
 using Sandbox.Background;
+using Sandbox.FGCAutomation;
 using uPromise;
 using Sandbox.Preloader;
 
@@ -153,6 +154,9 @@ namespace Retroman
             if (PauseResetButton)
                 PauseResetButton.SetActive(false);
             _Broker.Publish(new ChangeScene { Scene = EScene.GameRoot });
+
+            FGCTrackingMatchStart signal;
+            this.Publish(signal);
         }
         void GoToShop()
         {

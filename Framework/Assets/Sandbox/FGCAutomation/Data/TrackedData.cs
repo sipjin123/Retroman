@@ -5,17 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 
 namespace Sandbox.FGCAutomation.Data
 {
     public struct TrackedData
     {
         public bool IsAverage { get; set; }
+
+        [ShowInInspector]
         public float AverageScore { get; set; }
+
+        [ShowInInspector]
         public float AverageStamps { get; set; }
 
+        [ShowInInspector]
         public int Score { get; set; }
+
+        [ShowInInspector]
         public int StampsInt { get; set; }
+
+        [ShowInInspector]
         public float StampsFloat { get; set; }
 
         public void Reset()

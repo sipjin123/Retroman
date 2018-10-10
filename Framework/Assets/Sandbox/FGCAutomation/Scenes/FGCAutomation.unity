@@ -184,7 +184,7 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   SelectedScene: FGCAutomation
-  _IsPersistent: 0
+  _IsPersistent: 1
   Installers: []
   CachedScene: FGCAutomation
 --- !u!114 &654695156

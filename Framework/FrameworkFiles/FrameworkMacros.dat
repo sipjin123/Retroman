@@ -3,3 +3,4 @@
 {"Name":"ENABLE_FACEBOOK","IsEnabled":true}
 {"Name":"ENABLE_FGC","IsEnabled":true}
 {"Name":"ENABLE_AUTOMATION","IsEnabled":true}
+{"Name":"ENABLE_FGC_TRACKING","IsEnabled":true}
