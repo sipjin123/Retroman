@@ -15,8 +15,11 @@ using Common.Query;
 using Framework;
 using Common.Utils;
 using System.Collections;
+using System.Threading.Tasks;
 using Sandbox.ButtonSandbox;
+using Sandbox.Facebook;
 using Sandbox.FGCAutomation;
+using Sandbox.Popup;
 using Sandbox.RGC;
 
 namespace Retroman
@@ -50,22 +53,30 @@ namespace Retroman
                 OnConnectToFGCApp signal;
                 this.Publish(signal);
                 HasAttemptedFGCLogin = true;
+                this.Receive<OnFacebookLoginFailedSignal>()
+                    .Subscribe(_ =>
+                    {
+                        Debug.LogError($"{D.ERROR} Facebook Login failed");
+                        CloseAllPopups();
+                        
+                    }).AddTo(this);
             }
         }
 
-        protected override void OnEnable()
+        private async void CloseAllPopups()
         {
-            base.OnEnable();
+            await DelayAction(2f, () =>
+            {
+                OnCloseActivePopup closeSignal;
+                closeSignal.All = true;
+                this.Publish(closeSignal);
+            });
         }
 
-        protected override void OnDisable()
+        private async Task DelayAction(float delay, Action action)
         {
-            base.OnDisable();
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
+            await new TimeSpan(0, 0, 0, (int)delay);
+            action?.Invoke();
         }
         //=====================================================================
         void InitializeSignals()
