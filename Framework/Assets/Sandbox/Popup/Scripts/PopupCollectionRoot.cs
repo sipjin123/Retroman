@@ -166,7 +166,7 @@ namespace Sandbox.Popup
                 if (i == 0)
                 {
                     canvas.PlaneDistance = Mathf.Max(0, PlaneDistance);
-                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 2;
+                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 1;
                 }
                 // Front most
                 else if (i == 1)
@@ -178,7 +178,7 @@ namespace Sandbox.Popup
                 else
                 {
                     canvas.PlaneDistance = Mathf.Max(0, PlaneDistance - 5);
-                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 1;
+                    canvas.Canvas.sortingOrder = canvas.SceneDepth.ToInt() - 2;
                 }
 
                 canvas.Canvas.planeDistance = canvas.PlaneDistance;
