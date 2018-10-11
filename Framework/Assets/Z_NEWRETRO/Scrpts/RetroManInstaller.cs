@@ -303,7 +303,7 @@ namespace Retroman
                         Scene.LoadSceneAdditivePromise<FGCAutomationRoot>(EScene.FGCAutomation) : 
                         Scene.EndFramePromise())
 #endif
-                    .Then(_ => Scene.LoadSceneAdditivePromise<PreloaderRoot>(EScene.Preloader))
+                    .Then(_ => Scene.LoadScenePromise<PreloaderRoot>(EScene.Preloader))
                     .Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))
                     .Then(_ => Scene.LoadSceneAdditivePromise<TitleRoot>(EScene.TitleRoot))
                     //.Then(_ => Scene.LoadSceneAdditivePromise<GameRoot>(EScene.GameRoot))

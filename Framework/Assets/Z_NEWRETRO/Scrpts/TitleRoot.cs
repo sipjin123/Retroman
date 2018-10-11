@@ -29,6 +29,8 @@ namespace Retroman
 
         MessageBroker _Broker;
         public CanvasGroup _InteractiveCanvas;
+
+        private static bool HasAttemptedFGCLogin;
         //=====================================================================
         protected override void Awake()
         {
@@ -43,8 +45,12 @@ namespace Retroman
             InitializeSignals();
             _Broker.Publish(new AutomatedUIState { Scene = EScene.TitleRoot });
 
-            OnConnectToFGCApp signal;
-            this.Publish(signal);
+            if (!HasAttemptedFGCLogin)
+            {
+                OnConnectToFGCApp signal;
+                this.Publish(signal);
+                HasAttemptedFGCLogin = true;
+            }
         }
 
         protected override void OnEnable()
