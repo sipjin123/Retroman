@@ -22,6 +22,11 @@ public static class AwaitExtensions
         return tcs.Task.GetAwaiter();
     }
 
+    public static TaskAwaiter GetAwaiter(this TimeSpan timeSpan)
+    {
+        return Task.Delay(timeSpan).GetAwaiter();
+    }
+
     // Any time you call an async method from sync code, you can either use this wrapper
     // method or you can define your own `async void` method that performs the await
     // on the given Task

@@ -104,7 +104,8 @@ namespace Sandbox.FGCAutomation
 
             while (_IsRunning)
             {
-                await new WaitForSeconds(0.05f);
+                //await new WaitForSeconds(0.05f);
+                await new TimeSpan(0, 0, 0, 0, 50);
                 if (_TaskDataQueue.Count == 0)
                     continue;
 
