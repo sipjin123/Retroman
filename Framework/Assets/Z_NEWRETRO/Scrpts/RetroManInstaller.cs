@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Threading.Tasks;
 using uPromise;
 
 using UniRx;
@@ -22,9 +22,11 @@ using Common.Utils;
 using Framework;
 
 using Sandbox.Audio;
+using Sandbox.Facebook;
 using Sandbox.FGCAutomation;
 using Sandbox.Popup;
 using Sandbox.Preloader;
+using Sandbox.RGC;
 using Sandbox.Services;
 using Synergy88;
 
@@ -79,6 +81,8 @@ namespace Retroman
 
         private PreloaderRoot Preloader;
         private PopupCollectionRoot Popup;
+        private bool _HasAttemptedFGCLogin;
+
 
         private void OnDestroy()
         {
@@ -283,6 +287,18 @@ namespace Retroman
                     .Then(_ => Fsm.SendEvent(ON_TITLE))
                       .Then(_ =>
                       {
+                          if (!_HasAttemptedFGCLogin)
+                          {
+                              OnConnectToFGCApp signal;
+                              this.Publish(signal);
+                              _HasAttemptedFGCLogin = true;
+                              this.Receive<OnFacebookLoginFailedSignal>()
+                                  .Subscribe(x =>
+                                  {
+                                      Debug.LogError($"{D.ERROR} Facebook Login failed");
+                                      CloseAllPopups();
+                                  }).AddTo(this);
+                          }
                           FScene.GetScene<Framework.SystemRoot>(EScene.System).DisableBlackPanel();
                           Debug.LogError("Title Root Loaded");
                       })
@@ -411,6 +427,22 @@ namespace Retroman
             Fsm.Start(IDLE);
         }
 
-#endregion
+        private async void CloseAllPopups()
+        {
+            await DelayAction(1.5f, () =>
+            {
+                OnCloseActivePopup closeSignal;
+                closeSignal.All = true;
+                this.Publish(closeSignal);
+            });
+        }
+
+        private async Task DelayAction(float delay, Action action)
+        {
+            await new TimeSpan(0, 0, 0, (int)delay);
+            action?.Invoke();
+        }
+
+        #endregion
     }
 }

@@ -47,37 +47,8 @@ namespace Retroman
             ButtonSetup();
             InitializeSignals();
             _Broker.Publish(new AutomatedUIState { Scene = EScene.TitleRoot });
-
-            if (!HasAttemptedFGCLogin)
-            {
-                OnConnectToFGCApp signal;
-                this.Publish(signal);
-                HasAttemptedFGCLogin = true;
-                this.Receive<OnFacebookLoginFailedSignal>()
-                    .Subscribe(_ =>
-                    {
-                        Debug.LogError($"{D.ERROR} Facebook Login failed");
-                        CloseAllPopups();
-                        
-                    }).AddTo(this);
-            }
         }
 
-        private async void CloseAllPopups()
-        {
-            await DelayAction(2f, () =>
-            {
-                OnCloseActivePopup closeSignal;
-                closeSignal.All = true;
-                this.Publish(closeSignal);
-            });
-        }
-
-        private async Task DelayAction(float delay, Action action)
-        {
-            await new TimeSpan(0, 0, 0, (int)delay);
-            action?.Invoke();
-        }
         //=====================================================================
         void InitializeSignals()
         {
