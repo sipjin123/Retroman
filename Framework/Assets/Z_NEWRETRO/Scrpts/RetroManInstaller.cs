@@ -81,7 +81,7 @@ namespace Retroman
 
         private PreloaderRoot Preloader;
         private PopupCollectionRoot Popup;
-        private bool _HasAttemptedFGCLogin;
+        private static bool HasAttemptedFGCLogin;
 
 
         private void OnDestroy()
@@ -287,11 +287,11 @@ namespace Retroman
                     .Then(_ => Fsm.SendEvent(ON_TITLE))
                       .Then(_ =>
                       {
-                          if (!_HasAttemptedFGCLogin)
+                          if (!HasAttemptedFGCLogin)
                           {
                               OnConnectToFGCApp signal;
                               this.Publish(signal);
-                              _HasAttemptedFGCLogin = true;
+                              HasAttemptedFGCLogin = true;
                               this.Receive<OnFacebookLoginFailedSignal>()
                                   .Subscribe(x =>
                                   {
