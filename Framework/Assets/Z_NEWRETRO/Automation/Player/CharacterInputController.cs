@@ -26,7 +26,6 @@ public class CharacterInputController :  IController
         {
             if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.Mouse0))
             {
-                Debug.LogError("SPACE WAS PRESSED");
                 return true;
             }
             return false;

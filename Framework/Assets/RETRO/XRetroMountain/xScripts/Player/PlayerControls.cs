@@ -138,13 +138,12 @@ namespace Retroman
         bool bugfixFlagJumper;
         void FixedUpdate()
         {
-            RaycastHit bewhut;
+            RaycastHit groundCheckRay;
             Debug.DrawRay(RayObject.transform.position, -RayObject.transform.up * 10, Color.blue);
 
-            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out bewhut))// ,GroundWaterMask))
+            if (Physics.Raycast(RayObject.transform.position, -RayObject.transform.up * 10, out groundCheckRay))// ,GroundWaterMask))
             {
-                //Debug.LogError(D.CHECK + bewhut.collider.gameObject);
-                if(bewhut.collider.GetComponent<PlatformMinion>()!=null)
+                if(groundCheckRay.collider.GetComponent<PlatformMinion>()!=null)
                 {
                     bugfixFlagJumper = true;
                 }

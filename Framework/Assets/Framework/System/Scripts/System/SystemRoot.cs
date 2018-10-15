@@ -41,7 +41,7 @@ namespace Framework
 
         [SerializeField]
         [TabGroup("New Group", "System")]
-        private GameObject _BlackPanel;
+        private GameObject _BlackPanel, _LoadPanel;
 
         [SerializeField]
         private SystemVersion _SystemVersion;
@@ -90,10 +90,15 @@ namespace Framework
 
         #endregion
 
-        public void DisableBlackPanel()
+        public void ToggleBlackPanel(bool trigger)
         {
-            _BlackPanel.SetActive(false);
-            Debug.LogError("Panel Black Disabled");
+            _BlackPanel.SetActive(trigger);
+            Debug.LogError("Panel Black :: "+trigger);
+        }
+        public void ToggleLoadPanel(bool trigger)
+        {
+            _LoadPanel.SetActive(trigger);
+            Debug.LogError("Panel Load:: " + trigger);
         }
 
         #region Test

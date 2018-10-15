@@ -28,7 +28,6 @@ namespace Retroman {
 
             messsageBroker.Receive<ToggleCoins>().Subscribe(_ =>
             {
-                Debug.LogError("Toggling Coiins: " + _.IfActive);
                 CoinCanvas.enabled = _.IfActive;
                 _CoinsText.text = Factory.Get<DataManagerService>().GameCoins.ToString();
             }).AddTo(this);

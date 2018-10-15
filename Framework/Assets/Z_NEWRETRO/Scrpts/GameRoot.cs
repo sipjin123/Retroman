@@ -30,6 +30,8 @@ namespace Retroman
         public GameObject PauseResetButton;
         public GameControls _GameControls;
         MessageBroker _Broker;
+
+        CompositeDisposable _Disposable = new CompositeDisposable();
         //--------
 
         protected override void Awake()
@@ -82,7 +84,7 @@ namespace Retroman
                     {
                         if (LogBackbutton)
                             Debug.LogError("Go to Title Scene");
-                        popCol.Hide();
+                       
                         GoToTitlebutton();
                     }
                     else if (_GameControls.CanAccessBackButton() == false)
@@ -99,7 +101,7 @@ namespace Retroman
                     }
                 }
 
-            }).AddTo(this);
+            }).AddTo(_Disposable);
         }
 
         protected override void Start()
@@ -139,10 +141,12 @@ namespace Retroman
 
         public void GoToTitlebutton()
         {
+            _Disposable.Clear();
             _Broker.Publish(new TriggerCanvasInteraction());
             _Broker.Publish(new ToggleCoins { IfActive = false });
             SoundControls.Instance._buttonClick.Play();
             _Broker.Publish(new ChangeScene { Scene = EScene.TitleRoot });
+
         }
         void GoToGame()
         {
